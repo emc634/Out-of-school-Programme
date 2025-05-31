@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Out of School Children Program | OSCP</title>
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <!-- Layout Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/front.css') }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="text-center">
+                <h1 class="welcome-heading">Welcome to Out of School Children Program</h1>
+                <p class="hero-subtitle">Empowering education for every child through innovative programs and community
+                    support to bridge the educational gap worldwide</p>
+
+                <div class="button-group">
+                    <a href="{{ url_for('student_signup') }}" class="btn btn-primary btn-hero">
+                        <i class="fas fa-user-graduate"></i>
+                        Student Sign-up/Login
+                    </a>
+
+                    <a href="#" class="btn btn-secondary btn-hero">
+                        <i class="fas fa-lock"></i>
+                        Admin Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer class="footer">
+                <p>&copy; 2023 Out of School Children Program. All rights reserved. | Designed with <i
+                        class="fas fa-heart" style="color: #e74c3c;"></i> by Bhubandeep Singh</p>
+    </footer>
+
+    <script>
+        // Mobile navigation toggle
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
