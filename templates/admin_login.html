@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="admin-login-page">
+        <div class="admin-login-container">
+            <div class="admin-login-header">
+                <h1>Admin Portal</h1>
+                <p>Secure access to administrative functions</p>
+            </div>
+            
+            <form class="admin-login-form" method="POST" action="{{ url_for('admin_login') }}">
+                <div class="admin-form-group">
+                    <label for="email" class="admin-form-label">Admin Email</label>
+                    <input type="email" id="email" name="email" class="admin-form-control" placeholder="admin@example.com" required>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="password" class="admin-form-label">Password</label>
+                    <input type="password" id="password" name="password" class="admin-form-control" placeholder="••••••••" required>
+                </div>
+                
+                <div class="admin-login-actions">
+                    <div class="admin-remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Remember this device</label>
+                    </div>
+                    <a href="#" class="admin-forgot-password">Reset password</a>
+                </div>
+                
+                <button type="submit" class="admin-btn-submit">
+                    Secure Login
+                </button>
+            </form>
+            
+            <div class="admin-login-footer">
+                &copy; {{ now.year }} Company Name. Admin access only.
+            </div>
+        </div>
+    </div>
+</body>
+</html>
