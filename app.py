@@ -8,7 +8,9 @@ def index():
 
 @app.route('/student_signup')
 def student_signup():
+    
     return render_template('student_signup.html')
+
 
 
 if __name__ == '__main__':
