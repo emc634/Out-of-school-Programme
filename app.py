@@ -11,6 +11,10 @@ def student_signup():
     
     return render_template('student_signup.html')
 
+@app.route('/admin_login')
+def admin_login():
+    return render_template('admin_login.html')
+
 
 
 if __name__ == '__main__':
