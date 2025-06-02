@@ -114,7 +114,6 @@
 }
 
 .admin-btn-submit:hover {
-    background: linear-gradient(135deg, #1a2b3c 0%, var(--primary-dark) 100%);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
