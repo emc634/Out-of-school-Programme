@@ -20,7 +20,7 @@
 
 /* Header styling */
 .auth-header {
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-xs);
     text-align: center;
 }
 
@@ -118,28 +118,6 @@
     cursor: pointer;
 }
 
-/* Terms and conditions */
-.terms-container {
-    display: flex;
-    align-items: flex-start;
-    margin: var(--space-lg) 0;
-}
-
-.terms-container input {
-    margin-top: 4px;
-    margin-right: var(--space-sm);
-}
-
-.terms-container label {
-    color: var(--text-secondary);
-    line-height: 1.5;
-}
-
-.terms-container a {
-    color: var(--primary);
-    font-weight: 600;
-}
-
 /* Submit button */
 .btn-submit {
     width: 100%;
@@ -157,6 +135,45 @@
 .alt-action a {
     color: var(--primary);
     font-weight: 600;
+}
+
+/* flash messages */
+
+.flash-messages {
+    margin-bottom: 1rem;
+}
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+.alert-error {
+    color: #c01b2b;
+    background-color: #f8d7da;
+    text-align: center;
+    border-color: #f5c6cb;
+}
+.alert-success {
+    color: #31c955;
+    text-align: center;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.alert {
+    /* Your existing styles */
+    transition: opacity 0.5s ease-in-out;
+    opacity: 1;
+}
+
+/* Optional: Fade-out animation */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.alert.fade-out {
+    animation: fadeOut 0.5s forwards;
 }
 
 /* Responsive adjustments */
