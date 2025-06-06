@@ -30,6 +30,8 @@ def get_db_connection():
 def index():
     return render_template("front.html")
 
+
+# Student Sign in 
 @app.route("/student_signin", methods=["GET","POST"])
 def student_signin():
     if request.method == "POST":
@@ -53,6 +55,9 @@ def student_signin():
     
     return render_template("student_signup.html")  # Should be a different template
 
+
+
+# Student Sign up page
 @app.route('/student_signup', methods=["GET","POST"])
 def student_signup():
     if request.method == "POST":
@@ -83,7 +88,7 @@ def student_signup():
             conn.close()
             
             flash("Account created successfully, Please Login", "success")
-            return redirect(url_for("student_signin"))
+            return redirect(url_for("student_profile"))
             
         except sqlite3.IntegrityError:
             flash("Email already exists", "error")
@@ -99,6 +104,10 @@ def student_signup():
 @app.route('/admin_login')
 def admin_login():
     return render_template('admin_login.html')
+
+@app.route('/student_profile')
+def student_data():
+    return render_template('student_profile.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host="0.0.0.0")
