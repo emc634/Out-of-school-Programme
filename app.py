@@ -51,7 +51,7 @@ def student_signin():
             return redirect(url_for("student_signin"))
             
         flash("Login successful!", "success")
-        return redirect(url_for("student_signin"))
+        return redirect(url_for("student_profile"))
     
     return render_template("student_signup.html")  # Should be a different template
 
@@ -106,7 +106,7 @@ def admin_login():
     return render_template('admin_login.html')
 
 @app.route('/student_profile')
-def student_data():
+def student_profile():
     return render_template('student_profile.html')
 
 if __name__ == '__main__':
