@@ -49,7 +49,7 @@ def student_signin():
             return redirect(url_for("student_signin"))
             
         flash("Login successful!", "success")
-        return redirect(url_for("index"))
+        return redirect(url_for("student_signin"))
     
     return render_template("student_signup.html")  # Should be a different template
 
@@ -87,7 +87,7 @@ def student_signup():
             
         except sqlite3.IntegrityError:
             flash("Email already exists", "error")
-            return redirect(url_for("student_signup"))
+            return redirect(url_for("student_signin"))
         except Exception as e:
             flash(f"An error occurred during registration: {str(e)}", "error")
             return redirect(url_for("student_signup"))
