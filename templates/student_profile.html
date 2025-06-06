@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="#" class="logo">
+                <i class="fas fa-user-graduate"></i>
+                <span>Student Portal</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link">Dashboard</a></li>
+                <li><a href="#" class="nav-link active">Profile</a></li>
+                <li><a href="#" class="nav-link">Courses</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-outline-primary btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <form action="/update_profile" method="POST" class="form-container">
+                <div class="form-header">
+                    <h1 class="form-title">Student Profile</h1>
+                    <p class="section-subtitle">Update your personal and academic information</p>
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user"></i>
+                        Personal Information
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" id="firstName" name="firstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fatherName" class="form-label">Father's Name</label>
+                            <input type="text" id="fatherName" name="fatherName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="motherName" class="form-label">Mother's Name</label>
+                            <input type="text" id="motherName" name="motherName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="gender" value="male" checked>
+                                    Male
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="gender" value="female">
+                                    Female
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="gender" value="other">
+                                    Other
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="religion" class="form-label">Religion</label>
+                            <input type="text" id="religion" name="religion" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="category" class="form-label">Category</label>
+                            <select id="category" name="category" class="form-control form-select">
+                                <option value="general">General</option>
+                                <option value="obc">OBC</option>
+                                <option value="sc">SC</option>
+                                <option value="st">ST</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="aadhar" class="form-label">Aadhar Number</label>
+                            <input type="text" id="aadhar" name="aadhar" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile" class="form-label">Mobile Number</label>
+                            <input type="tel" id="mobile" name="mobile" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        Academic Information
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="canId" class="form-label">CAN ID</label>
+                            <input type="text" id="canId" name="canId" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="center" class="form-label">Center Name</label>
+                            <select id="center" name="center" class="form-control form-select" required>
+                                <option value="">Select Center</option>
+                                <option value="center1">Center 1</option>
+                                <option value="center2">Center 2</option>
+                                <option value="center3">Center 3</option>
+                                <option value="center4">Center 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                        <div class="form-group">
+                            <label for="trade" class="form-label">Trade</label>
+                            <select id="trade" name="trade" class="form-control form-select" required>
+                                 <option value="">Select Trade</option>
+                                <option value="agriculture">Agriculture</option>
+                                <option value="beauty_wellness">Beauty & Wellness</option>
+                                <option value="plumbing">Plumbing</option>
+                                <option value="food_processing">Food Processing</option>
+                                <option value="automotive">Automotive</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="tourism_hospitality">Tourism & Hospitality</option>
+                                <option value="ites">ITeS</option>
+                        </select>
+                        </div>
+                        <div class="form-group
+                    </div>
+                </div>
+
+                <!-- Bank Details Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-university"></i>
+                        Bank Details
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="accountNumber" class="form-label">Bank Account Number</label>
+                            <input type="text" id="accountNumber" name="accountNumber" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="accountHolder" class="form-label">Account Holder Name</label>
+                            <input type="text" id="accountHolder" name="accountHolder" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ifsc" class="form-label">Bank IFSC Code</label>
+                            <input type="text" id="ifsc" name="ifsc" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Training Status Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-tasks"></i>
+                        Training Status
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ojt" class="form-label">OJT Status</label>
+                            <select id="ojt" name="ojt" class="form-control form-select">
+                                <option value="completed">COMPLETED</option>
+                                <option value="not_completed">NOT COMPLETED</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="guestLecture" class="form-label">Guest Lecture</label>
+                            <select id="guestLecture" name="guestLecture" class="form-control form-select">
+                                <option value="completed">COMPLETED</option>
+                                <option value="not_completed">NOT COMPLETED</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="industrialVisit" class="form-label">Industrial Visit</label>
+                            <select id="industrialVisit" name="industrialVisit" class="form-control form-select">
+                                <option value="completed">COMPLETED</option>
+                                <option value="not_completed">NOT COMPLETED</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assessment" class="form-label">Assessment</label>
+                            <select id="assessment" name="assessment" class="form-control form-select">
+                                <option value="completed">COMPLETED</option>
+                                <option value="not_completed">NOT COMPLETED</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Reset Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-lock"></i>
+                        Password Reset
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-outline">Reset</button>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container text-center pb-4 pt-4">
+            <p>© 2023 Student Portal. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
