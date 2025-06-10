@@ -190,3 +190,60 @@
         padding: var(--space-sm) var(--space-md);
     }
 }
+
+/* ====================== */
+/* FORM ELEMENT ADJUSTMENTS */
+/* ====================== */
+
+/* Ensure form controls fit properly in their containers */
+.form-control {
+    box-sizing: border-box; /* Include padding and border in element's width */
+    width: 100%; /* Full width of parent container */
+    max-width: 100%; /* Prevent overflowing parent */
+}
+
+/* Password container adjustments */
+.password-container {
+    display: flex;
+    align-items: center;
+}
+
+.password-container .form-control {
+    flex-grow: 1; /* Allow input to fill available space */
+    padding-right: 40px; /* Space for toggle button */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Form grid adjustments for better spacing */
+.form-grid {
+    grid-gap: var(--space-md);
+    align-items: start; /* Align items at the top */
+}
+
+/* Responsive adjustments for form elements */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr; /* Single column on small screens */
+    }
+    
+    .form-control {
+        padding: var(--space-sm) var(--space-md); /* Comfortable padding */
+    }
+}
+
+/* Button width adjustment */
+.btn-submit {
+    width: auto; /* Don't force full width */
+    min-width: 200px; /* Minimum width */
+    margin: 0 auto; /* Center the button */
+    display: block; /* Make it a block element */
+    padding: var(--space-md) var(--space-xl); /* Comfortable padding */
+}
