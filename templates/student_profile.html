@@ -33,7 +33,7 @@
     </nav>
 
     <main class="main-content">
-        
+
         <div class="container">
             <div class="form-header">
                 <h1 class="form-title">Student Profile</h1>
@@ -49,11 +49,13 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" id="firstName" name="firstName" class="form-control" required>
+                            <input type="text" id="firstName" name="firstName" value="{{ first_name }}"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" class="form-control" required>
+                            <input type="text" id="lastName" name="lastName" value="{{ last_name }}"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="fatherName" class="form-label">Father's Name</label>
@@ -104,7 +106,7 @@
                         </div>
                         <div class="form-group">
                             <label for="mobile" class="form-label">Mobile Number</label>
-                            <input type="tel" id="mobile" name="mobile" class="form-control" required>
+                            <input type="tel" id="mobile" name="mobile" value="{{ mobile }}" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -122,7 +124,8 @@
                         </div>
                         <div class="form-group">
                             <label for="center" class="form-label">Center</label>
-                            <select id="center" name="center" class="form-control form-select" required onchange="updateSubCenters()">
+                            <select id="center" name="center" class="form-control form-select" required
+                                onchange="updateSubCenters()">
                                 <option value="">Select Center</option>
                                 <option value="Bilaspur">Bilaspur</option>
                                 <option value="Chamba">Chamba</option>
@@ -144,45 +147,10 @@
                                 <!-- Options will be populated by JavaScript -->
                             </select>
                         </div>
-                    
 
-                    <script>
-                        const centerData = {
-                            "Bilaspur": ["JHANDUTTA", "SADAR", "SHRI NAINA DEVI JI"],
-                            "Chamba": ["BANIKHET", "CHAMBA", "CHOWARI", "GAROLA", "GEHRA", "HARDASPURA", "KALHEL", "KIANI", "MEHLA", "SALOONI", "SIHUNTA", "SUNDLA", "TISSA"],
-                            "Hamirpur": ["HAMIRPUR"],
-                            "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
-                            "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
-                            "Mandi": ["SADAR-2", "SERAJ-2"],
-                            "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA", "MAJRA"],
-                            "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
-                            "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
-                        };
 
-                        function updateSubCenters() {
-                            const mainPlaceSelect = document.getElementById('center');
-                            const subCenterSelect = document.getElementById('subCenter');
-                            const selectedPlace = mainPlaceSelect.value;
 
-                            // Clear existing options
-                            subCenterSelect.innerHTML = '<option value="">Select Sub-Center</option>';
-                            
-                            if (selectedPlace && centerData[selectedPlace]) {
-                                subCenterSelect.disabled = false;
-                                
-                                // Add new options
-                                centerData[selectedPlace].forEach(center => {
-                                    const option = document.createElement('option');
-                                    option.value = center.toLowerCase().replace(/\s+/g, '_');
-                                    option.textContent = center;
-                                    subCenterSelect.appendChild(option);
-                                });
-                            } else {
-                                subCenterSelect.disabled = true;
-                            }
-                        }
-                    </script>
-                
+
                         <div class="form-group">
                             <label for="trade" class="form-label">Trade</label>
                             <select id="trade" name="trade" class="form-control form-select" required>
@@ -259,38 +227,55 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Password Reset Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-lock"></i>
-                        Password Reset
-                    </h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="currentPassword" class="form-label">Current Password</label>
-                            <input type="password" id="currentPassword" name="currentPassword" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" id="newPassword" name="newPassword" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
-                        </div>
-                    </div>
-                </div>
+                <a href="{{ url_for('reset_password') }}">Reset Password</a>
 
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <button type="reset" class="btn btn-outline">Reset</button>
                     <button type="submit" class="btn btn-primary">Update Profile</button>
                 </div>
             </form>
         </div>
     </main>
 
+
 </body>
+<script>
+    const centerData = {
+        "Bilaspur": ["JHANDUTTA", "SADAR", "SHRI NAINA DEVI JI"],
+        "Chamba": ["BANIKHET", "CHAMBA", "CHOWARI", "GAROLA", "GEHRA", "HARDASPURA", "KALHEL", "KIANI", "MEHLA",
+            "SALOONI", "SIHUNTA", "SUNDLA", "TISSA"
+        ],
+        "Hamirpur": ["HAMIRPUR"],
+        "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
+        "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
+        "Mandi": ["SADAR-2", "SERAJ-2"],
+        "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA", "MAJRA"],
+        "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
+        "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
+    };
+
+    function updateSubCenters() {
+        const mainPlaceSelect = document.getElementById('center');
+        const subCenterSelect = document.getElementById('subCenter');
+        const selectedPlace = mainPlaceSelect.value;
+
+        // Clear existing options
+        subCenterSelect.innerHTML = '<option value="">Select Sub-Center</option>';
+
+        if (selectedPlace && centerData[selectedPlace]) {
+            subCenterSelect.disabled = false;
+
+            // Add new options
+            centerData[selectedPlace].forEach(center => {
+                const option = document.createElement('option');
+                option.value = center.toLowerCase().replace(/\s+/g, '_');
+                option.textContent = center;
+                subCenterSelect.appendChild(option);
+            });
+        } else {
+            subCenterSelect.disabled = true;
+        }
+    }
+</script>
 
 </html>
