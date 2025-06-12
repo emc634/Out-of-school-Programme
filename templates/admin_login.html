@@ -11,12 +11,12 @@
 </head>
 <body>
     <div class="admin-login-page">
-        <div class="admin-login-header">
+        
+        <div class="admin-login-container">
+            <div class="admin-login-header">
                 <h1>Admin Portal</h1>
                 <p>Secure access to administrative functions</p>
             </div>
-        <div class="admin-login-container">
-            
             <form class="admin-login-form" method="POST" action="{{ url_for('admin_login') }}">
                 <div class="admin-form-group">
                     <label for="email" class="admin-form-label">Admin Email</label>
