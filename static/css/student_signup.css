@@ -1,82 +1,54 @@
-/* ====================== */
-/* PAGE-SPECIFIC STYLES */
-/* ====================== */
+/* student_signup.css - Student Signup Page Styles */
 
-/* Main container for authentication */
+/* Auth container styles */
 .auth-container {
-    max-width: 800px;
-    margin: var(--space-xl) auto;
-    padding: 0 var(--space-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: var(--space-xl) 0;
 }
 
-/* Card styling for forms */
 .auth-card {
     background: var(--white);
     border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-lg);
-    padding: var(--space-xl);
-    margin-top: var(--space-lg);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    max-width: 800px;
+    overflow: hidden;
 }
 
-/* Header styling */
 .auth-header {
-    margin-bottom: var(--space-xs);
+    padding: var(--space-xl);
     text-align: center;
+    background: var(--primary-light);
+    border-bottom: 1px solid var(--border);
 }
 
-.auth-title {
+.auth-header h2 {
     color: var(--primary-dark);
     margin-bottom: var(--space-sm);
 }
 
 .auth-subtitle {
     color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto;
+    font-size: 1.1rem;
 }
 
-/* Tab navigation */
-.auth-tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--border);
+/* Form styles */
+.auth-form {
+    padding: var(--space-xl);
 }
 
-.auth-tab {
-    padding: var(--space-md) var(--space-xl);
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--text-secondary);
-    position: relative;
-    transition: var(--transition);
-}
-
-.auth-tab.active {
-    color: var(--primary);
-}
-
-.auth-tab.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: var(--primary);
-    border-radius: 3px;
-}
-
-/* Form grid */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md);
+    margin-bottom: var(--space-lg);
 }
 
-/* Form group styling */
 .form-group {
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
 }
 
 .form-group label {
@@ -93,23 +65,21 @@
     border-radius: var(--border-radius);
     font-size: 1rem;
     transition: var(--transition);
-    background: var(--light-bg);
 }
 
 .form-control:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
-/* Password container with toggle */
 .password-container {
     position: relative;
 }
 
 .toggle-password {
     position: absolute;
-    right: var(--space-sm);
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -118,14 +88,17 @@
     cursor: pointer;
 }
 
-/* Submit button */
+.toggle-password:hover {
+    color: var(--primary);
+}
+
 .btn-submit {
     width: 100%;
     padding: var(--space-md);
     font-size: 1.1rem;
+    margin-top: var(--space-md);
 }
 
-/* Alternative action link */
 .alt-action {
     text-align: center;
     margin-top: var(--space-lg);
@@ -137,76 +110,25 @@
     font-weight: 600;
 }
 
-
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .auth-card {
-        padding: var(--space-lg);
-    }
-
-    .auth-header {
-        margin-bottom: var(--space-lg);
-    }
-
-    .auth-tab {
-        padding: var(--space-sm) var(--space-md);
-    }
-}
-
-/* ====================== */
-/* FORM ELEMENT ADJUSTMENTS */
-/* ====================== */
-
-/* Ensure form controls fit properly in their containers */
-.form-control {
-    box-sizing: border-box; /* Include padding and border in element's width */
-    width: 100%; /* Full width of parent container */
-    max-width: 100%; /* Prevent overflowing parent */
-}
-
-/* Password container adjustments */
-.password-container {
-    display: flex;
-    align-items: center;
-}
-
-.password-container .form-control {
-    flex-grow: 1; /* Allow input to fill available space */
-    padding-right: 40px; /* Space for toggle button */
-}
-
-.toggle-password {
-    position: absolute;
-    right: 10px;
-    background: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-}
-
-/* Form grid adjustments for better spacing */
-.form-grid {
-    grid-gap: var(--space-md);
-    align-items: start; /* Align items at the top */
-}
-
-/* Responsive adjustments for form elements */
-@media (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: 1fr; /* Single column on small screens */
+    .auth-container {
+        padding: var(--space-md) 0;
     }
     
-    .form-control {
-        padding: var(--space-sm) var(--space-md); /* Comfortable padding */
+    .auth-header,
+    .auth-form {
+        padding: var(--space-lg);
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
     }
 }
 
-/* Button width adjustment */
-.btn-submit {
-    width: auto; /* Don't force full width */
-    min-width: 200px; /* Minimum width */
-    margin: 0 auto; /* Center the button */
-    display: block; /* Make it a block element */
-    padding: var(--space-md) var(--space-xl); /* Comfortable padding */
+@media (max-width: 480px) {
+    .auth-header,
+    .auth-form {
+        padding: var(--space-md);
+    }
 }

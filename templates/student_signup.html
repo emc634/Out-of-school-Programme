@@ -1,250 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal | Sign Up / Sign In</title>
-    <!-- Linking to your CSS files -->
-    <!-- Base Styles -->
+    <title>Student Sign Up</title>
+    <!-- Link to your CSS files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <!-- Layout Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <!-- Component Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student_signup.css') }}">
-    <!-- Page-specific CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
-
     <main class="main-content">
+        <div class="container">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
 
-        <div class="container auth-container">
-            <div class="auth-header">
-                <h2 class="auth-title">Student Portal</h2>
-                <p class="auth-subtitle">Join thousands of students already learning with us. Get access to exclusive
-                    resources and courses.</p>
-            </div>
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2>Create Student Account</h2>
+                        <p class="auth-subtitle">Join our learning community today</p>
+                    </div>
 
+                    <!-- Sign Up Form -->
+                    <form id="signup-form" class="auth-form" method="POST" action="{{ url_for('student_signup') }}">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" class="form-control"
+                                    placeholder="Enter your first name" value="{{ request.form.firstName if request.form.firstName }}">
+                            </div>
 
-            <div class="auth-card">
-                <div class="flash-messages">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" class="form-control"
+                                    placeholder="Enter your last name" value="{{ request.form.lastName if request.form.lastName }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" class="form-control"
+                                    placeholder="Enter your email" value="{{ request.form.email if request.form.email }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mobile">Mobile Number</label>
+                                <input type="tel" id="mobile" name="mobile" class="form-control" pattern="[0-9]{10}"
+                                    title="Please enter a 10-digit phone number" placeholder="Enter your mobile number"
+                                    value="{{ request.form.mobile if request.form.mobile }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Create Password</label>
+                                <div class="password-container">
+                                    <input type="password" id="password" name="password" class="form-control"
+                                        placeholder="Create your password">
+                                    <button type="button" class="toggle-password" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <div class="password-container">
+                                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                                        placeholder="Confirm your password">
+                                    <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-submit">Create Account</button>
+                        </div>
+
+                        <div class="alt-action">
+                            <p>Already have an account? <a href="{{ url_for('student_login') }}">Sign in</a></p>
+                        </div>
+                    </form>
                 </div>
-
-                <div class="auth-tabs">
-                    <div class="auth-tab active" id="signup-tab">Sign Up</div>
-                    <div class="auth-tab" id="signin-tab">Sign In</div>
-                </div>
-
-
-                <!-- Sign Up Form -->
-                <form id="signup-form" class="auth-form" method="POST" action="/student_signup">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <input type="text" id="firstName" name="firstName" class="form-control"
-                                placeholder="Enter your first name" value="{{ first_name}}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" class="form-control"
-                                placeholder="Enter your last name" value="{{ last_name }}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" class="form-control"
-                                placeholder="Enter your email" value="{{ email}}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="mobile">Mobile Number</label>
-                            <input type="tel" id="mobile" name="mobile" class="form-control" pattern="[0-9]{10}"
-                                title="Please enter a 10-digit phone number" placeholder="Enter your mobile number"
-                                value="{{ mobile}}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password">Create Password</label>
-                            <div class="password-container">
-                                <input type="password" id="password" name="password" class="form-control"
-                                    placeholder="Create your password">
-                                <button type="button" class="toggle-password" id="togglePassword">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password</label>
-                            <div class="password-container">
-                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
-                                    placeholder="Confirm your password">
-                                <button type="button" class="toggle-password" id="toggleConfirmPassword">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <button type="submit" class="btn btn-primary btn-submit">Create Account</button>
-
-                    <div class="alt-action">
-                        <p>Already have an account? <a href="#" id="show-signin">Sign in</a></p>
-                    </div>
-                </form>
-
-                <!-- Sign In Form (Hidden by default) -->
-                <form id="signin-form" class="auth-form" style="display: none;" method="POST" action="/student_signin">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="login-email">Email Address</label>
-                            <input type="email" id="login-email" name="login-email" class="form-control"
-                                placeholder="Enter your email" value="{{ email }}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="login-password">Password</label>
-                            <div class="password-container">
-                                <input type="password" id="login-password" name="login-password" class="form-control"
-                                    placeholder="Enter your password" required>
-                                <button type="button" class="toggle-password" id="toggleLoginPassword">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-submit">Sign In</button>
-
-                    <div class="alt-action">
-                        <p>Don't have an account? <a href="#" id="show-signup">Sign up</a></p>
-                    </div>
-                </form>
             </div>
         </div>
     </main>
 
     <script>
-        // DOM Elements
-        // Get references to the sign-up and sign-in tab elements
-        const signupTab = document.getElementById('signup-tab');
-        const signinTab = document.getElementById('signin-tab');
-
-        // Get references to the sign-up and sign-in form elements
-        const signupForm = document.getElementById('signup-form');
-        const signinForm = document.getElementById('signin-form');
-
-        // Get references to the "Show sign-in" and "Show sign-up" links
-        const showSignin = document.getElementById('show-signin');
-        const showSignup = document.getElementById('show-signup');
-
-        // Function to toggle between sign-up and sign-in forms
-        function showForm(formToShow) {
-            // Check which form to display
-            if (formToShow === 'signup') {
-                // Show sign-up form and hide sign-in form
-                signupForm.style.display = 'block';
-                signinForm.style.display = 'none';
-
-                // Add 'active' class to sign-up tab and remove from sign-in tab
-                signupTab.classList.add('active');
-                signinTab.classList.remove('active');
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
-                // Show sign-in form and hide sign-up form
-                signupForm.style.display = 'none';
-                signinForm.style.display = 'block';
-
-                // Add 'active' class to sign-in tab and remove from sign-up tab
-                signinTab.classList.add('active');
-                signupTab.classList.remove('active');
+                passwordInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
-        }
-
-        // Add click event listener to sign-up tab
-        signupTab.addEventListener('click', () => showForm('signup'));
-
-        // Add click event listener to sign-in tab
-        signinTab.addEventListener('click', () => showForm('signin'));
-
-        // Add click event listener to "Show sign-in" link
-        showSignin.addEventListener('click', (e) => {
-            // Prevent default link behavior (page reload)
-            e.preventDefault();
-            // Show sign-in form
-            showForm('signin');
         });
 
-        // Add click event listener to "Show sign-up" link
-        showSignup.addEventListener('click', (e) => {
-            // Prevent default link behavior (page reload)
-            e.preventDefault();
-            // Show sign-up form
-            showForm('signup');
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const icon = this.querySelector('i');
+            
+            if (confirmPasswordInput.type === 'password') {
+                confirmPasswordInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                confirmPasswordInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
         });
 
-        // Function to set up password visibility toggle
-        function setupPasswordToggle(passwordId, buttonId) {
-            // Get password input element by ID
-            const passwordInput = document.getElementById(passwordId);
-            // Get toggle button element by ID
-            const toggleButton = document.getElementById(buttonId);
-
-            // Check if both elements exist
-            if (passwordInput && toggleButton) {
-                // Add click event listener to toggle button
-                toggleButton.addEventListener('click', function () {
-                    // Get the eye icon inside the button
-                    const icon = this.querySelector('i');
-
-                    // Check if password is currently hidden
-                    if (passwordInput.type === 'password') {
-                        // Change to visible text
-                        passwordInput.type = 'text';
-                        // Change eye icon to "eye-slash" (visible state)
-                        icon.classList.replace('fa-eye', 'fa-eye-slash');
-                    } else {
-                        // Change back to password dots
-                        passwordInput.type = 'password';
-                        // Change eye icon back to "eye" (hidden state)
-                        icon.classList.replace('fa-eye-slash', 'fa-eye');
-                    }
-                });
-            }
-        }
-
-        // Set up password toggle for sign-up form's password field
-        setupPasswordToggle('password', 'togglePassword');
-
-        // Set up password toggle for sign-up form's confirm password field
-        setupPasswordToggle('confirmPassword', 'toggleConfirmPassword');
-
-        // Set up password toggle for sign-in form's password field
-        setupPasswordToggle('login-password', 'toggleLoginPassword');
-
-        // Auto-dismiss flash messages after 3 seconds
-        document.addEventListener('DOMContentLoaded', function () {
-            const flashMessages = document.querySelectorAll('.alert');
-
-            flashMessages.forEach(message => {
-                setTimeout(() => {
-                    message.style.opacity = '0';
-                    setTimeout(() => message.remove(), 500); // Match this with CSS transition
-                }, 3000); // 5000ms = 5 seconds
+        // Fade out flash messages after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.classList.add('fade-out');
+                setTimeout(() => alert.remove(), 500);
             });
-        });
+        }, 5000);
     </script>
 </body>
-
 </html>
