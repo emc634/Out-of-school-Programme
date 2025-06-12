@@ -39,6 +39,19 @@
                 <h1 class="form-title">Student Profile</h1>
                 <p class="section-subtitle">Update your personal and academic information</p>
             </div>
+
+            <!-- Flash messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{category}}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
             <form action="/update_profile" method="POST" class="form-container">
                 <!-- Personal Information Section -->
                 <div class="form-section">
@@ -59,50 +72,59 @@
                         </div>
                         <div class="form-group">
                             <label for="fatherName" class="form-label">Father's Name</label>
-                            <input type="text" id="fatherName" name="fatherName" class="form-control" required>
+                            <input type="text" id="fatherName" name="fatherName" value="{{father_name}}"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="motherName" class="form-label">Mother's Name</label>
-                            <input type="text" id="motherName" name="motherName" class="form-control" required>
+                            <input type="text" id="motherName" name="motherName" value="{{mother_name}}"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="dob" class="form-label">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" class="form-control">
+                            <input type="date" id="dob" name="dob" value="{{dob}}" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Gender</label>
                             <div class="radio-group">
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="male" checked>
+                                    <input type="radio" name="gender" value="male"
+                                        {% if gender == 'male' %}checked{% endif %}>
                                     Male
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="female">
+                                    <input type="radio" name="gender" value="female"
+                                        {% if gender == 'female' %}checked{% endif %}>
                                     Female
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="other">
+                                    <input type="radio" name="gender" value="other"
+                                        {% if gender == 'other' %}checked{% endif %}>
                                     Other
                                 </label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="religion" class="form-label">Religion</label>
-                            <input type="text" id="religion" name="religion" class="form-control">
+                            <input type="text" id="religion" name="religion" value="{{ religion }}" class="form-control"
+                                required>
                         </div>
                         <div class="form-group">
                             <label for="category" class="form-label">Category</label>
-                            <select id="category" name="category" class="form-control form-select">
-                                <option value="general">General</option>
-                                <option value="obc">OBC</option>
-                                <option value="sc">SC</option>
-                                <option value="st">ST</option>
-                                <option value="other">Other</option>
+                            <select id="category" name="category" class="form-control form-select" required>
+                                <option value="">Select Category</option>
+                                <option value="general" {% if category == 'general' %}selected{% endif %}>General
+                                </option>
+                                <option value="obc" {% if category == 'obc' %}selected{% endif %}>OBC</option>
+                                <option value="sc" {% if category == 'sc' %}selected{% endif %}>SC</option>
+                                <option value="st" {% if category == 'st' %}selected{% endif %}>ST</option>
+                                <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="aadhar" class="form-label">Aadhar Number</label>
-                            <input type="text" id="aadhar" name="aadhar" class="form-control" required>
+                            <input type="text" id="aadhar" name="aadhar" value="{{ aadhar }}" class="form-control"
+                                required>
                         </div>
                         <div class="form-group">
                             <label for="mobile" class="form-label">Mobile Number</label>
@@ -121,22 +143,25 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="canId" class="form-label">CAN ID</label>
-                            <input type="text" id="canId" name="canId" class="form-control" required>
+                            <input type="text" id="canId" name="canId" value="{{ can_id }}" class="form-control"
+                                required>
                         </div>
                         <div class="form-group">
                             <label for="center" class="form-label">Center</label>
                             <select id="center" name="center" class="form-control form-select" required
                                 onchange="updateSubCenters()">
                                 <option value="">Select Center</option>
-                                <option value="Bilaspur">Bilaspur</option>
-                                <option value="Chamba">Chamba</option>
-                                <option value="Hamirpur">Hamirpur</option>
-                                <option value="Kangra">Kangra</option>
-                                <option value="Kullu">Kullu</option>
-                                <option value="Mandi">Mandi</option>
-                                <option value="Sirmour">Sirmour</option>
-                                <option value="Solan">Solan</option>
-                                <option value="Una">Una</option>
+                                <option value="Bilaspur" {% if center == 'Bilaspur' %}selected{% endif %}>Bilaspur
+                                </option>
+                                <option value="Chamba" {% if center == 'Chamba' %}selected{% endif %}>Chamba</option>
+                                <option value="Hamirpur" {% if center == 'Hamirpur' %}selected{% endif %}>Hamirpur
+                                </option>
+                                <option value="Kangra" {% if center == 'Kangra' %}selected{% endif %}>Kangra</option>
+                                <option value="Kullu" {% if center == 'Kullu' %}selected{% endif %}>Kullu</option>
+                                <option value="Mandi" {% if center == 'Mandi' %}selected{% endif %}>Mandi</option>
+                                <option value="Sirmour" {% if center == 'Sirmour' %}selected{% endif %}>Sirmour</option>
+                                <option value="Solan" {% if center == 'Solan' %}selected{% endif %}>Solan</option>
+                                <option value="Una" {% if center == 'Una' %}selected{% endif %}>Una</option>
                             </select>
                         </div>
 
@@ -156,14 +181,22 @@
                             <label for="trade" class="form-label">Trade</label>
                             <select id="trade" name="trade" class="form-control form-select" required>
                                 <option value="">Select Trade</option>
-                                <option value="agriculture">Agriculture</option>
-                                <option value="beauty_wellness">Beauty & Wellness</option>
-                                <option value="plumbing">Plumbing</option>
-                                <option value="food_processing">Food Processing</option>
-                                <option value="automotive">Automotive</option>
-                                <option value="electronics">Electronics</option>
-                                <option value="tourism_hospitality">Tourism & Hospitality</option>
-                                <option value="ites">ITeS</option>
+                                <option value="agriculture" {% if trade == 'agriculture' %}selected{% endif %}>
+                                    Agriculture</option>
+                                <option value="beauty_wellness" {% if trade == 'beauty_wellness' %}selected{% endif %}>
+                                    Beauty & Wellness</option>
+                                <option value="plumbing" {% if trade == 'plumbing' %}selected{% endif %}>Plumbing
+                                </option>
+                                <option value="food_processing" {% if trade == 'food_processing' %}selected{% endif %}>
+                                    Food Processing</option>
+                                <option value="automotive" {% if trade == 'automotive' %}selected{% endif %}>Automotive
+                                </option>
+                                <option value="electronics" {% if trade == 'electronics' %}selected{% endif %}>
+                                    Electronics</option>
+                                <option value="tourism_hospitality"
+                                    {% if trade == 'tourism_hospitality' %}selected{% endif %}>Tourism & Hospitality
+                                </option>
+                                <option value="ites" {% if trade == 'ites' %}selected{% endif %}>ITeS</option>
                             </select>
                         </div>
                     </div>
@@ -178,15 +211,17 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="accountNumber" class="form-label">Bank Account Number</label>
-                            <input type="text" id="accountNumber" name="accountNumber" class="form-control" required>
+                            <input type="text" id="accountNumber" name="accountNumber" value="{{ account_number }}"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="accountHolder" class="form-label">Account Holder Name</label>
-                            <input type="text" id="accountHolder" name="accountHolder" class="form-control" required>
+                            <input type="text" id="accountHolder" name="accountHolder" value="{{ account_holder }}"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="ifsc" class="form-label">Bank IFSC Code</label>
-                            <input type="text" id="ifsc" name="ifsc" class="form-control" required>
+                            <input type="text" id="ifsc" name="ifsc" value="{{ ifsc }}" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -200,36 +235,49 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="ojt" class="form-label">OJT Status</label>
-                            <select id="ojt" name="ojt" class="form-control form-select">
-                                <option value="completed">COMPLETED</option>
-                                <option value="not_completed">NOT COMPLETED</option>
+                            <select id="ojt" name="ojt" class="form-control form-select" required>
+                                <option value="">SELECT</option>
+                                <option value="completed" {% if ojt == 'completed' %}selected{% endif %}>COMPLETED
+                                </option>
+                                <option value="not_completed" {% if ojt == 'not_completed' %}selected{% endif %}>NOT
+                                    COMPLETED</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="guestLecture" class="form-label">Guest Lecture</label>
-                            <select id="guestLecture" name="guestLecture" class="form-control form-select">
-                                <option value="completed">COMPLETED</option>
-                                <option value="not_completed">NOT COMPLETED</option>
+                            <select id="guestLecture" name="guestLecture" class="form-control form-select" required>
+                                <option value="">SELECT</option>
+                                <option value="completed" {% if guest_lecture == 'completed' %}selected{% endif %}>
+                                    COMPLETED</option>
+                                <option value="not_completed"
+                                    {% if guest_lecture == 'not_completed' %}selected{% endif %}>NOT COMPLETED</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="industrialVisit" class="form-label">Industrial Visit</label>
-                            <select id="industrialVisit" name="industrialVisit" class="form-control form-select">
-                                <option value="completed">COMPLETED</option>
-                                <option value="not_completed">NOT COMPLETED</option>
+                            <select id="industrialVisit" name="industrialVisit" class="form-control form-select"
+                                required>
+                                <option value="">SELECT</option>
+                                <option value="completed" {% if industrial_visit == 'completed' %}selected{% endif %}>
+                                    COMPLETED</option>
+                                <option value="not_completed"
+                                    {% if industrial_visit == 'not_completed' %}selected{% endif %}>NOT COMPLETED
+                                </option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="assessment" class="form-label">Assessment</label>
-                            <select id="assessment" name="assessment" class="form-control form-select">
-                                <option value="completed">COMPLETED</option>
-                                <option value="not_completed">NOT COMPLETED</option>
+                            <select id="assessment" name="assessment" class="form-control form-select" required>
+                                <option value="">SELECT</option>
+                                <option value="completed" {% if assessment == 'completed' %}selected{% endif %}>
+                                    COMPLETED</option>
+                                <option value="not_completed" {% if assessment == 'not_completed' %}selected{% endif %}>
+                                    NOT COMPLETED</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <a href="{{ url_for('reset_password') }}">Reset Password</a>
-
 
                 <!-- Form Actions -->
                 <div class="form-actions">
@@ -260,6 +308,7 @@
         const mainPlaceSelect = document.getElementById('center');
         const subCenterSelect = document.getElementById('subCenter');
         const selectedPlace = mainPlaceSelect.value;
+        const currentSubCenter = "{{ subcenter }}"; // Get current subcenter value
 
         // Clear existing options
         subCenterSelect.innerHTML = '<option value="">Select Sub-Center</option>';
@@ -270,14 +319,34 @@
             // Add new options
             centerData[selectedPlace].forEach(center => {
                 const option = document.createElement('option');
-                option.value = center.toLowerCase().replace(/\s+/g, '_');
+                const centerValue = center.toLowerCase().replace(/\s+/g, '_');
+                option.value = centerValue;
                 option.textContent = center;
+
+                // Preserve selected subcenter
+                if (centerValue === currentSubCenter) {
+                    option.selected = true;
+                }
+
                 subCenterSelect.appendChild(option);
             });
         } else {
             subCenterSelect.disabled = true;
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('center').value) {
+            updateSubCenters();
+        }
+
+        flashMessages.forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 500); // Match this with CSS transition
+            }, 3000); // 3000ms = 3 seconds
+        });
+    });
 </script>
 
 </html>

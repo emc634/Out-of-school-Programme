@@ -75,6 +75,34 @@ def student_signup():
     return render_template('student_signup.html')
 
 
+
+
+
+# Student Sign in 
+@app.route("/student_signin", methods=["GET","POST"])
+def student_signin():
+    if request.method == "POST":
+        email = request.form.get("login-email")
+        password = request.form.get("login-password")
+        
+        if not email or not password:
+            flash("Please fill in both fields", "error")
+            return redirect(url_for("student_signin"))
+            
+        conn = get_db_connection("user.db")
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        conn.close()
+        
+        if user is None or not check_password_hash(user['password_hash'], password):
+            flash("Invalid email or password", "error")
+            return redirect(url_for("student_signin"))
+            
+        flash("Login successful!", "success")
+        return redirect(url_for("student_profile"))
+    
+    return render_template("student_signup.html",email=session.get("email",""))  # Should be a different template
+
+
 # Student data entry
 @app.route('/update_profile', methods=["GET", "POST"])
 def student_profile():
@@ -205,34 +233,10 @@ def student_profile():
                                    email=session.get("email",""))
 
 
+
 @app.route("/reset_password")
 def reset_password():
     return render_template("reset_password.html")
-
-
-# Student Sign in 
-@app.route("/student_signin", methods=["GET","POST"])
-def student_signin():
-    if request.method == "POST":
-        email = request.form.get("login-email")
-        password = request.form.get("login-password")
-        
-        if not email or not password:
-            flash("Please fill in both fields", "error")
-            return redirect(url_for("student_signin"))
-            
-        conn = get_db_connection("user.db")
-        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-        conn.close()
-        
-        if user is None or not check_password_hash(user['password_hash'], password):
-            flash("Invalid email or password", "error")
-            return redirect(url_for("student_signin"))
-            
-        flash("Login successful!", "success")
-        return redirect(url_for("student_profile"))
-    
-    return render_template("student_signup.html",email=session.get("email",""))  # Should be a different template
 
 
 @app.route('/admin_login')
