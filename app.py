@@ -26,29 +26,21 @@ def student_signup():
         password = request.form.get("password")
         confirmation = request.form.get("confirmPassword")
         
-        #session names
-        session['first_name'] = first_name
-        session['last_name'] = last_name
-        session["mobile"] = mobile
-        session['email']=email
+        # Store in session only for this request cycle
+        session['form_data'] = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': email,
+            'mobile': mobile
+        }
         
         if not all([first_name, last_name, email, password, confirmation]):
             flash("Please fill in all required fields", "error")
-            return render_template("student_signup.html",
-                                   first_name=session.get("first_name",""),
-                                   last_name=session.get("last_name",""),
-                                   mobile=session.get("mobile",""),
-                                   email=session.get("email","")
-                                   )
+            return redirect(url_for("student_signup"))
             
         if password != confirmation:
             flash("Password didn't match, Please Try again", "error")
-            return render_template("student_signup.html",
-                                   first_name=session.get("first_name",""),
-                                   last_name=session.get("last_name",""),
-                                   mobile=session.get("mobile",""),
-                                   email=session.get("email","")
-                                   )
+            return redirect(url_for("student_signup"))
             
         password_hash = generate_password_hash(password)
         
@@ -60,7 +52,15 @@ def student_signup():
             )
             conn.commit()
             
-            flash("Account created successfully, Please Login", "success")
+            # Store signup data in temporary session key
+            session['new_signup_data'] = {
+                'first_name': first_name,
+                'last_name': last_name,
+                'email': email,
+                'mobile': mobile
+            }
+            
+            flash("Account created successfully", "success")
             return redirect(url_for("student_profile"))
             
         except sqlite3.IntegrityError:
@@ -72,14 +72,19 @@ def student_signup():
         finally:
             conn.close()
     
-    return render_template('student_signup.html')
+    # Clear any old form data when rendering the template for GET requests
+    form_data = session.pop('form_data', {})
+    return render_template('student_signup.html', form_data=form_data)
 
 
 # Student data entry
 @app.route('/update_profile', methods=["GET", "POST"])
 def student_profile():
+    # Handle new signup data
+    new_signup_data = session.pop('new_signup_data', None)
+    
     if request.method == "POST":
-        # Store form data in session (remove trailing commas that create tuples)
+        # Store form data in session
         session["firstName"] = request.form.get("firstName", "")
         session["lastName"] = request.form.get("lastName", "")
         session["fatherName"] = request.form.get("fatherName", "")
@@ -90,8 +95,7 @@ def student_profile():
         session["category"] = request.form.get("category", "")
         session["aadhar"] = request.form.get("aadhar", "")
         session["mobile"] = request.form.get("mobile", "")
-        # Fix: Use correct field name from HTML form
-        session["canID"] = request.form.get("canId", "")  # HTML uses 'canId', not 'canID'
+        session["canID"] = request.form.get("canId", "") 
         session["center"] = request.form.get("center", "")
         session["subCenter"] = request.form.get("subCenter", "")
         session["trade"] = request.form.get("trade", "")
@@ -102,18 +106,6 @@ def student_profile():
         session["guestLecture"] = request.form.get("guestLecture", "")
         session["industrialVisit"] = request.form.get("industrialVisit", "")
         session["assessment"] = request.form.get("assessment", "")
-        
-        # Debug: Print all form data to see what's being received
-        print("=== FORM DATA DEBUG ===")
-        for key, value in request.form.items():
-            print(f"{key}: '{value}'")
-        print("=== SESSION DATA DEBUG ===")
-        for key in ["firstName", "lastName", "fatherName", "motherName", "dob", "gender",
-                   "religion", "category", "aadhar", "mobile", "canID", "center", 
-                   "subCenter", "trade", "accountNumber", "accountHolder", "ifsc", 
-                   "ojt", "guestLecture", "industrialVisit", "assessment"]:
-            print(f"{key}: '{session.get(key, 'NOT_FOUND')}'")
-        print("=== END DEBUG ===")
         
         # Validate required fields
         required_fields = [
@@ -126,13 +118,14 @@ def student_profile():
             session["guestLecture"], session["industrialVisit"], session["assessment"]
         ]
         
-        # Check if any required field is empty or None
+        # Check for empty required fields
         empty_fields = []
+        field_names = ["firstName", "lastName", "fatherName", "motherName", "dob", "gender",
+                      "religion", "category", "aadhar", "mobile", "canID", "center", 
+                      "subCenter", "trade", "accountNumber", "accountHolder", "ifsc", 
+                      "ojt", "guestLecture", "industrialVisit", "assessment"]
+        
         for i, field in enumerate(required_fields):
-            field_names = ["firstName", "lastName", "fatherName", "motherName", "dob", "gender",
-                          "religion", "category", "aadhar", "mobile", "canID", "center", 
-                          "subCenter", "trade", "accountNumber", "accountHolder", "ifsc", 
-                          "ojt", "guestLecture", "industrialVisit", "assessment"]
             if not field or not field.strip():
                 empty_fields.append(field_names[i])
         
@@ -174,9 +167,10 @@ def student_profile():
             conn.commit()
             flash("Student data saved successfully!", "success")
             
-            # Clear session data only after successful save
+            # Clear all session data after successful save
             clear_session_data()
             
+            # Redirect to a confirmation page or back to profile
             return redirect(url_for('student_profile'))
 
         except sqlite3.IntegrityError as e:
@@ -198,11 +192,20 @@ def student_profile():
             if conn:
                 conn.close()
 
-    # For GET requests, return form with any existing session data
-    return render_template('student_profile.html',first_name=session.get("first_name",""),
-                                   last_name=session.get("last_name",""),
-                                   mobile=session.get("mobile",""),
-                                   email=session.get("email",""))
+    # For GET requests
+    # Prepare template data - start with session data
+    template_data = get_template_data()
+    
+    # If we have new signup data, use it to pre-fill the form
+    if new_signup_data:
+        template_data.update({
+            'first_name': new_signup_data.get('first_name', ''),
+            'last_name': new_signup_data.get('last_name', ''),
+            'mobile': new_signup_data.get('mobile', ''),
+            'email': new_signup_data.get('email', '')
+        })
+    
+    return render_template('student_profile.html', **template_data)
 
 
 @app.route("/reset_password")
@@ -232,7 +235,7 @@ def student_signin():
         flash("Login successful!", "success")
         return redirect(url_for("student_profile"))
     
-    return render_template("student_signup.html",email=session.get("email",""))  # Should be a different template
+    return render_template("student_signin.html")  # Should be a different template
 
 
 @app.route('/admin_login')

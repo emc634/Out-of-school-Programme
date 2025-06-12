@@ -96,13 +96,15 @@ def get_template_data():
     }
     
 def clear_session_data():
-    """Helper function to clear form data from session after successful submission"""
-    fields_to_clear = [
-        "firstName", "lastName", "fatherName", "motherName", "dob", "gender",
-        "religion", "category", "aadhar", "mobile", "canID", "center", 
-        "subCenter", "trade", "accountNumber", "accountHolder", "ifsc", 
-        "ojt", "guestLecture", "industrialVisit", "assessment"
+    keys_to_remove = [
+        'first_name', 'last_name', 'email', 'mobile',
+        'firstName', 'lastName', 'fatherName', 'motherName',
+        'dob', 'gender', 'religion', 'category', 'aadhar',
+        'mobile', 'canID', 'center', 'subCenter', 'trade',
+        'accountNumber', 'accountHolder', 'ifsc', 'ojt',
+        'guestLecture', 'industrialVisit', 'assessment',
+        'new_signup_data'  # Add this new key
     ]
-    
-    for field in fields_to_clear:
-        session.pop(field, None)
+    for key in keys_to_remove:
+        if key in session:
+            session.pop(key)
