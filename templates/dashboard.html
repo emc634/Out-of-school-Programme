@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="#" class="logo">
+                <i class="fas fa-user-graduate"></i>
+                <span>Student Portal</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active">Dashboard</a></li>
+                <li><a href="{{ url_for('student_profile') }}" class="nav-link">Profile</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-outline-primary btn-sm">Logout</button>
+            </div>
+            <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container dashboard-container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Student Dashboard</h1>
+                <div class="dashboard-actions">
+                    <a href="{{ url_for('student_profile') }}" class="btn btn-primary">
+                        <i class="fas fa-user-edit"></i> Update Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {{ student.first_name[0] }}{{ student.last_name[0] }}
+                    </div>
+                    <div class="profile-info">
+                        <h2 class="profile-name">{{ student.first_name }} {{ student.last_name }}</h2>
+                        <p class="profile-id">CAN ID: {{ student.can_id }}</p>
+                    </div>
+                </div>
+                <div class="profile-body">
+                    <!-- Personal Information Section -->
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user"></i>
+                            Personal Information
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Full Name</div>
+                                <div class="info-value">{{ student.first_name }} {{ student.last_name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Father's Name</div>
+                                <div class="info-value">{{ student.father_name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Mother's Name</div>
+                                <div class="info-value">{{ student.mother_name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Date of Birth</div>
+                                <div class="info-value">{{ student.dob }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Gender</div>
+                                <div class="info-value">{{ student.gender|capitalize }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Religion</div>
+                                <div class="info-value">{{ student.religion }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Category</div>
+                                <div class="info-value">{{ student.category|upper }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Aadhar Number</div>
+                                <div class="info-value">{{ student.aadhar }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Mobile Number</div>
+                                <div class="info-value">{{ student.mobile }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Academic Information Section -->
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-graduation-cap"></i>
+                            Academic Information
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">CAN ID</div>
+                                <div class="info-value">{{ student.can_id }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Center</div>
+                                <div class="info-value">{{ student.center }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Sub-Center</div>
+                                <div class="info-value">{{ student.subcenter }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Trade</div>
+                                <div class="info-value">{{ student.trade }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details Section -->
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-university"></i>
+                            Bank Details
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Account Number</div>
+                                <div class="info-value">{{ student.account_number }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Account Holder</div>
+                                <div class="info-value">{{ student.account_holder }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">IFSC Code</div>
+                                <div class="info-value">{{ student.ifsc }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Training Status Section -->
+                    <div class="info-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-tasks"></i>
+                            Training Status
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">OJT Status</div>
+                                <div class="info-value">
+                                    <span class="status-{{ student.ojt_status }}">
+                                        {{ student.ojt_status|upper }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Guest Lecture</div>
+                                <div class="info-value">
+                                    <span class="status-{{ student.guest_lecture }}">
+                                        {{ student.guest_lecture|upper }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Industrial Visit</div>
+                                <div class="info-value">
+                                    <span class="status-{{ student.industrial_visit }}">
+                                        {{ student.industrial_visit|upper }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Assessment</div>
+                                <div class="info-value">
+                                    <span class="status-{{ student.assessment }}">
+                                        {{ student.assessment|upper }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container py-3 text-center">
+            <p>&copy; 2023 Student Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Auto-dismiss flash messages
+        const flashMessages = document.querySelectorAll('.alert');
+        flashMessages.forEach(message => {
+            setTimeout(() => {
+                message.classList.add('fade-out');
+                setTimeout(() => message.remove(), 500);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
