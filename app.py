@@ -231,12 +231,24 @@ def student_signin():
         if user is None or not check_password_hash(user['password_hash'], password):
             flash("Invalid email or password", "error")
             return redirect(url_for("student_signin"))
-            
+        
+        session['user_id'] = user['id']   
         flash("Login successful!", "success")
-        return redirect(url_for("student_profile"))
+        return redirect(url_for("dashboard"))
     
-    return render_template("student_signin.html")  # Should be a different template
+    return render_template("student_signin.html") 
 
+@app.route("/dashboard")
+def dashboard():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('student_signin'))
+
+    conn = get_student_data_db_connection('student_data.db')
+    conn.row_factory = sqlite3.Row
+    user = conn.execute('SELECT * FROM students WHERE id = ?', (user_id,)).fetchone()
+    conn.close()
+    return render_template("dashboard.html",student=user)
 
 @app.route('/admin_login')
 def admin_login():
