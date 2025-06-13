@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,41 +8,60 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
 </head>
+
 <body>
-    <div class="admin-login-page">
-        
-        <div class="admin-login-container">
-            <div class="admin-login-header">
-                <h1>Admin Portal</h1>
-                <p>Secure access to administrative functions</p>
-            </div>
-            <form class="admin-login-form" method="POST" action="{{ url_for('admin_login') }}">
-                <div class="admin-form-group">
-                    <label for="email" class="admin-form-label">Admin Email</label>
-                    <input type="email" id="email" name="email" class="admin-form-control" placeholder="admin@example.com" required>
+    <main class="main-content">
+        <div class="container">
+
+            <div class="auth-container">
+                <div class="auth-header">
+                    <h1>Admin Portal</h1>
+                    <p class="auth-subtitle">Secure access to administrative functions</p>
                 </div>
-                
-                <div class="admin-form-group">
-                    <label for="password" class="admin-form-label">Password</label>
-                    <input type="password" id="password" name="password" class="admin-form-control" placeholder="••••••••" required>
-                </div>
-                
-                <div class="admin-login-actions">
-                    <div class="admin-remember-me">
-                        <input type="checkbox" id="remember" name="remember">
-                        <label for="remember">Remember this device</label>
+
+                <!-- Flash messages -->
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
                     </div>
-                    <a href="#" class="admin-forgot-password">Reset password</a>
+                    {% endfor %}
+
+                    {% endif %}
+                    {% endwith %}
                 </div>
-                
-                <button type="submit" class="admin-btn-submit">
-                    Secure Login
-                </button>
-            </form>
-            
+                <div class="auth-card">
+                    <form class="auth-form" method="POST" action="/admin_login">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="email">Admin Email</label>
+                                <input type="email" id="email" name="email" class="form-control"
+                                    placeholder="admin@example.com" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" name="password" class="form-control"
+                                    placeholder="••••••••" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-submit">
+                            Secure Login
+                        </button>
+
+                        <div class="alt-action">
+                            <a href="{{ url_for('reset_password') }}">Reset password</a>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
         </div>
-    </div>
 </body>
+
 </html>
