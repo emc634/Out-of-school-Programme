@@ -16,91 +16,122 @@
 
 <body>
     <main class="main-content">
-
         <div class="container">
-            <div class="auth-container">
-                <div class="auth-header">
-                    <h2>Create Student Account</h2>
-                    <p class="auth-subtitle">Join our learning community today</p>
-                </div>
-
-                <!-- Flash messages -->
-                <div class="flash-messages">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-
-                    {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
-                        {{ message }}
-                    </div>
-                    {% endfor %}
-
-                    {% endif %}
-                    {% endwith %}
-                </div>
-                <div class="auth-card">
-                    <!-- Sign Up Form -->
-                    <form id="signup-form" class="auth-form" method="POST" action="/student_signup">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" name="firstName" class="form-control"
-                                    placeholder="Enter your first name"
-                                    value="{{ form_data.first_name if form_data.first_name else '' }}">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" id="lastName" name="lastName" class="form-control"
-                                    placeholder="Enter your last name"
-                                    value="{{ form_data.last_name if form_data.last_name else '' }}">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" id="email" name="email" class="form-control"
-                                    placeholder="Enter your email"
-                                    value="{{ form_data.email if form_data.email else '' }}">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="mobile">Mobile Number</label>
-                                <input type="tel" id="mobile" name="mobile" class="form-control" pattern="[0-9]{10}"
-                                    title="Please enter a 10-digit phone number" placeholder="Enter your mobile number"
-                                    value="{{ form_data.mobile if form_data.mobile else '' }}">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="password">Create Password</label>
-                                <div class="password-container">
-                                    <input type="password" id="password" name="password" class="form-control"
-                                        placeholder="Create your password">
-                                    <button type="button" class="toggle-password" id="togglePassword">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="confirmPassword">Confirm Password</label>
-                                <div class="password-container">
-                                    <input type="password" id="confirmPassword" name="confirmPassword"
-                                        class="form-control" placeholder="Confirm your password">
-                                    <button type="button" class="toggle-password" id="toggleConfirmPassword">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                            <button type="submit" class="btn btn-primary btn-submit">Create Account</button>
-
-                        <div class="alt-action">
-                            <p>Already have an account? <a href="{{ url_for('student_signin') }}">Sign in</a></p>
-                        </div>
-                    </form>
-                </div>
+            <div class="form-header">
+                <h2 class="form-title">Create Student Account</h2>
+                <p class="section-subtitle">Join our learning community today</p>
             </div>
+
+            <!-- Flash messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <form id="signup-form" class="form-container" method="POST" action="/student_signup">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" id="firstName" name="firstName" class="form-control"
+                            placeholder="Enter your first name"
+                            value="{{ form_data.first_name if form_data.first_name else '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" class="form-control"
+                            placeholder="Enter your last name"
+                            value="{{ form_data.last_name if form_data.last_name else '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fatherName" class="form-label">Father's Name</label>
+                        <input type="text" id="fatherName" name="fatherName" value="{{father_name}}"
+                            class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="motherName" class="form-label">Mother's Name</label>
+                        <input type="text" id="motherName" name="motherName" value="{{mother_name}}"
+                            class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" id="dob" name="dob" value="{{dob}}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gender</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="male"
+                                    {% if gender == 'male' %}checked{% endif %}>
+                                Male
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="female"
+                                    {% if gender == 'female' %}checked{% endif %}>
+                                Female
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="other"
+                                    {% if gender == 'other' %}checked{% endif %}>
+                                Other
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="religion" class="form-label">Religion</label>
+                        <input type="text" id="religion" name="religion" value="{{ religion }}" class="form-control"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" name="category" class="form-control form-select" required>
+                            <option value="">Select Category</option>
+                            <option value="general" {% if category == 'general' %}selected{% endif %}>General
+                            </option>
+                            <option value="obc" {% if category == 'obc' %}selected{% endif %}>OBC</option>
+                            <option value="sc" {% if category == 'sc' %}selected{% endif %}>SC</option>
+                            <option value="st" {% if category == 'st' %}selected{% endif %}>ST</option>
+                            <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" class="form-control" pattern="[0-9]{10}"
+                            title="Please enter a 10-digit phone number" placeholder="Enter your mobile number"
+                            value="{{ form_data.mobile if form_data.mobile else '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Create Password</label>
+                        <input type="password" id="password" name="password" class="form-control"
+                            placeholder="Create your password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                            placeholder="Confirm your password">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </div>
+                <div class="alt-action">
+                    <p>Already have an account? <a href="{{ url_for('student_signin') }}">Sign in</a></p>
+                </div>
+            </form>
         </div>
     </main>
     <script>

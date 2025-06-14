@@ -1,7 +1,7 @@
 import sqlite3
 
 # Path to your .db file
-db_path = "student_data.db"  # replace with your actual file
+db_path = "user.db"  # replace with your actual file
 
 # Connect to the database
 conn = sqlite3.connect(db_path)
