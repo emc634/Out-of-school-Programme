@@ -40,7 +40,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    align-items: start; /* Changed for better vertical alignment */
+    align-items: center; /* Changed for better vertical alignment */
 }
 
 .form-full-width {

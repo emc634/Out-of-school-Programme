@@ -139,162 +139,89 @@
    ====================== */
 
 /* Navigation bar container */
-/* components.css - Reusable component styles */
-
-/* ======================
-   BUTTON COMPONENTS 
-   ====================== */
-/* (Keep all existing button styles exactly the same) */
-
-/* ======================
-   NAVIGATION COMPONENTS - NOW VERTICAL SIDEBAR
-   ====================== */
-
-/* Navigation bar converted to vertical sidebar */
 .navbar {
-    background: var(--white);
-    box-shadow: var(--shadow-sm);
-    position: fixed; /* Changed from sticky to fixed */
-    left: 0;
-    top: 0;
-    bottom: 0; /* Full viewport height */
-    width: 250px; /* Fixed width */
-    padding: 1rem 0;
-    z-index: 100;
-    display: flex;
-    flex-direction: column; /* Vertical layout */
-    overflow-y: auto; /* Scrollable if content exceeds height */
-    transition: width 0.3s ease; /* Smooth collapse/expand */
+    background: var(--white); /* White background */
+    box-shadow: var(--shadow-sm); /* Subtle shadow */
+    padding: 1rem 0; /* Vertical padding */
+    position: sticky; /* Sticks to top when scrolling */
+    top: 0; /* Position at very top */
+    z-index: 100; /* Ensure it stays above other content */
 }
 
-/* Navbar content container - now vertical */
+/* Container for nav content */
 .navbar-content {
     display: flex;
-    flex-direction: column; /* Stack children vertically */
-    height: 100%; /* Take full available height */
-    padding: 0 1rem;
+    justify-content: space-between; /* Space between logo and nav items */
+    align-items: center; /* Vertical centering */
 }
 
-/* Logo styling adjusted for sidebar */
+/* Logo styling */
 .logo {
     display: flex;
-    align-items: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-dark);
-    gap: 0.5rem;
-    padding: 1rem 0;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
+    align-items: center; /* Center logo and text */
+    font-size: 1.8rem; /* Larger text */
+    font-weight: 700; /* Bold */
+    color: var(--primary-dark); /* Dark color */
+    gap: 0.5rem; /* Space between icon and text */
 }
 
-/* Navigation links - now vertical */
+/* Logo icon color */
+.logo i {
+    color: var(--primary); /* Primary color icon */
+}
+
+/* Navigation links container */
 .nav-links {
     display: flex;
-    flex-direction: column; /* Vertical stack */
-    list-style: none;
-    gap: 0.5rem; /* Reduced gap for vertical layout */
-    flex-grow: 1; /* Take available space */
+    list-style: none; /* Remove bullet points */
+    gap: 1.5rem; /* Space between links */
 }
 
-/* Individual nav link - enhanced for vertical layout */
+/* Individual navigation link */
 .nav-link {
     font-weight: 600;
-    color: var(--text);
-    padding: 0.75rem 1rem; /* Increased padding */
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-    display: flex; /* For icon alignment */
-    align-items: center;
-    gap: 0.75rem; /* Space between icon and text */
+    color: var(--text); /* Default text color */
+    padding: 0.5rem 0; /* Vertical padding */
+    position: relative; /* For underline effect */
 }
 
+/* Hover state for links */
 .nav-link:hover {
-    color: var(--primary);
-    background-color: var(--primary-light); /* Added background on hover */
+    color: var(--primary); /* Primary color on hover */
 }
 
+/* Active link styling */
 .nav-link.active {
-    color: var(--primary);
-    background-color: var(--primary-light); /* Full background for active */
+    color: var(--primary); /* Primary color */
 }
 
-/* Remove underline effect for vertical nav */
+/* Underline effect for active link */
 .nav-link.active::after {
-    display: none;
+    content: ''; /* Required for pseudo-element */
+    position: absolute;
+    bottom: 0; /* Position at bottom of link */
+    left: 0;
+    width: 100%; /* Full width */
+    height: 3px; /* Thickness */
+    background: var(--primary); /* Primary color */
+    border-radius: 3px; /* Slightly rounded */
 }
 
-/* Nav actions moved to bottom */
+/* Container for action buttons in nav */
 .nav-actions {
     display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    gap: 0.75rem;
-    padding: 1rem 0;
-    margin-top: auto; /* Push to bottom */
-    border-top: 1px solid var(--border);
+    gap: 1rem; /* Space between buttons */
 }
 
-/* Make buttons full width in sidebar */
-.nav-actions .btn {
-    width: 100%;
-    justify-content: center;
-}
-
-/* Main content area adjustment */
-.main-content {
-    margin-left: 250px; /* Offset for sidebar */
-    padding: 2rem;
-    transition: margin-left 0.3s ease; /* Smooth transition */
-}
-
-/* Mobile toggle - hidden by default */
+/* Mobile menu toggle button */
 .mobile-toggle {
-    display: none;
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 101;
-    background: var(--white);
-    padding: 0.5rem;
-    border-radius: 50%;
-    box-shadow: var(--shadow-sm);
+    display: none; /* Hidden by default (shown in mobile) */
+    background: none; /* No background */
+    border: none; /* No border */
+    font-size: 1.5rem; /* Icon size */
+    color: var(--text); /* Default color */
+    cursor: pointer; /* Pointer cursor */
 }
-
-/* ======================
-   RESPONSIVE ADJUSTMENTS 
-   ====================== */
-
-@media (max-width: 992px) {
-    /* Slightly narrower sidebar */
-    .navbar {
-        width: 220px;
-    }
-    .main-content {
-        margin-left: 220px;
-    }
-}
-
-@media (max-width: 768px) {
-    /* Mobile-friendly overlay menu */
-    .navbar {
-        width: 0;
-        overflow: hidden;
-    }
-    
-    .navbar.active {
-        width: 250px;
-    }
-    
-    .main-content {
-        margin-left: 0;
-    }
-    
-    /* Show mobile toggle */
-    .mobile-toggle {
-        display: block;
-    }
-}
-
 
 /* ======================
    CARD COMPONENTS 
@@ -377,98 +304,30 @@
    RESPONSIVE ADJUSTMENTS 
    ====================== */
 
-
-/* ======================
-   RESPONSIVE ADJUSTMENTS 
-   ====================== */
-
-/* Default: Desktop (full sidebar always visible) */
-.navbar {
-    width: 250px;
-    transform: translateX(0);
-}
-
-.main-content {
-    margin-left: 250px;
-}
-
-/* Medium devices (tablets, 992px and down) */
 @media (max-width: 992px) {
-    /* Slightly narrower sidebar */
-    .navbar {
-        width: 220px;
-    }
-    
-    .main-content {
-        margin-left: 220px;
-    }
-    
-    /* Optional: Collapse to icons-only */
-    /*
-    .navbar {
-        width: 70px;
-    }
-    .nav-link span {
-        display: none;
-    }
-    .logo span {
-        display: none;
-    }
-    .main-content {
-        margin-left: 70px;
-    }
-    */
-}
-
-/* Small devices (landscape phones, 768px and down) */
-@media (max-width: 768px) {
-    /* Sidebar becomes overlay */
-    .navbar {
-        width: 250px;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    
-    .navbar.active {
-        transform: translateX(0);
-    }
-    
-    .main-content {
-        margin-left: 0;
-        padding: 1rem;
-    }
-    
-    /* Show mobile toggle button */
-    .mobile-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-    }
-    
-    /* Add overlay when menu is open */
-    .navbar.active + .overlay {
-        position: fixed;
-        top: 0;
+    /* Mobile navigation styles */
+    .nav-links {
+        position: fixed; /* Fixed position */
+        top: 70px; /* Below navbar */
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 99;
-    }
-}
-
-/* Extra small devices (portrait phones, 576px and down) */
-@media (max-width: 576px) {
-    /* Full-width sidebar on very small screens */
-    .navbar {
-        width: 100%;
+        width: 100%; /* Full width */
+        background: var(--white); /* White background */
+        flex-direction: column; /* Stack vertically */
+        align-items: center;
+        padding: 2rem 0; /* Ample padding */
+        box-shadow: var(--shadow-md); /* Shadow for depth */
+        transform: translateY(-150%); /* Hide offscreen by default */
+        transition: var(--transition); /* Smooth animation */
     }
     
-    /* Adjust content padding */
-    .main-content {
-        padding: 1rem 0.75rem;
+    /* Mobile menu when active */
+    .nav-links.active {
+        transform: translateY(0); /* Slide into view */
+    }
+    
+    /* Show mobile toggle on smaller screens */
+    .mobile-toggle {
+        display: block;
     }
 }
 
