@@ -10,7 +10,7 @@
 
 .form-header {
     text-align: center;
-    margin-top:var(--space-xl);
+    margin-top: var(--space-xl);
     margin-bottom: var(--space-md);
 }
 
@@ -40,7 +40,8 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    align-items: center; /* Changed for better vertical alignment */
+    align-items: center;
+    /* Changed for better vertical alignment */
 }
 
 .form-full-width {
@@ -54,7 +55,7 @@
 }
 
 /* Added to ensure all form controls take full width */
-.form-group > * {
+.form-group>* {
     width: 100%;
 }
 
@@ -66,19 +67,21 @@
 }
 
 .form-control {
-    width: 100%; /* Ensures all inputs take full width */
+    width: 100%;
+    /* Ensures all inputs take full width */
     padding: 0.7rem;
     border: 2px solid var(--border);
     border-radius: var(--border-radius);
     font-size: 1rem;
     transition: var(--transition);
     box-sizing: border-box;
+    color: var(--text);
 }
 
 .form-control:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--primary-light);
+    box-shadow: 0 0 0 2px var(--primary);
 }
 
 .form-select {
@@ -103,15 +106,84 @@
 
 .form-actions {
     display: flex;
-    justify-content: center; /* Changed to center buttons */
+    justify-content: center;
+    /* Changed to center buttons */
     gap: var(--space-md);
     margin-top: var(--space-md);
 }
 
-.alt-action{
+/* FIXED PASSWORD INPUT CONTAINER */
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-container .form-control {
+    padding-right: 45px;
+    /* Space for eye icon */
+    width: 100%;
+}
+
+/* FIXED TOGGLE BUTTON */
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--primary-dark);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    z-index: 2;
+}
+
+.password-toggle:hover {
+    background:var(--primary-light);
+    color: var(--primary);
+}
+
+.alt-action {
     justify-content: center;
     padding: var(--space-md);
     text-align: center;
+}
+
+.alt-action a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+}
+
+.alt-action a:hover {
+    text-decoration: underline;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: var(--space-md);
+    font-size: 1.1rem;
+    margin-top: var(--space-md);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -119,7 +191,7 @@
         grid-template-columns: 1fr;
         gap: 10px;
     }
-    
+
     .form-full-width {
         grid-column: span 1;
     }

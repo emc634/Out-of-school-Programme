@@ -99,29 +99,6 @@
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
 }
 
-.password-container {
-    position: relative;
-}
-
-.toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: var(--transition);
-}
-
-.toggle-password:hover {
-    background: rgba(0, 0, 0, 0.03);
-    color: var(--primary);
-}
-
 .btn-submit {
     width: 100%;
     padding: var(--space-md);
@@ -142,6 +119,12 @@
     box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
 }
 
+
+
+
+
+
+
 .alt-action {
     text-align: center;
     margin-top: var(--space-lg);
@@ -149,16 +132,7 @@
     font-size: 1rem;
 }
 
-.alt-action a {
-    color: var(--primary);
-    font-weight: 600;
-    text-decoration: none;
-    position: relative;
-}
 
-.alt-action a:hover {
-    text-decoration: underline;
-}
 
 
 
