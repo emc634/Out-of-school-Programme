@@ -39,89 +39,161 @@
 
             <form id="signup-form" class="form-container" method="POST" action="/student_signup">
                 <div class="form-grid">
+                    <!-- Student Name -->
                     <div class="form-group">
-                        <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" id="firstName" name="firstName" class="form-control"
-                            placeholder="Enter your first name"
-                            value="{{ form_data.first_name if form_data.first_name else '' }}">
+                        <label for="studentName" class="form-label">Student Name</label>
+                        <input type="text" id="studentName" name="studentName" class="form-control"
+                            placeholder="Enter student name" required
+                            value="{{ form_data.student_name if form_data.student_name else '' }}">
                     </div>
 
-                    <div class="form-group">
-                        <label for="lastName" class="form-label">Last Name</label>
-                        <input type="text" id="lastName" name="lastName" class="form-control"
-                            placeholder="Enter your last name"
-                            value="{{ form_data.last_name if form_data.last_name else '' }}">
-                    </div>
-
+                    <!-- Father's Name -->
                     <div class="form-group">
                         <label for="fatherName" class="form-label">Father's Name</label>
-                        <input type="text" id="fatherName" name="fatherName" value="{{father_name}}"
-                            class="form-control" required>
+                        <input type="text" id="fatherName" name="fatherName" class="form-control"
+                            placeholder="Enter father's name" required
+                            value="{{ form_data.father_name if form_data.father_name else '' }}">
                     </div>
+
+                    <!-- Mother's Name -->
                     <div class="form-group">
                         <label for="motherName" class="form-label">Mother's Name</label>
-                        <input type="text" id="motherName" name="motherName" value="{{mother_name}}"
-                            class="form-control" required>
+                        <input type="text" id="motherName" name="motherName" class="form-control"
+                            placeholder="Enter mother's name" required
+                            value="{{ form_data.mother_name if form_data.mother_name else '' }}">
                     </div>
+
+                    <!-- CAN ID -->
                     <div class="form-group">
-                        <label for="dob" class="form-label">Date of Birth</label>
-                        <input type="date" id="dob" name="dob" value="{{dob}}" class="form-control" required>
+                        <label for="canId" class="form-label">CAN ID</label>
+                        <input type="text" id="canId" name="canId" class="form-control"
+                            placeholder="Enter CAN ID" required
+                            value="{{ form_data.can_id if form_data.can_id else '' }}">
                     </div>
+
+                    <!-- Mobile Number -->
                     <div class="form-group">
-                        <label class="form-label">Gender</label>
-                        <div class="radio-group">
-                            <label class="radio-option">
-                                <input type="radio" name="gender" value="male"
-                                    {% if gender == 'male' %}checked{% endif %}>
-                                Male
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="gender" value="female"
-                                    {% if gender == 'female' %}checked{% endif %}>
-                                Female
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="gender" value="other"
-                                    {% if gender == 'other' %}checked{% endif %}>
-                                Other
-                            </label>
-                        </div>
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" class="form-control" 
+                            pattern="[0-9]{10}" title="Please enter a 10-digit phone number" 
+                            placeholder="Enter mobile number" required
+                            value="{{ form_data.mobile if form_data.mobile else '' }}">
                     </div>
+
+                    <!-- Religion Dropdown -->
                     <div class="form-group">
                         <label for="religion" class="form-label">Religion</label>
-                        <input type="text" id="religion" name="religion" value="{{ religion }}" class="form-control"
-                            required>
+                        <select id="religion" name="religion" class="form-control form-select" required>
+                            <option value="">Select Religion</option>
+                            <option value="hindu" {% if form_data.religion == 'hindu' %}selected{% endif %}>Hindu</option>
+                            <option value="muslim" {% if form_data.religion == 'muslim' %}selected{% endif %}>Muslim</option>
+                            <option value="christian" {% if form_data.religion == 'christian' %}selected{% endif %}>Christian</option>
+                            <option value="sikh" {% if form_data.religion == 'sikh' %}selected{% endif %}>Sikh</option>
+                            <option value="jain" {% if form_data.religion == 'jain' %}selected{% endif %}>Jain</option>
+                            <option value="buddhist" {% if form_data.religion == 'buddhist' %}selected{% endif %}>Buddhist</option>
+                            <option value="other" {% if form_data.religion == 'other' %}selected{% endif %}>Other</option>
+                        </select>
                     </div>
+
+                    <!-- Category Dropdown -->
                     <div class="form-group">
                         <label for="category" class="form-label">Category</label>
                         <select id="category" name="category" class="form-control form-select" required>
                             <option value="">Select Category</option>
-                            <option value="general" {% if category == 'general' %}selected{% endif %}>General
-                            </option>
-                            <option value="obc" {% if category == 'obc' %}selected{% endif %}>OBC</option>
-                            <option value="sc" {% if category == 'sc' %}selected{% endif %}>SC</option>
-                            <option value="st" {% if category == 'st' %}selected{% endif %}>ST</option>
-                            <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+                            <option value="general" {% if form_data.category == 'general' %}selected{% endif %}>General</option>
+                            <option value="obc" {% if form_data.category == 'obc' %}selected{% endif %}>OBC</option>
+                            <option value="sc" {% if form_data.category == 'sc' %}selected{% endif %}>SC</option>
+                            <option value="st" {% if form_data.category == 'st' %}selected{% endif %}>ST</option>
+                            <option value="other" {% if form_data.category == 'other' %}selected{% endif %}>Other</option>
                         </select>
                     </div>
 
+                    <!-- Date of Birth -->
                     <div class="form-group">
-                        <label for="mobile" class="form-label">Mobile Number</label>
-                        <input type="tel" id="mobile" name="mobile" class="form-control" pattern="[0-9]{10}"
-                            title="Please enter a 10-digit phone number" placeholder="Enter your mobile number"
-                            value="{{ form_data.mobile if form_data.mobile else '' }}">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" id="dob" name="dob" class="form-control" required
+                            value="{{ form_data.dob if form_data.dob else '' }}">
                     </div>
 
+                    <!-- Center Name Dropdown -->
+                    <div class="form-group">
+                            <label for="center" class="form-label">Center</label>
+                            <select id="center" name="center" class="form-control form-select" required
+                                onchange="updateSubCenters()">
+                                <option value="">Select Center</option>
+                                <option value="Bilaspur" {% if center == 'Bilaspur' %}selected{% endif %}>Bilaspur
+                                </option>
+                                <option value="Chamba" {% if center == 'Chamba' %}selected{% endif %}>Chamba</option>
+                                <option value="Hamirpur" {% if center == 'Hamirpur' %}selected{% endif %}>Hamirpur
+                                </option>
+                                <option value="Kangra" {% if center == 'Kangra' %}selected{% endif %}>Kangra</option>
+                                <option value="Kullu" {% if center == 'Kullu' %}selected{% endif %}>Kullu</option>
+                                <option value="Mandi" {% if center == 'Mandi' %}selected{% endif %}>Mandi</option>
+                                <option value="Sirmour" {% if center == 'Sirmour' %}selected{% endif %}>Sirmour</option>
+                                <option value="Solan" {% if center == 'Solan' %}selected{% endif %}>Solan</option>
+                                <option value="Una" {% if center == 'Una' %}selected{% endif %}>Una</option>
+                            </select>
+                        </div>
+
+                        <!-- Sub-Center Selection -->
+                        <div class="form-group">
+                            <label for="subCenter" class="form-label">Sub-Center</label>
+                            <select id="subCenter" name="subCenter" class="form-control form-select" required>
+                                <option value="">Select Sub-Center</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+
+
+                    <!-- Trade Dropdown -->
+                    <div class="form-group">
+                        <label for="trade" class="form-label">Trade</label>
+                        <select id="trade" name="trade" class="form-control form-select" required>
+                            <option value="">Select Trade</option>
+                            <option value="agriculture" {% if form_data.trade == 'agriculture' %}selected{% endif %}>Agriculture</option>
+                            <option value="beauty_wellness" {% if form_data.trade == 'beauty_wellness' %}selected{% endif %}>Beauty & Wellness</option>
+                            <option value="plumbing" {% if form_data.trade == 'plumbing' %}selected{% endif %}>Plumbing</option>
+                            <option value="food_processing" {% if form_data.trade == 'food_processing' %}selected{% endif %}>Food Processing</option>
+                            <option value="automotive" {% if form_data.trade == 'automotive' %}selected{% endif %}>Automotive</option>
+                            <option value="electronics" {% if form_data.trade == 'electronics' %}selected{% endif %}>Electronics</option>
+                            <option value="tourism_hospitality" {% if form_data.trade == 'tourism_hospitality' %}selected{% endif %}>Tourism & Hospitality</option>
+                            <option value="ites" {% if form_data.trade == 'ites' %}selected{% endif %}>ITeS</option>
+                        </select>
+                    </div>
+
+                    <!-- Gender Dropdown -->
+                    <div class="form-group">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select id="gender" name="gender" class="form-control form-select" required>
+                            <option value="">Select Gender</option>
+                            <option value="male" {% if form_data.gender == 'male' %}selected{% endif %}>Male</option>
+                            <option value="female" {% if form_data.gender == 'female' %}selected{% endif %}>Female</option>
+                            <option value="other" {% if form_data.gender == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Password -->
                     <div class="form-group">
                         <label for="password" class="form-label">Create Password</label>
-                        <input type="password" id="password" name="password" class="form-control"
-                            placeholder="Create your password">
+                        <div class="password-input-container">
+                            <input type="password" id="password" name="password" class="form-control"
+                                placeholder="Create your password" required>
+                            <span id="togglePassword" class="password-toggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
                     </div>
 
+                    <!-- Confirm Password -->
                     <div class="form-group">
                         <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
-                            placeholder="Confirm your password">
+                        <div class="password-input-container">
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                                placeholder="Confirm your password" required>
+                            <span id="toggleConfirmPassword" class="password-toggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -172,5 +244,65 @@
         }, 3000);
     </script>
 </body>
+<script>
+    const centerData = {
+        "Bilaspur": ["JHANDUTTA", "SADAR", "SHRI NAINA DEVI JI"],
+        "Chamba": ["BANIKHET", "CHAMBA", "CHOWARI", "GAROLA", "GEHRA", "HARDASPURA", "KALHEL", "KIANI", "MEHLA",
+            "SALOONI", "SIHUNTA", "SUNDLA", "TISSA"
+        ],
+        "Hamirpur": ["HAMIRPUR"],
+        "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
+        "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
+        "Mandi": ["SADAR-2", "SERAJ-2"],
+        "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA", "MAJRA"],
+        "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
+        "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
+    };
+
+    function updateSubCenters() {
+        const mainPlaceSelect = document.getElementById('center');
+        const subCenterSelect = document.getElementById('subCenter');
+        const selectedPlace = mainPlaceSelect.value;
+        const currentSubCenter = "{{ subcenter }}"; // Get current subcenter value
+
+        // Clear existing options
+        subCenterSelect.innerHTML = '<option value="">Select Sub-Center</option>';
+
+        if (selectedPlace && centerData[selectedPlace]) {
+            subCenterSelect.disabled = false;
+
+            // Add new options
+            centerData[selectedPlace].forEach(center => {
+                const option = document.createElement('option');
+                const centerValue = center.toLowerCase().replace(/\s+/g, '_');
+                option.value = centerValue;
+                option.textContent = center;
+
+                // Preserve selected subcenter
+                if (centerValue === currentSubCenter) {
+                    option.selected = true;
+                }
+
+                subCenterSelect.appendChild(option);
+            });
+        } else {
+            subCenterSelect.disabled = true;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('center').value) {
+            updateSubCenters();
+        }
+
+        flashMessages.forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 500); // Match this with CSS transition
+            }, 3000); // 3000ms = 3 seconds
+        });
+    });
+</script>
+
 
 </html>
