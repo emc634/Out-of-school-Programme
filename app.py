@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import os
 
-from functions import get_db_connection, get_student_data_db_connection,get_template_data,clear_session_data
+from functions import get_db_connection
 
 app = Flask(__name__)
 app.secret_key = 'bhuvnn'
@@ -19,22 +19,39 @@ def index():
 @app.route('/student_signup', methods=["GET","POST"])
 def student_signup():
     if request.method == "POST":
-        first_name = request.form.get("firstName")  
-        last_name = request.form.get("lastName") 
-        email = request.form.get("email")
+        student_name = request.form.get("studentName")   
+        father_name = request.form.get("fatherName")
+        mother_name=request.form.get("motherName")
+        can_id=request.form.get("canId")
         mobile = request.form.get("mobile")
+        religion=request.form.get("religion")
+        category=request.form.get("category")
+        dob=request.form.get('dob')
+        center=request.form.get("center")
+        subcenter=request.form.get('subCenter')
+        trade=request.form.get("trade")
+        gender=request.form.get("gender")
         password = request.form.get("password")
         confirmation = request.form.get("confirmPassword")
         
         # Store in session only for this request cycle
-        session['form_data'] = {
-            'first_name': first_name,
-            'last_name': last_name,
-            'email': email,
-            'mobile': mobile
+        session['form_data']= {
+            'student_name': student_name,
+            'father_name': father_name,
+            'mother_name': mother_name,
+            'gender':gender,
+            'mobile': mobile,
+            'can_id':can_id,
+            'religion':religion,
+            'category':category,
+            'dob':dob,
+            'center':center,
+            'trade':trade,
+            'subcenter':subcenter,
         }
         
-        if not all([first_name, last_name, email, password, confirmation]):
+        if not all([student_name, father_name, mother_name, gender, mobile,
+                    can_id, religion, category, dob, center, trade, subcenter, password, confirmation]):
             flash("Please fill in all required fields", "error")
             return redirect(url_for("student_signup"))
             
@@ -45,30 +62,33 @@ def student_signup():
         password_hash = generate_password_hash(password)
         
         try:
-            conn = get_db_connection("user.db")
+            conn = get_db_connection("student_data.db")
             conn.execute(
-                "INSERT INTO users (first_name, last_name, email, mobile, password_hash) VALUES (?, ?, ?, ?, ?)",
-                (first_name, last_name, email, mobile, password_hash)
+                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, center, subcenter, trade, gender, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, center, subcenter, trade, gender, password_hash)
             )
             conn.commit()
-            
-            # Store signup data in temporary session key
-            session['new_signup_data'] = {
-                'first_name': first_name,
-                'last_name': last_name,
-                'email': email,
-                'mobile': mobile
-            }
             
             flash("Account created successfully", "success")
             return redirect(url_for("student_profile"))
             
-        except sqlite3.IntegrityError:
-            flash("Email already exists", "error")
-            return redirect(url_for("student_signin"))
+        except sqlite3.IntegrityError as e:
+            # Handle duplicate primary key (can_id) or NOT NULL violations
+            if 'UNIQUE constraint failed: students.can_id' in str(e):
+                flash("Candidate ID already exists. Please use a different ID.", "error")
+            elif 'NOT NULL constraint failed' in str(e):
+                flash("Some required fields are missing. Please fill all fields.", "error")
+            else:
+                flash("Data integrity error: " + str(e), "error")
+            return redirect(url_for('student_signup'))
+
+        except sqlite3.OperationalError as e:
+            flash("Database operational error: " + str(e), "error")
+            return redirect(url_for('student_signup'))
+
         except Exception as e:
-            flash(f"An error occurred during registration: {str(e)}", "error")
-            return redirect(url_for("student_signup"))
+            flash("An unexpected error occurred: " + str(e), "error")
+            return redirect(url_for('student_signup'))
         finally:
             conn.close()
     
@@ -80,132 +100,85 @@ def student_signup():
 # Student data entry
 @app.route('/update_profile', methods=["GET", "POST"])
 def student_profile():
-    # Handle new signup data
-    new_signup_data = session.pop('new_signup_data', None)
+    form_data=session.get("form_data",{})
     
     if request.method == "POST":
-        # Store form data in session
-        session["firstName"] = request.form.get("firstName", "")
-        session["lastName"] = request.form.get("lastName", "")
-        session["fatherName"] = request.form.get("fatherName", "")
-        session["motherName"] = request.form.get("motherName", "")
-        session["dob"] = request.form.get("dob", "")
-        session["gender"] = request.form.get("gender", "")
-        session["religion"] = request.form.get("religion", "")
-        session["category"] = request.form.get("category", "")
-        session["aadhar"] = request.form.get("aadhar", "")
-        session["mobile"] = request.form.get("mobile", "")
-        session["canID"] = request.form.get("canId", "") 
-        session["center"] = request.form.get("center", "")
-        session["subCenter"] = request.form.get("subCenter", "")
-        session["trade"] = request.form.get("trade", "")
-        session["accountNumber"] = request.form.get("accountNumber", "")
-        session["accountHolder"] = request.form.get("accountHolder", "")
-        session["ifsc"] = request.form.get("ifsc", "")
-        session["ojt"] = request.form.get("ojt", "")
-        session["guestLecture"] = request.form.get("guestLecture", "")
-        session["industrialVisit"] = request.form.get("industrialVisit", "")
-        session["assessment"] = request.form.get("assessment", "")
+        can_id = form_data.get('can_id')
         
-        # Validate required fields
-        required_fields = [
-            session["firstName"], session["lastName"], session["fatherName"], 
-            session["motherName"], session["dob"], session["gender"],
-            session["religion"], session["category"], session["aadhar"], 
-            session["mobile"], session["canID"], session["center"], 
-            session["subCenter"], session["trade"], session["accountNumber"], 
-            session["accountHolder"], session["ifsc"], session["ojt"], 
-            session["guestLecture"], session["industrialVisit"], session["assessment"]
-        ]
+        aadhar=request.form.get('aadhar')
+        account_number=request.form.get('accountNumber')
+        account_holder=request.form.get("accountHolder")
+        ifsc=request.form.get('ifsc')
+        ojt=request.form.get('ojt')
+        guest_lecture=request.form.get('guestLecture')
+        industrial_visit=request.form.get('industrialVisit')
+        assessment=request.form.get('assessment')
         
-        # Check for empty required fields
-        empty_fields = []
-        field_names = ["firstName", "lastName", "fatherName", "motherName", "dob", "gender",
-                      "religion", "category", "aadhar", "mobile", "canID", "center", 
-                      "subCenter", "trade", "accountNumber", "accountHolder", "ifsc", 
-                      "ojt", "guestLecture", "industrialVisit", "assessment"]
+        current_data={
+            'aadhar':aadhar,
+            'account_number':account_number,
+            'account_holder':account_holder,
+            'ifsc':ifsc,
+            'ojt':ojt,
+            'guest_lecture':guest_lecture,
+            'industrial_visit':industrial_visit,
+            'assessment':assessment
+        }
         
-        for i, field in enumerate(required_fields):
-            if not field or not field.strip():
-                empty_fields.append(field_names[i])
+        merged_data={**form_data, **current_data}
+        session['form_data']=merged_data
         
-        if empty_fields:
-            flash(f"Please fill in all required fields. Missing: {', '.join(empty_fields)}", "error")
-            return render_template('student_profile.html', **get_template_data())
-
-        # Validate specific fields
-        if len(session["aadhar"]) != 12 or not session["aadhar"].isdigit():
-            flash("Aadhar number must be exactly 12 digits", "error")
-            return render_template('student_profile.html', **get_template_data())
         
-        if len(session["mobile"]) != 10 or not session["mobile"].isdigit():
-            flash("Mobile number must be exactly 10 digits", "error")
-            return render_template('student_profile.html', **get_template_data())
-
         # Database operations
         conn = None
         try:
-            conn = get_student_data_db_connection("student_data.db")
+            conn = get_db_connection("student_data.db")
+            
+            student=conn.execute("SELECT * FROM students WHERE can_id = ?", (can_id,)).fetchone()
+            if student is None:
+                flash("Candidate ID does not exist", "error")
+                return redirect(url_for('student_profile'))
             conn.execute(
-                """INSERT INTO students (
-                first_name, last_name, father_name, mother_name, dob, 
-                gender, religion, category, aadhar, mobile,
-                can_id, center, subcenter, trade, account_number,
-                account_holder, ifsc, ojt, guest_lecture, industrial_visit, assessment
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                (
-                    session['firstName'], session['lastName'], session['fatherName'], 
-                    session['motherName'], session['dob'], session['gender'], 
-                    session['religion'], session['category'], session['aadhar'], 
-                    session['mobile'], session['canID'], session['center'], 
-                    session['subCenter'], session['trade'], session['accountNumber'],
-                    session['accountHolder'], session['ifsc'], session['ojt'], 
-                    session['guestLecture'], session['industrialVisit'], session['assessment']
+                """UPDATE students SET aadhar=?, account_number=?, account_holder=?, ifsc=?,
+                   ojt=?, guest_lecture=?, industrial_visit=?, assessment=? WHERE can_id=?""",
+                (aadhar, account_number, account_holder, ifsc, ojt, guest_lecture, industrial_visit, assessment,can_id)
                 )
-            )
 
             conn.commit()
             flash("Student data saved successfully!", "success")
-            
-            # Clear all session data after successful save
-            clear_session_data()
-            
-            # Redirect to a confirmation page or back to profile
-            return redirect(url_for('student_profile'))
+            session.pop('form_data',None)
+            return redirect(url_for('dashboard'))
 
         except sqlite3.IntegrityError as e:
             error_msg = str(e).lower()
             if "aadhar" in error_msg:
                 flash("Aadhar number already registered", "error")
+            elif "account_number" in error_msg:
+                flash("Account number already exists", "error")
             elif "can_id" in error_msg:
-                flash("Candidate ID already exists", "error")
+                flash("Candidate ID does not exist", "error")
             else:
                 flash(f"Database integrity error: {str(e)}", "error")
-            
-            return render_template('student_profile.html', **get_template_data())
+            return redirect(url_for('student_profile'))
+
+        except sqlite3.OperationalError as e:
+            flash(f"Database operational error: {str(e)}", "error")
+            return redirect(url_for('student_profile'))
+
+        except ValueError as e:
+            # For example, if you parse or validate fields and detect bad data
+            flash(f"Invalid input data: {str(e)}", "error")
+            return redirect(url_for('student_profile'))
 
         except Exception as e:
-            flash(f"Error saving student data: {str(e)}", "error")
-            return render_template('student_profile.html', **get_template_data())
+            flash(f"An unexpected error occurred: {str(e)}", "error")
+            return redirect(url_for('student_profile'))
 
         finally:
             if conn:
                 conn.close()
-
-    # For GET requests
-    # Prepare template data - start with session data
-    template_data = get_template_data()
-    
-    # If we have new signup data, use it to pre-fill the form
-    if new_signup_data:
-        template_data.update({
-            'first_name': new_signup_data.get('first_name', ''),
-            'last_name': new_signup_data.get('last_name', ''),
-            'mobile': new_signup_data.get('mobile', ''),
-            'email': new_signup_data.get('email', '')
-        })
-    
-    return render_template('student_profile.html', **template_data)
+    form_data=session.get('form_data',{})
+    return render_template('student_profile.html', form_data=form_data)
 
 
 @app.route("/reset_password")
@@ -224,7 +197,7 @@ def student_signin():
             flash("Please fill in both fields", "error")
             return redirect(url_for("student_signin"))
             
-        conn = get_db_connection("user.db")
+        conn = get_db_connection("student_data.db")
         user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
         conn.close()
         
@@ -240,13 +213,12 @@ def student_signin():
 
 @app.route("/dashboard")
 def dashboard():
-    user_id = session.get('user_id')
-    if not user_id:
+    can_id = session.get('can_id')
+    if not can_id:
         return redirect(url_for('student_signin'))
 
-    conn = get_student_data_db_connection('student_data.db')
-    conn.row_factory = sqlite3.Row
-    user = conn.execute('SELECT * FROM students WHERE id = ?', (user_id,)).fetchone()
+    conn = get_db_connection('student_data.db')
+    user = conn.execute('SELECT * FROM students WHERE id = ?', (can_id,)).fetchone()
     conn.close()
     return render_template("dashboard.html",student=user)
 

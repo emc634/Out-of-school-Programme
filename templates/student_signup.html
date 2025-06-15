@@ -63,6 +63,17 @@
                             value="{{ form_data.mother_name if form_data.mother_name else '' }}">
                     </div>
 
+                                        <!-- Gender Dropdown -->
+                    <div class="form-group">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select id="gender" name="gender" class="form-control form-select" required>
+                            <option value="">Select Gender</option>
+                            <option value="male" {% if form_data.gender == 'male' %}selected{% endif %}>Male</option>
+                            <option value="female" {% if form_data.gender == 'female' %}selected{% endif %}>Female</option>
+                            <option value="other" {% if form_data.gender == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
                     <!-- CAN ID -->
                     <div class="form-group">
                         <label for="canId" class="form-label">CAN ID</label>
@@ -121,17 +132,17 @@
                             <select id="center" name="center" class="form-control form-select" required
                                 onchange="updateSubCenters()">
                                 <option value="">Select Center</option>
-                                <option value="Bilaspur" {% if center == 'Bilaspur' %}selected{% endif %}>Bilaspur
+                                <option value="Bilaspur" {% if form_data.center == 'Bilaspur' %}selected{% endif %}>Bilaspur
                                 </option>
-                                <option value="Chamba" {% if center == 'Chamba' %}selected{% endif %}>Chamba</option>
-                                <option value="Hamirpur" {% if center == 'Hamirpur' %}selected{% endif %}>Hamirpur
+                                <option value="Chamba" {% if form_data.center == 'Chamba' %}selected{% endif %}>Chamba</option>
+                                <option value="Hamirpur" {% if form_data.center == 'Hamirpur' %}selected{% endif %}>Hamirpur
                                 </option>
-                                <option value="Kangra" {% if center == 'Kangra' %}selected{% endif %}>Kangra</option>
-                                <option value="Kullu" {% if center == 'Kullu' %}selected{% endif %}>Kullu</option>
-                                <option value="Mandi" {% if center == 'Mandi' %}selected{% endif %}>Mandi</option>
-                                <option value="Sirmour" {% if center == 'Sirmour' %}selected{% endif %}>Sirmour</option>
-                                <option value="Solan" {% if center == 'Solan' %}selected{% endif %}>Solan</option>
-                                <option value="Una" {% if center == 'Una' %}selected{% endif %}>Una</option>
+                                <option value="Kangra" {% if form_data.center == 'Kangra' %}selected{% endif %}>Kangra</option>
+                                <option value="Kullu" {% if form_data.center == 'Kullu' %}selected{% endif %}>Kullu</option>
+                                <option value="Mandi" {% if form_data.center == 'Mandi' %}selected{% endif %}>Mandi</option>
+                                <option value="Sirmour" {% if form_data.center == 'Sirmour' %}selected{% endif %}>Sirmour</option>
+                                <option value="Solan" {% if form_data.center == 'Solan' %}selected{% endif %}>Solan</option>
+                                <option value="Una" {% if form_data.center == 'Una' %}selected{% endif %}>Una</option>
                             </select>
                         </div>
 
@@ -161,16 +172,7 @@
                         </select>
                     </div>
 
-                    <!-- Gender Dropdown -->
-                    <div class="form-group">
-                        <label for="gender" class="form-label">Gender</label>
-                        <select id="gender" name="gender" class="form-control form-select" required>
-                            <option value="">Select Gender</option>
-                            <option value="male" {% if form_data.gender == 'male' %}selected{% endif %}>Male</option>
-                            <option value="female" {% if form_data.gender == 'female' %}selected{% endif %}>Female</option>
-                            <option value="other" {% if form_data.gender == 'other' %}selected{% endif %}>Other</option>
-                        </select>
-                    </div>
+
 
                     <!-- Password -->
                     <div class="form-group">
@@ -264,7 +266,7 @@
         const mainPlaceSelect = document.getElementById('center');
         const subCenterSelect = document.getElementById('subCenter');
         const selectedPlace = mainPlaceSelect.value;
-        const currentSubCenter = "{{ subcenter }}"; // Get current subcenter value
+        const currentSubCenter = "{{form_data.subcenter if form_data.subcenter else '' }}"; // Get current subcenter value
 
         // Clear existing options
         subCenterSelect.innerHTML = '<option value="">Select Sub-Center</option>';
@@ -292,15 +294,18 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        if (document.getElementById('center').value) {
+        const centerValue = "{{ form_data.center if form_data.center else '' }}";
+        if (document.getElementById('center').value=centerValue) {
             updateSubCenters();
         }
 
+        // Handle flash messages
+        const flashMessages = document.querySelectorAll('.alert');
         flashMessages.forEach(message => {
             setTimeout(() => {
-                message.style.opacity = '0';
-                setTimeout(() => message.remove(), 500); // Match this with CSS transition
-            }, 3000); // 3000ms = 3 seconds
+                message.classList.add('fade-out');
+                setTimeout(() => message.remove(), 500);
+            }, 3000);
         });
     });
 </script>

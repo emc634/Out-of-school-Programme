@@ -61,74 +61,69 @@
                     </h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" id="firstName" name="firstName" value="{{ first_name }}"
-                                class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" value="{{ last_name }}"
+                            <label for="studentName" class="form-label">Student's Name</label>
+                            <input type="text" id="studentName" name="studentName" value="{{ form_data.student_name or '' }}"
                                 class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="fatherName" class="form-label">Father's Name</label>
-                            <input type="text" id="fatherName" name="fatherName" value="{{father_name}}"
+                            <input type="text" id="fatherName" name="fatherName" value="{{form_data.father_name or ''}}"
                                 class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="motherName" class="form-label">Mother's Name</label>
-                            <input type="text" id="motherName" name="motherName" value="{{mother_name}}"
+                            <input type="text" id="motherName" name="motherName" value="{{form_data.mother_name or ''}}"
                                 class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="dob" class="form-label">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" value="{{dob}}" class="form-control" required>
+                            <input type="date" id="dob" name="dob" value="{{form_data.dob or ''}}" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Gender</label>
                             <div class="radio-group">
                                 <label class="radio-option">
                                     <input type="radio" name="gender" value="male"
-                                        {% if gender == 'male' %}checked{% endif %}>
+                                        {% if form_data.gender == 'male' %}checked{% endif %}>
                                     Male
                                 </label>
                                 <label class="radio-option">
                                     <input type="radio" name="gender" value="female"
-                                        {% if gender == 'female' %}checked{% endif %}>
+                                        {% if form_data.gender == 'female' %}checked{% endif %}>
                                     Female
                                 </label>
                                 <label class="radio-option">
                                     <input type="radio" name="gender" value="other"
-                                        {% if gender == 'other' %}checked{% endif %}>
+                                        {% if form_data.gender == 'other' %}checked{% endif %}>
                                     Other
                                 </label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="religion" class="form-label">Religion</label>
-                            <input type="text" id="religion" name="religion" value="{{ religion }}" class="form-control"
+                            <input type="text" id="religion" name="religion" value="{{ form_data.religion or '' }}" class="form-control"
                                 required>
                         </div>
                         <div class="form-group">
                             <label for="category" class="form-label">Category</label>
                             <select id="category" name="category" class="form-control form-select" required>
                                 <option value="">Select Category</option>
-                                <option value="general" {% if category == 'general' %}selected{% endif %}>General
+                                <option value="general" {% if form_data.category == 'general' %}selected{% endif %}>General
                                 </option>
-                                <option value="obc" {% if category == 'obc' %}selected{% endif %}>OBC</option>
-                                <option value="sc" {% if category == 'sc' %}selected{% endif %}>SC</option>
-                                <option value="st" {% if category == 'st' %}selected{% endif %}>ST</option>
-                                <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+                                <option value="obc" {% if form_data.category == 'obc' %}selected{% endif %}>OBC</option>
+                                <option value="sc" {% if form_data.category == 'sc' %}selected{% endif %}>SC</option>
+                                <option value="st" {% if form_data.category == 'st' %}selected{% endif %}>ST</option>
+                                <option value="other" {% if form_data.category == 'other' %}selected{% endif %}>Other</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="aadhar" class="form-label">Aadhar Number</label>
-                            <input type="text" id="aadhar" name="aadhar" value="{{ aadhar }}" class="form-control"
+                            <input type="text" id="aadhar" name="aadhar" value="{{ form_data.aadhar or '' }}" class="form-control"
                                 required>
                         </div>
                         <div class="form-group">
                             <label for="mobile" class="form-label">Mobile Number</label>
-                            <input type="tel" id="mobile" name="mobile" value="{{ mobile }}" class="form-control"
+                            <input type="tel" id="mobile" name="mobile" value="{{ form_data.mobile or '' }}" class="form-control"
                                 required>
                         </div>
                     </div>
@@ -143,7 +138,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="canId" class="form-label">CAN ID</label>
-                            <input type="text" id="canId" name="canId" value="{{ can_id }}" class="form-control"
+                            <input type="text" id="canId" name="canId" value="{{ form_data.can_id or '' }}" class="form-control"
                                 required>
                         </div>
                         <div class="form-group">
@@ -151,17 +146,17 @@
                             <select id="center" name="center" class="form-control form-select" required
                                 onchange="updateSubCenters()">
                                 <option value="">Select Center</option>
-                                <option value="Bilaspur" {% if center == 'Bilaspur' %}selected{% endif %}>Bilaspur
+                                <option value="Bilaspur" {% if form_data.center == 'Bilaspur' %}selected{% endif %}>Bilaspur
                                 </option>
-                                <option value="Chamba" {% if center == 'Chamba' %}selected{% endif %}>Chamba</option>
-                                <option value="Hamirpur" {% if center == 'Hamirpur' %}selected{% endif %}>Hamirpur
+                                <option value="Chamba" {% if form_data.center == 'Chamba' %}selected{% endif %}>Chamba</option>
+                                <option value="Hamirpur" {% if form_data.center == 'Hamirpur' %}selected{% endif %}>Hamirpur
                                 </option>
-                                <option value="Kangra" {% if center == 'Kangra' %}selected{% endif %}>Kangra</option>
-                                <option value="Kullu" {% if center == 'Kullu' %}selected{% endif %}>Kullu</option>
-                                <option value="Mandi" {% if center == 'Mandi' %}selected{% endif %}>Mandi</option>
-                                <option value="Sirmour" {% if center == 'Sirmour' %}selected{% endif %}>Sirmour</option>
-                                <option value="Solan" {% if center == 'Solan' %}selected{% endif %}>Solan</option>
-                                <option value="Una" {% if center == 'Una' %}selected{% endif %}>Una</option>
+                                <option value="Kangra" {% if form_data.center == 'Kangra' %}selected{% endif %}>Kangra</option>
+                                <option value="Kullu" {% if form_data.center == 'Kullu' %}selected{% endif %}>Kullu</option>
+                                <option value="Mandi" {% if form_data.center == 'Mandi' %}selected{% endif %}>Mandi</option>
+                                <option value="Sirmour" {% if form_data.center == 'Sirmour' %}selected{% endif %}>Sirmour</option>
+                                <option value="Solan" {% if form_data.center == 'Solan' %}selected{% endif %}>Solan</option>
+                                <option value="Una" {% if form_data.center == 'Una' %}selected{% endif %}>Una</option>
                             </select>
                         </div>
 
@@ -181,22 +176,22 @@
                             <label for="trade" class="form-label">Trade</label>
                             <select id="trade" name="trade" class="form-control form-select" required>
                                 <option value="">Select Trade</option>
-                                <option value="agriculture" {% if trade == 'agriculture' %}selected{% endif %}>
+                                <option value="agriculture" {% if form_data.trade == 'agriculture' %}selected{% endif %}>
                                     Agriculture</option>
-                                <option value="beauty_wellness" {% if trade == 'beauty_wellness' %}selected{% endif %}>
+                                <option value="beauty_wellness" {% if form_data.trade == 'beauty_wellness' %}selected{% endif %}>
                                     Beauty & Wellness</option>
-                                <option value="plumbing" {% if trade == 'plumbing' %}selected{% endif %}>Plumbing
+                                <option value="plumbing" {% if form_data.trade == 'plumbing' %}selected{% endif %}>Plumbing
                                 </option>
-                                <option value="food_processing" {% if trade == 'food_processing' %}selected{% endif %}>
+                                <option value="food_processing" {% if form_data.trade == 'food_processing' %}selected{% endif %}>
                                     Food Processing</option>
-                                <option value="automotive" {% if trade == 'automotive' %}selected{% endif %}>Automotive
+                                <option value="automotive" {% if form_data.trade == 'automotive' %}selected{% endif %}>Automotive
                                 </option>
-                                <option value="electronics" {% if trade == 'electronics' %}selected{% endif %}>
+                                <option value="electronics" {% if form_data.trade == 'electronics' %}selected{% endif %}>
                                     Electronics</option>
                                 <option value="tourism_hospitality"
-                                    {% if trade == 'tourism_hospitality' %}selected{% endif %}>Tourism & Hospitality
+                                    {% if form_data.trade == 'tourism_hospitality' %}selected{% endif %}>Tourism & Hospitality
                                 </option>
-                                <option value="ites" {% if trade == 'ites' %}selected{% endif %}>ITeS</option>
+                                <option value="ites" {% if form_data.trade == 'ites' %}selected{% endif %}>ITeS</option>
                             </select>
                         </div>
                     </div>
@@ -211,17 +206,17 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="accountNumber" class="form-label">Bank Account Number</label>
-                            <input type="text" id="accountNumber" name="accountNumber" value="{{ account_number }}"
+                            <input type="text" id="accountNumber" name="accountNumber" value="{{ form_data.account_number or '' }}"
                                 class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="accountHolder" class="form-label">Account Holder Name</label>
-                            <input type="text" id="accountHolder" name="accountHolder" value="{{ account_holder }}"
+                            <input type="text" id="accountHolder" name="accountHolder" value="{{ form_data.account_holder or '' }}"
                                 class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="ifsc" class="form-label">Bank IFSC Code</label>
-                            <input type="text" id="ifsc" name="ifsc" value="{{ ifsc }}" class="form-control" required>
+                            <input type="text" id="ifsc" name="ifsc" value="{{ form_data.ifsc or '' }}" class="form-control" required>
                         </div>
                     </div>
                 </div>
@@ -237,9 +232,9 @@
                             <label for="ojt" class="form-label">OJT Status</label>
                             <select id="ojt" name="ojt" class="form-control form-select" required>
                                 <option value="">SELECT</option>
-                                <option value="completed" {% if ojt == 'completed' %}selected{% endif %}>COMPLETED
+                                <option value="completed" {% if form_data.ojt == 'completed' %}selected{% endif %}>COMPLETED
                                 </option>
-                                <option value="not_completed" {% if ojt == 'not_completed' %}selected{% endif %}>NOT
+                                <option value="not_completed" {% if form_data.ojt == 'not_completed' %}selected{% endif %}>NOT
                                     COMPLETED</option>
                             </select>
                         </div>
@@ -247,10 +242,10 @@
                             <label for="guestLecture" class="form-label">Guest Lecture</label>
                             <select id="guestLecture" name="guestLecture" class="form-control form-select" required>
                                 <option value="">SELECT</option>
-                                <option value="completed" {% if guest_lecture == 'completed' %}selected{% endif %}>
+                                <option value="completed" {% if form_data.guest_lecture == 'completed' %}selected{% endif %}>
                                     COMPLETED</option>
                                 <option value="not_completed"
-                                    {% if guest_lecture == 'not_completed' %}selected{% endif %}>NOT COMPLETED</option>
+                                    {% if form_data.guest_lecture == 'not_completed' %}selected{% endif %}>NOT COMPLETED</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -258,10 +253,10 @@
                             <select id="industrialVisit" name="industrialVisit" class="form-control form-select"
                                 required>
                                 <option value="">SELECT</option>
-                                <option value="completed" {% if industrial_visit == 'completed' %}selected{% endif %}>
+                                <option value="completed" {% if form_data.industrial_visit == 'completed' %}selected{% endif %}>
                                     COMPLETED</option>
                                 <option value="not_completed"
-                                    {% if industrial_visit == 'not_completed' %}selected{% endif %}>NOT COMPLETED
+                                    {% if form_data.industrial_visit == 'not_completed' %}selected{% endif %}>NOT COMPLETED
                                 </option>
                             </select>
                         </div>
@@ -269,9 +264,9 @@
                             <label for="assessment" class="form-label">Assessment</label>
                             <select id="assessment" name="assessment" class="form-control form-select" required>
                                 <option value="">SELECT</option>
-                                <option value="completed" {% if assessment == 'completed' %}selected{% endif %}>
+                                <option value="completed" {% if form_data.assessment == 'completed' %}selected{% endif %}>
                                     COMPLETED</option>
-                                <option value="not_completed" {% if assessment == 'not_completed' %}selected{% endif %}>
+                                <option value="not_completed" {% if form_data.assessment == 'not_completed' %}selected{% endif %}>
                                     NOT COMPLETED</option>
                             </select>
                         </div>
