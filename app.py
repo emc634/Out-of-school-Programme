@@ -190,26 +190,45 @@ def reset_password():
 @app.route("/student_signin", methods=["GET","POST"])
 def student_signin():
     if request.method == "POST":
-        email = request.form.get("login-email")
-        password = request.form.get("login-password")
+        can_id = request.form.get("canId")
+        password = request.form.get("password")
         
-        if not email or not password:
+        # Validate form inputs
+        if not can_id or not password:
             flash("Please fill in both fields", "error")
             return redirect(url_for("student_signin"))
-            
-        conn = get_db_connection("student_data.db")
-        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-        conn.close()
         
-        if user is None or not check_password_hash(user['password_hash'], password):
-            flash("Invalid email or password", "error")
+        conn = None
+        try:
+            # Connect to database
+            conn = get_db_connection("student_data.db")
+            user = conn.execute(
+                'SELECT * FROM students WHERE can_id = ?', 
+                (can_id,)
+            ).fetchone()
+            
+            # Verify credentials
+            if user is None or not check_password_hash(user['password'], password):
+                flash("Invalid CAN ID or password", "error")  # Updated message
+                return redirect(url_for("student_signin"))
+            
+            # Successful login
+            session['can_id'] = can_id  # Store CAN ID in session
+            
+            flash("Login successful!", "success")
+            return redirect(url_for("dashboard"))
+        
+        except sqlite3.Error as e:
+            flash("Database error. Please try again.", "error")
             return redirect(url_for("student_signin"))
         
-        session['user_id'] = user['id']   
-        flash("Login successful!", "success")
-        return redirect(url_for("dashboard"))
+        finally:
+            if conn:
+                conn.close()  # Ensure connection always closes
+        
+    login_data=session.get('can_id',{})
     
-    return render_template("student_signin.html") 
+    return render_template("student_signin.html",login_data=login_data) 
 
 @app.route("/dashboard")
 def dashboard():
@@ -218,9 +237,11 @@ def dashboard():
         return redirect(url_for('student_signin'))
 
     conn = get_db_connection('student_data.db')
-    user = conn.execute('SELECT * FROM students WHERE id = ?', (can_id,)).fetchone()
+    student=conn.execute('SELECT * FROM students WHERE can_id = ?', (can_id,)).fetchone()
     conn.close()
-    return render_template("dashboard.html",student=user)
+    return render_template("dashboard.html",student=student)
+
+
 
 @app.route('/admin_login')
 def admin_login():

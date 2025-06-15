@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -48,13 +50,13 @@
             <!-- Flash Messages -->
             <div class="flash-messages">
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
                 {% endwith %}
             </div>
 
@@ -62,10 +64,10 @@
             <div class="profile-card">
                 <div class="profile-header">
                     <div class="profile-avatar">
-                        {{ student.first_name[0] }}{{ student.last_name[0] }}
+                        {{ student.student_name[0] }}
                     </div>
                     <div class="profile-info">
-                        <h2 class="profile-name">{{ student.first_name }} {{ student.last_name }}</h2>
+                        <h2 class="profile-name">{{ student.student_name }}</h2>
                         <p class="profile-id">CAN ID: {{ student.can_id }}</p>
                     </div>
                 </div>
@@ -79,7 +81,7 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <div class="info-label">Full Name</div>
-                                <div class="info-value">{{ student.first_name }} {{ student.last_name }}</div>
+                                <div class="info-value">{{ student.student_name }}</div>
                             </div>
                             <div class="info-item">
                                 <div class="info-label">Father's Name</div>
@@ -142,28 +144,6 @@
                         </div>
                     </div>
 
-                    <!-- Bank Details Section -->
-                    <div class="info-section">
-                        <h3 class="section-title">
-                            <i class="fas fa-university"></i>
-                            Bank Details
-                        </h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Account Number</div>
-                                <div class="info-value">{{ student.account_number }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Account Holder</div>
-                                <div class="info-value">{{ student.account_holder }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">IFSC Code</div>
-                                <div class="info-value">{{ student.ifsc }}</div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Training Status Section -->
                     <div class="info-section">
                         <h3 class="section-title">
@@ -220,7 +200,7 @@
     <!-- Scripts -->
     <script>
         // Mobile menu toggle
-        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
             document.querySelector('.nav-links').classList.toggle('active');
         });
 
@@ -234,4 +214,5 @@
         });
     </script>
 </body>
+
 </html>
