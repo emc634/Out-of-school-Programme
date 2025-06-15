@@ -1,6 +1,6 @@
-/* profile.css - Student Profile Form Styles */
+
 .form-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: var(--space-xl) auto;
     padding: var(--space-lg);
     background: var(--white);

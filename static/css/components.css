@@ -148,9 +148,10 @@
 .navbar {
     background-color: white;
     box-shadow: var(--box-shadow);
-    position: sticky;
+    position: relative;
     top: 0;
     z-index: 100;
+    padding: var(--space-lg);
 }
 
 .navbar-content {
