@@ -139,88 +139,122 @@
    ====================== */
 
 /* Navigation bar container */
-.navbar {
-    background: var(--white); /* White background */
-    box-shadow: var(--shadow-sm); /* Subtle shadow */
-    padding: 1rem 0; /* Vertical padding */
-    position: sticky; /* Sticks to top when scrolling */
-    top: 0; /* Position at very top */
-    z-index: 100; /* Ensure it stays above other content */
-}
+/* ======================
+   NAVIGATION COMPONENTS 
+   ====================== */
 
-/* Container for nav content */
-.navbar-content {
-    display: flex;
-    justify-content: space-between; /* Space between logo and nav items */
-    align-items: center; /* Vertical centering */
-}
-
-/* Logo styling */
-.logo {
-    display: flex;
-    align-items: center; /* Center logo and text */
-    font-size: 1.8rem; /* Larger text */
-    font-weight: 700; /* Bold */
-    color: var(--primary-dark); /* Dark color */
-    gap: 0.5rem; /* Space between icon and text */
-}
-
-/* Logo icon color */
-.logo i {
-    color: var(--primary); /* Primary color icon */
-}
-
-/* Navigation links container */
-.nav-links {
-    display: flex;
-    list-style: none; /* Remove bullet points */
-    gap: 1.5rem; /* Space between links */
-}
-
-/* Individual navigation link */
-.nav-link {
-    font-weight: 600;
-    color: var(--text); /* Default text color */
-    padding: 0.5rem 0; /* Vertical padding */
-    position: relative; /* For underline effect */
-}
-
-/* Hover state for links */
-.nav-link:hover {
-    color: var(--primary); /* Primary color on hover */
-}
-
-/* Active link styling */
-.nav-link.active {
-    color: var(--primary); /* Primary color */
-}
-
-/* Underline effect for active link */
-.nav-link.active::after {
-    content: ''; /* Required for pseudo-element */
-    position: absolute;
-    bottom: 0; /* Position at bottom of link */
+/* Only apply vertical layout when navbar has the 'vertical' class */
+.navbar.vertical {
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    width: 250px;
+    height: 100vh;
+    position: fixed;
     left: 0;
-    width: 100%; /* Full width */
-    height: 3px; /* Thickness */
-    background: var(--primary); /* Primary color */
-    border-radius: 3px; /* Slightly rounded */
+    top: 0;
+    z-index: 100;
+    padding: 1rem 0;
+    overflow-y: auto;
 }
 
-/* Container for action buttons in nav */
-.nav-actions {
+/* Only apply these styles when navbar is vertical */
+.navbar.vertical .navbar-content {
     display: flex;
-    gap: 1rem; /* Space between buttons */
+    flex-direction: column;
+    height: 100%;
+    padding: 0 1rem;
 }
 
-/* Mobile menu toggle button */
-.mobile-toggle {
-    display: none; /* Hidden by default (shown in mobile) */
-    background: none; /* No background */
-    border: none; /* No border */
-    font-size: 1.5rem; /* Icon size */
-    color: var(--text); /* Default color */
-    cursor: pointer; /* Pointer cursor */
+.navbar.vertical .logo {
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    justify-content: flex-start;
+}
+
+.navbar.vertical .nav-links {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.navbar.vertical .nav-link {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    width: 100%;
+}
+
+.navbar.vertical .nav-link.active {
+    background-color: var(--primary-light);
+}
+
+.navbar.vertical .nav-link.active::after {
+    display: none;
+}
+
+.navbar.vertical .nav-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    margin-top: auto;
+}
+
+/* Only apply margin to main content when navbar is vertical */
+body.has-vertical-nav .main-content {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+/* ======================
+   RESPONSIVE ADJUSTMENTS 
+   ====================== */
+
+@media (max-width: 992px) {
+    /* Reset vertical styles on mobile */
+    .navbar.vertical {
+        width: 100%;
+        height: auto;
+        position: sticky;
+        padding: 0.5rem 0;
+    }
+    
+    .navbar.vertical .navbar-content {
+        flex-direction: row;
+        padding: 0 1rem;
+    }
+    
+    .navbar.vertical .logo {
+        margin-bottom: 0;
+        padding: 0.5rem 0;
+    }
+    
+    .navbar.vertical .nav-links {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: var(--white);
+        flex-direction: column;
+        padding: 1rem 0;
+        transform: translateY(-150%);
+    }
+    
+    .navbar.vertical .nav-links.active {
+        transform: translateY(0);
+    }
+    
+    .navbar.vertical .nav-actions {
+        flex-direction: row;
+        margin-top: 0;
+        padding: 0;
+    }
+    
+    /* Reset main content margin on mobile */
+    body.has-vertical-nav .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
 }
 
 /* ======================
@@ -303,34 +337,7 @@
 /* ======================
    RESPONSIVE ADJUSTMENTS 
    ====================== */
-
-@media (max-width: 992px) {
-    /* Mobile navigation styles */
-    .nav-links {
-        position: fixed; /* Fixed position */
-        top: 70px; /* Below navbar */
-        left: 0;
-        width: 100%; /* Full width */
-        background: var(--white); /* White background */
-        flex-direction: column; /* Stack vertically */
-        align-items: center;
-        padding: 2rem 0; /* Ample padding */
-        box-shadow: var(--shadow-md); /* Shadow for depth */
-        transform: translateY(-150%); /* Hide offscreen by default */
-        transition: var(--transition); /* Smooth animation */
-    }
-    
-    /* Mobile menu when active */
-    .nav-links.active {
-        transform: translateY(0); /* Slide into view */
-    }
-    
-    /* Show mobile toggle on smaller screens */
-    .mobile-toggle {
-        display: block;
-    }
-}
-
+     
 @media (max-width: 768px) {
     /* Responsive typography adjustments */
     h1 {
