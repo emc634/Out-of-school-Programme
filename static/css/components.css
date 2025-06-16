@@ -140,18 +140,18 @@
 .navbar {
     background-color: white;
     box-shadow: var(--box-shadow);
-    position: sticky;
     top: 0;
     z-index: 100;
-    padding: var(--space-sm);
+    padding: var(--space-xs);
 }
 
 .navbar-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
+    padding: 2rem;
     max-width: 1200px;
+    width: 100%;
     margin: auto;
 }
 
@@ -308,6 +308,7 @@
     }
     .mobile-toggle {
         display: block;
+
     }
     
     .nav-links {

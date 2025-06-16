@@ -146,8 +146,9 @@ def student_profile():
 
             conn.commit()
             flash("Student data saved successfully!", "success")
+            session['can_id']=form_data.can_id
             session.pop('form_data',None)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('profile_display'))
 
         except sqlite3.IntegrityError as e:
             error_msg = str(e).lower()
@@ -190,6 +191,7 @@ def reset_password():
 @app.route("/student_signin", methods=["GET","POST"])
 def student_signin():
     if request.method == "POST":
+        session.pop('form_data', None)
         can_id = request.form.get("canId")
         password = request.form.get("password")
         
@@ -216,7 +218,7 @@ def student_signin():
             session['can_id'] = can_id  # Store CAN ID in session
             
             flash("Login successful!", "success")
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("profile_display"))
         
         except sqlite3.Error as e:
             flash("Database error. Please try again.", "error")
@@ -226,12 +228,11 @@ def student_signin():
             if conn:
                 conn.close()  # Ensure connection always closes
         
-    login_data=session.get('can_id',{})
-    
+    login_data=session.pop('can_id',{})
     return render_template("student_signin.html",login_data=login_data) 
 
-@app.route("/dashboard")
-def dashboard():
+@app.route("/profile_display")
+def profile_display():
     can_id = session.get('can_id')
     if not can_id:
         return redirect(url_for('student_signin'))
@@ -239,7 +240,7 @@ def dashboard():
     conn = get_db_connection('student_data.db')
     student=conn.execute('SELECT * FROM students WHERE can_id = ?', (can_id,)).fetchone()
     conn.close()
-    return render_template("dashboard.html",student=student)
+    return render_template("profile_display.html",student=student)
 
 
 

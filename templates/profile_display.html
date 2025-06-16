@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
+    <title>Student profile</title>
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_display.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -22,7 +22,7 @@
             </a>
 
             <ul class="nav-links">
-                <li><a href="{{ url_for('dashboard') }}" class="nav-link active">Profile</a></li>
+                <li><a href="{{ url_for('profile_display') }}" class="nav-link active">Profile</a></li>
                 <li><a href="{{ url_for('student_profile') }}" class="nav-link">Update</a></li>
             </ul>
 
@@ -38,11 +38,8 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="container dashboard-container">
-            <!-- Dashboard Header -->
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">Student Profile</h1>
-            </div>
+        <div class="container profile-container">
+
 
             <!-- Flash Messages -->
             <div class="flash-messages">

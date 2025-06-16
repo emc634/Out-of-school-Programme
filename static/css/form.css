@@ -1,17 +1,17 @@
 
 .form-container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: var(--space-xl) auto;
     padding: var(--space-lg);
     background: var(--white);
     border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
 }
 
 .form-header {
     text-align: center;
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-md);
+    margin-top: var(--space-xs);
+    margin-bottom: var(--space-sm);
 }
 
 .form-title {
@@ -21,9 +21,9 @@
 }
 
 .form-section {
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-xl);
     border-bottom: 1px solid var(--border);
-    padding-bottom: var(--space-md);
+    padding-bottom: var(--space-lg);
 }
 
 .section-title {
@@ -39,7 +39,7 @@
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: var(--space-lg);
     align-items: center;
     /* Changed for better vertical alignment */
 }

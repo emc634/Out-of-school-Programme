@@ -1,30 +1,28 @@
-/* Dashboard-specific styles with layout spacing system */
-
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-lg);
-}
-
-.dashboard-title {
-    color: var(--primary);
+/* Profile Container */
+.profile-container {
+    max-width: 1200px;
+    margin: var(--space-xl) auto;
+    padding: 0 var(--space-lg);
+    width: 100%;
 }
 
 /* Profile Card */
 .profile-card {
     background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    overflow: hidden;
-    margin-bottom: var(--space-lg);
+    padding: var(--space-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    margin: 0 auto var(--space-lg);
+    width: 100%;
 }
 
+/* Profile Header */
 .profile-header {
     display: flex;
     align-items: center;
-    padding: var(--space-lg);
+    padding: var(--space-sm);
     border-bottom: 1px solid var(--primary-light);
+    margin-bottom: var(--space-lg);
 }
 
 .profile-avatar {
@@ -55,7 +53,7 @@
 }
 
 .profile-body {
-    padding: var(--space-lg);
+    padding: var(--space-sm);
 }
 
 /* Info Sections */
@@ -76,7 +74,7 @@
     color: var(--primary);
 }
 
-
+/* Grid System - Modified for responsive behavior */
 .info-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -93,14 +91,13 @@
     font-size: 1.1rem;
     color: var(--primary--dark);
     font-weight: 600;
-    
 }
 
 .info-value {
     background-color: var(--white);
     border: 2px solid var(--border);
     border-radius: var(--border-radius-lg);
-    padding: var(--space-sm);
+    padding: var(--space-xs) var(--space-md);
     font-size: 1.1rem;
     font-weight: 400;
     transition: all 0.3s ease;
@@ -115,7 +112,7 @@
     box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
 }
 
-/* Status indicator */
+/* Status Indicators */
 .status-indicator {
     display: inline-flex;
     align-items: center;
@@ -152,24 +149,21 @@
     background-color: #d97706;
 }
 
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    /* Tablet: 2 columns */
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
 
-/* Dashboard-specific responsive adjustments */
 @media (max-width: 768px) {
-    .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-md);
-    }
-
-    .dashboard-actions {
-        margin-top: var(--space-md);
-        justify-content: flex-end;
-    }
-
+    /* Mobile: 2 columns (changed from original 1 column) */
     .profile-header {
         flex-direction: column;
         text-align: center;
         padding: var(--space-md);
+        gap: var(--space-md);
     }
 
     .profile-avatar {
@@ -178,7 +172,18 @@
     }
 
     .info-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--space-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra Small Devices: 1 column */
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-card {
+        padding: var(--space-lg);
     }
 }
