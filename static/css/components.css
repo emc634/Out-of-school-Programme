@@ -137,21 +137,13 @@
 /* ======================
    NAVIGATION COMPONENTS 
    ====================== */
-
-/* Navigation bar container */
-/* ======================
-   NAVIGATION COMPONENTS 
-   ====================== */
-
-/* Only apply vertical layout when navbar has the 'vertical' class */
-/* Navigation */
 .navbar {
     background-color: white;
     box-shadow: var(--box-shadow);
-    position: relative;
+    position: sticky;
     top: 0;
     z-index: 100;
-    padding: var(--space-lg);
+    padding: var(--space-sm);
 }
 
 .navbar-content {
@@ -159,104 +151,65 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
+    max-width: 1200px;
+    margin: auto;
 }
 
+/* Add consistent logo styling */
 .logo {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: var(--secondary-color);
     font-weight: 600;
     font-size: 1.25rem;
+    color: var(--primary-dark);
 }
 
 .logo i {
     margin-right: 0.5rem;
-    color: var(--primary-color);
+    color: var(--primary);
 }
 
+/* Consistent nav links */
 .nav-links {
     display: flex;
     list-style: none;
+    gap: 1rem;
 }
 
 .nav-link {
     text-decoration: none;
-    color: var(--text-light);
+    color: var(--text);
     padding: 0.5rem 1rem;
-    margin: 0 0.25rem;
     border-radius: var(--border-radius);
     transition: var(--transition);
 }
 
 .nav-link:hover {
-    color: var(--primary-color);
+    color: var(--primary);
 }
 
 .nav-link.active {
-    color: var(--primary-color);
+    color: var(--primary);
     background-color: rgba(52, 152, 219, 0.1);
 }
 
+/* Mobile menu toggle */
 .mobile-toggle {
     display: none;
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: var(--text-light);
+    color: var(--text);
     cursor: pointer;
 }
 
-/* ======================
-   RESPONSIVE ADJUSTMENTS 
-   ====================== */
-
-@media (max-width: 992px) {
-    /* Reset vertical styles on mobile */
-    .navbar.vertical {
-        width: 100%;
-        height: auto;
-        position: sticky;
-        padding: 0.5rem 0;
-    }
-    
-    .navbar.vertical .navbar-content {
-        flex-direction: row;
-        padding: 0 1rem;
-    }
-    
-    .navbar.vertical .logo {
-        margin-bottom: 0;
-        padding: 0.5rem 0;
-    }
-    
-    .navbar.vertical .nav-links {
-        position: fixed;
-        top: 60px;
-        left: 0;
-        width: 100%;
-        background: var(--white);
-        flex-direction: column;
-        padding: 1rem 0;
-        transform: translateY(-150%);
-    }
-    
-    .navbar.vertical .nav-links.active {
-        transform: translateY(0);
-    }
-    
-    .navbar.vertical .nav-actions {
-        flex-direction: row;
-        margin-top: 0;
-        padding: 0;
-    }
-    
-    /* Reset main content margin on mobile */
-    body.has-vertical-nav .main-content {
-        margin-left: 0;
-        width: 100%;
-    }
+/* Consistent nav actions */
+.nav-actions {
+    display: flex;
+    gap: 0.5rem;
 }
+
 
 /* ======================
    CARD COMPONENTS 
@@ -330,7 +283,7 @@
 }
 
 .alert.fade-out {
-    animation: fadeOut 0.5s forwards;
+    animation: fadeOut 0.3s forwards;
 } 
 
 
@@ -352,4 +305,32 @@
     h3 {
         font-size: 1.5rem;
     }
+    .mobile-toggle {
+        display: block;
+    }
+    
+    .nav-links {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: var(--box-shadow);
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+    }
+    
+    .nav-links.active {
+        transform: translateY(0);
+    }
+    
+    .nav-link {
+        display: block;
+        padding: 1rem;
+        border-radius: 0;
+        border-bottom: 1px solid var(--border);
+    }
+
 }

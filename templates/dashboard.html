@@ -14,20 +14,22 @@
 </head>
 
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
-        <div class="container navbar-content">
+        <div class="navbar-content">
             <a href="#" class="logo">
                 <i class="fas fa-user-graduate"></i>
                 <span>Student Portal</span>
             </a>
+
             <ul class="nav-links">
-                <li><a href="#" class="nav-link active">Dashboard</a></li>
-                <li><a href="{{ url_for('student_profile') }}" class="nav-link">Profile</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="nav-link active">Profile</a></li>
+                <li><a href="{{ url_for('student_profile') }}" class="nav-link">Update</a></li>
             </ul>
+
             <div class="nav-actions">
                 <button class="btn btn-outline-primary btn-sm">Logout</button>
             </div>
+
             <button class="mobile-toggle">
                 <i class="fas fa-bars"></i>
             </button>
@@ -40,11 +42,6 @@
             <!-- Dashboard Header -->
             <div class="dashboard-header">
                 <h1 class="dashboard-title">Student Profile</h1>
-                <div class="dashboard-actions">
-                    <a href="{{ url_for('student_profile') }}" class="btn btn-primary">
-                        <i class="fas fa-user-edit"></i> Update Profile
-                    </a>
-                </div>
             </div>
 
             <!-- Flash Messages -->
@@ -80,7 +77,7 @@
                         </h3>
                         <div class="info-grid">
                             <div class="info-item">
-                                <div class="info-label">Full Name</div>
+                                <div class="info-label">Full Name </div>
                                 <div class="info-value">{{ student.student_name }}</div>
                             </div>
                             <div class="info-item">
@@ -211,6 +208,10 @@
                 message.classList.add('fade-out');
                 setTimeout(() => message.remove(), 500);
             }, 1000);
+        });
+
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
+            document.querySelector('.nav-links').classList.toggle('active');
         });
     </script>
 </body>
