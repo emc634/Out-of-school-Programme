@@ -1,6 +1,6 @@
 
 .form-container {
-    max-width: 1200px;
+    max-width: 1000px;
     margin: var(--space-xl) auto;
     padding: var(--space-lg);
     background: var(--white);
@@ -10,7 +10,7 @@
 
 .form-header {
     text-align: center;
-    margin-top: var(--space-xs);
+    margin-top: var(--space-xl);
     margin-bottom: var(--space-sm);
 }
 
