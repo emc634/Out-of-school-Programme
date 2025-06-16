@@ -195,23 +195,42 @@
     </footer>
 
     <!-- Scripts -->
-    <script>
-        // Mobile menu toggle
-        document.querySelector('.mobile-toggle').addEventListener('click', function () {
-            document.querySelector('.nav-links').classList.toggle('active');
-        });
-
-        // Auto-dismiss flash messages
-        const flashMessages = document.querySelectorAll('.alert');
-        flashMessages.forEach(message => {
-            setTimeout(() => {
-                message.classList.add('fade-out');
-                setTimeout(() => message.remove(), 500);
-            }, 1000);
-        });
-
-        document.querySelector('.mobile-toggle').addEventListener('click', function () {
-            document.querySelector('.nav-links').classList.toggle('active');
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            // Toggle mobile menu
+            mobileToggle.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                
+                // Toggle active class
+                navLinks.classList.toggle('active');
+                
+                // Change icon
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+            
+            // Close menu when clicking on links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.classList.remove('active');
+                    mobileToggle.querySelector('i').classList.replace('fa-times', 'fa-bars');
+                });
+            });
+            
+            // Auto-dismiss flash messages (if any)
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.classList.add('fade-out');
+                    setTimeout(() => message.remove(), 500);
+                }, 1000);
+            });
         });
     </script>
 </body>
