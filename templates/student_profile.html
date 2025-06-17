@@ -90,56 +90,53 @@
                             <label class="form-label">Gender</label>
                             <div class="radio-group">
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="male"
-                                        {% if form_data.gender == 'male' %}checked{% endif %}>
+                                    <input type="radio" name="gender" value="Male"
+                                        {% if form_data.gender == 'Male' %}checked{% endif %}>
                                     Male
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="female"
-                                        {% if form_data.gender == 'female' %}checked{% endif %}>
+                                    <input type="radio" name="gender" value="Female"
+                                        {% if form_data.gender == 'Female' %}checked{% endif %}>
                                     Female
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="other"
-                                        {% if form_data.gender == 'other' %}checked{% endif %}>
+                                    <input type="radio" name="gender" value="Other"
+                                        {% if form_data.gender == 'Other' %}checked{% endif %}>
                                     Other
                                 </label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="religion" class="form-label">Religion</label>
-                            <input type="text" id="religion" name="religion" value="{{ form_data.religion or '' }}"
-                                class="form-control" required>
                             <select id="religion" name="religion" class="form-control form-select" required>
                                 <option value="">Select Religion</option>
-                                <option value="hindu" {% if form_data.religion == 'hindu' %}selected{% endif %}>Hindu
+                                <option value="Hindu" {% if form_data.religion == 'Hindu' %}selected{% endif %}>Hindu
                                 </option>
-                                <option value="muslim" {% if form_data.religion == 'muslim' %}selected{% endif %}>Muslim
+                                <option value="Muslim" {% if form_data.religion == 'Muslim' %}selected{% endif %}>Muslim
                                 </option>
-                                <option value="christian" {% if form_data.religion == 'christian' %}selected{% endif %}>
+                                <option value="Christian" {% if form_data.religion == 'Christian' %}selected{% endif %}>
                                     Christian</option>
-                                <option value="sikh" {% if form_data.religion == 'sikh' %}selected{% endif %}>Sikh
+                                <option value="Sikh" {% if form_data.religion == 'Sikh' %}selected{% endif %}>Sikh
                                 </option>
-                                <option value="jain" {% if form_data.religion == 'jain' %}selected{% endif %}>Jain
+                                <option value="Jain" {% if form_data.religion == 'Jain' %}selected{% endif %}>Jain
                                 </option>
-                                <option value="buddhist" {% if form_data.religion == 'buddhist' %}selected{% endif %}>
+                                <option value="Buddhist" {% if form_data.religion == 'Buddhist' %}selected{% endif %}>
                                     Buddhist</option>
-                                <option value="other" {% if form_data.religion == 'other' %}selected{% endif %}>Other
+                                <option value="Other" {% if form_data.religion == 'Other' %}selected{% endif %}>Other
                                 </option>
                             </select>
-
                         </div>
                         <div class="form-group">
                             <label for="category" class="form-label">Category</label>
                             <select id="category" name="category" class="form-control form-select" required>
                                 <option value="">Select Category</option>
-                                <option value="general" {% if form_data.category == 'General' %}selected{% endif %}>
+                                <option value="General" {% if form_data.category == 'General' %}selected{% endif %}>
                                     General
                                 </option>
-                                <option value="obc" {% if form_data.category == 'OBC' %}selected{% endif %}>OBC</option>
-                                <option value="sc" {% if form_data.category == 'SC' %}selected{% endif %}>SC</option>
-                                <option value="st" {% if form_data.category == 'ST' %}selected{% endif %}>ST</option>
-                                <option value="other" {% if form_data.category == 'Other' %}selected{% endif %}>Other
+                                <option value="OBC" {% if form_data.category == 'OBC' %}selected{% endif %}>OBC</option>
+                                <option value="SC" {% if form_data.category == 'SC' %}selected{% endif %}>SC</option>
+                                <option value="ST" {% if form_data.category == 'ST' %}selected{% endif %}>ST</option>
+                                <option value="Other" {% if form_data.category == 'Other' %}selected{% endif %}>Other
                                 </option>
                             </select>
                         </div>
@@ -209,27 +206,27 @@
                             <label for="trade" class="form-label">Trade</label>
                             <select id="trade" name="trade" class="form-control form-select" required>
                                 <option value="">Select Trade</option>
-                                <option value="agriculture"
+                                <option value="Agriculture"
                                     {% if form_data.trade == 'Agriculture' %}selected{% endif %}>
                                     Agriculture</option>
-                                <option value="beauty_wellness"
-                                    {% if form_data.trade == 'Beauty & wellness' %}selected{% endif %}>Beauty & Wellness
+                                <option value="Beauty & Wellness"
+                                    {% if form_data.trade == 'Beauty & Wellness' %}selected{% endif %}>Beauty & Wellness
                                 </option>
-                                <option value="plumbing" {% if form_data.trade == 'Plumbing' %}selected{% endif %}>
+                                <option value="Plumbing" {% if form_data.trade == 'Plumbing' %}selected{% endif %}>
                                     Plumbing
                                 </option>
-                                <option value="food_processing"
+                                <option value="Food Processing"
                                     {% if form_data.trade == 'Food Processing' %}selected{% endif %}>Food Processing
                                 </option>
-                                <option value="automotive" {% if form_data.trade == 'Automotive' %}selected{% endif %}>
+                                <option value="Automotive" {% if form_data.trade == 'Automotive' %}selected{% endif %}>
                                     Automotive</option>
-                                <option value="electronics"
+                                <option value="Electronics"
                                     {% if form_data.trade == 'Electronics' %}selected{% endif %}>
                                     Electronics</option>
-                                <option value="tourism_hospitality"
-                                    {% if form_data.trade == 'Tourism & hospitality' %}selected{% endif %}>Tourism &
+                                <option value="Tourism & Hospitality"
+                                    {% if form_data.trade == 'Tourism & Hospitality' %}selected{% endif %}>Tourism &
                                     Hospitality</option>
-                                <option value="ites" {% if form_data.trade == 'ITeS' %}selected{% endif %}>ITeS</option>
+                                <option value="ITeS" {% if form_data.trade == 'ITeS' %}selected{% endif %}>ITeS</option>
                             </select>
                         </div>
                     </div>
@@ -271,10 +268,10 @@
                             <label for="ojt" class="form-label">OJIT Status</label>
                             <select id="ojt" name="ojt" class="form-control form-select" required>
                                 <option value="">SELECT</option>
-                                <option value="completed" {% if form_data.ojt == 'Completed' %}selected{% endif %}>
+                                <option value="Completed" {% if form_data.ojt == 'Completed' %}selected{% endif %}>
                                     COMPLETED
                                 </option>
-                                <option value="not_completed"
+                                <option value="Not Completed"
                                     {% if form_data.ojt == 'Not Completed' %}selected{% endif %}>NOT
                                     COMPLETED</option>
                             </select>
@@ -283,10 +280,10 @@
                             <label for="guestLecture" class="form-label">Guest Lecture</label>
                             <select id="guestLecture" name="guestLecture" class="form-control form-select" required>
                                 <option value="">SELECT</option>
-                                <option value="completed"
+                                <option value="Completed"
                                     {% if form_data.guest_lecture == 'Completed' %}selected{% endif %}>
                                     COMPLETED</option>
-                                <option value="not_completed"
+                                <option value="Not Completed"
                                     {% if form_data.guest_lecture == 'Not Completed' %}selected{% endif %}>NOT COMPLETED
                                 </option>
                             </select>
@@ -296,10 +293,10 @@
                             <select id="industrialVisit" name="industrialVisit" class="form-control form-select"
                                 required>
                                 <option value="">SELECT</option>
-                                <option value="completed"
+                                <option value="Completed"
                                     {% if form_data.industrial_visit == 'Completed' %}selected{% endif %}>
                                     COMPLETED</option>
-                                <option value="not_completed"
+                                <option value="Not Completed"
                                     {% if form_data.industrial_visit == 'Not Completed' %}selected{% endif %}>NOT
                                     COMPLETED
                                 </option>
@@ -309,10 +306,10 @@
                             <label for="assessment" class="form-label">Assessment</label>
                             <select id="assessment" name="assessment" class="form-control form-select" required>
                                 <option value="">SELECT</option>
-                                <option value="completed"
+                                <option value="Completed"
                                     {% if form_data.assessment == 'Completed' %}selected{% endif %}>
                                     COMPLETED</option>
-                                <option value="not_completed"
+                                <option value="Not Completed"
                                     {% if form_data.assessment == 'Not Completed' %}selected{% endif %}>
                                     NOT COMPLETED</option>
                             </select>
@@ -363,12 +360,12 @@
                 // Add new options
                 centerData[selectedDistrict].forEach(center => {
                     const option = document.createElement('option');
-                    const centerValue = center.toLowerCase().replace(/\s+/g, '_');
-                    option.value = centerValue;
+                    // Use the actual center name as both value and display text
+                    option.value = center;
                     option.textContent = center;
 
                     // Preserve selected center if it matches
-                    if (centerValue === currentCenter) {
+                    if (center === currentCenter) {
                         option.selected = true;
                     }
 

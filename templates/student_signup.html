@@ -68,10 +68,10 @@
                         <label for="gender" class="form-label">Gender</label>
                         <select id="gender" name="gender" class="form-control form-select" required>
                             <option value="">Select Gender</option>
-                            <option value="male" {% if form_data.gender == 'male' %}selected{% endif %}>Male</option>
-                            <option value="female" {% if form_data.gender == 'female' %}selected{% endif %}>Female
+                            <option value="Male" {% if form_data.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if form_data.gender == 'Female' %}selected{% endif %}>Female
                             </option>
-                            <option value="other" {% if form_data.gender == 'other' %}selected{% endif %}>Other</option>
+                            <option value="Other" {% if form_data.gender == 'Other' %}selected{% endif %}>Other</option>
                         </select>
                     </div>
 
@@ -95,17 +95,17 @@
                         <label for="religion" class="form-label">Religion</label>
                         <select id="religion" name="religion" class="form-control form-select" required>
                             <option value="">Select Religion</option>
-                            <option value="hindu" {% if form_data.religion == 'hindu' %}selected{% endif %}>Hindu
+                            <option value="Hindu" {% if form_data.religion == 'Hindu' %}selected{% endif %}>Hindu
                             </option>
-                            <option value="muslim" {% if form_data.religion == 'muslim' %}selected{% endif %}>Muslim
+                            <option value="Muslim" {% if form_data.religion == 'Muslim' %}selected{% endif %}>Muslim
                             </option>
-                            <option value="christian" {% if form_data.religion == 'christian' %}selected{% endif %}>
+                            <option value="Christian" {% if form_data.religion == 'Christian' %}selected{% endif %}>
                                 Christian</option>
-                            <option value="sikh" {% if form_data.religion == 'sikh' %}selected{% endif %}>Sikh</option>
-                            <option value="jain" {% if form_data.religion == 'jain' %}selected{% endif %}>Jain</option>
-                            <option value="buddhist" {% if form_data.religion == 'buddhist' %}selected{% endif %}>
+                            <option value="Sikh" {% if form_data.religion == 'Sikh' %}selected{% endif %}>Sikh</option>
+                            <option value="Jain" {% if form_data.religion == 'Jain' %}selected{% endif %}>Jain</option>
+                            <option value="Buddhist" {% if form_data.religion == 'Buddhist' %}selected{% endif %}>
                                 Buddhist</option>
-                            <option value="other" {% if form_data.religion == 'other' %}selected{% endif %}>Other
+                            <option value="Other" {% if form_data.religion == 'Other' %}selected{% endif %}>Other
                             </option>
                         </select>
                     </div>
@@ -115,12 +115,12 @@
                         <label for="category" class="form-label">Category</label>
                         <select id="category" name="category" class="form-control form-select" required>
                             <option value="">Select Category</option>
-                            <option value="general" {% if form_data.category == 'general' %}selected{% endif %}>General
+                            <option value="General" {% if form_data.category == 'General' %}selected{% endif %}>General
                             </option>
-                            <option value="obc" {% if form_data.category == 'obc' %}selected{% endif %}>OBC</option>
-                            <option value="sc" {% if form_data.category == 'sc' %}selected{% endif %}>SC</option>
-                            <option value="st" {% if form_data.category == 'st' %}selected{% endif %}>ST</option>
-                            <option value="other" {% if form_data.category == 'other' %}selected{% endif %}>Other
+                            <option value="OBC" {% if form_data.category == 'OBC' %}selected{% endif %}>OBC</option>
+                            <option value="SC" {% if form_data.category == 'SC' %}selected{% endif %}>SC</option>
+                            <option value="ST" {% if form_data.category == 'ST' %}selected{% endif %}>ST</option>
+                            <option value="Other" {% if form_data.category == 'Other' %}selected{% endif %}>Other
                             </option>
                         </select>
                     </div>
@@ -173,24 +173,24 @@
                         <label for="trade" class="form-label">Trade</label>
                         <select id="trade" name="trade" class="form-control form-select" required>
                             <option value="">Select Trade</option>
-                            <option value="agriculture" {% if form_data.trade == 'Agriculture' %}selected{% endif %}>
+                            <option value="Agriculture" {% if form_data.trade == 'Agriculture' %}selected{% endif %}>
                                 Agriculture</option>
-                            <option value="beauty_wellness"
+                            <option value="Beauty & Wellness"
                                 {% if form_data.trade == 'Beauty & Wellness' %}selected{% endif %}>Beauty & Wellness
                             </option>
-                            <option value="plumbing" {% if form_data.trade == 'Plumbing' %}selected{% endif %}>Plumbing
+                            <option value="Plumbing" {% if form_data.trade == 'Plumbing' %}selected{% endif %}>Plumbing
                             </option>
-                            <option value="food_processing"
+                            <option value="Food Processing"
                                 {% if form_data.trade == 'Food Processing' %}selected{% endif %}>Food Processing
                             </option>
-                            <option value="automotive" {% if form_data.trade == 'Automotive' %}selected{% endif %}>
+                            <option value="Automotive" {% if form_data.trade == 'Automotive' %}selected{% endif %}>
                                 Automotive</option>
-                            <option value="electronics" {% if form_data.trade == 'Electronics' %}selected{% endif %}>
+                            <option value="Electronics" {% if form_data.trade == 'Electronics' %}selected{% endif %}>
                                 Electronics</option>
-                            <option value="tourism_hospitality"
+                            <option value="Tourism & Hospitality"
                                 {% if form_data.trade == 'Tourism & Hospitality' %}selected{% endif %}>Tourism &
                                 Hospitality</option>
-                            <option value="ites" {% if form_data.trade == 'ITeS' %}selected{% endif %}>ITeS</option>
+                            <option value="ITeS" {% if form_data.trade == 'ITeS' %}selected{% endif %}>ITeS</option>
                         </select>
                     </div>
 
@@ -300,12 +300,12 @@
                 // Add new options
                 centerData[selectedDistrict].forEach(center => {
                     const option = document.createElement('option');
-                    const centerValue = center.toLowerCase().replace(/\s+/g, '_');
-                    option.value = centerValue;
+                    // Use the actual center name as both value and display text
+                    option.value = center;
                     option.textContent = center;
 
                     // Preserve selected center if it matches
-                    if (centerValue === currentCenter) {
+                    if (center === currentCenter) {
                         option.selected = true;
                     }
 

@@ -145,7 +145,8 @@ def student_profile():
 
             conn.commit()
             flash("Profile Completion Successful", "success")
-            session['can_id']=form_data.can_id
+            # FIXED: Changed from form_data.can_id to form_data.get('can_id')
+            session['can_id']=form_data.get('can_id')
             session.pop('form_data',None)
             return redirect(url_for('profile_display'))
 

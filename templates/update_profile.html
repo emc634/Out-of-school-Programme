@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <nav class="navbar">
         <div class="navbar-content">
@@ -61,66 +62,74 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="studentName" class="form-label">Student's Name</label>
-                            <input type="text" id="studentName" name="studentName" value="Rahul Sharma" class="form-control" required>
+                            <input type="text" placeholder="Enter your Name" id="studentName" name="studentName"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="fatherName" class="form-label">Father's Name</label>
-                            <input type="text" id="fatherName" name="fatherName" value="Rajesh Sharma" class="form-control" required>
+                            <input type="text" placeholder="Enter your Father's Name" id="fatherName" name="fatherName"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="motherName" class="form-label">Mother's Name</label>
-                            <input type="text" id="motherName" name="motherName" value="Sunita Sharma" class="form-control" required>
+                            <input type="text" placeholder="Enter your Mother's Name" id="motherName" name="motherName"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="dob" class="form-label">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" value="2002-05-15" class="form-control" required>
+                            <input type="date" placeholder="Enter your Date of Birth" id="dob" name="dob"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Gender</label>
                             <div class="radio-group">
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="male" checked>
+                                    <input type="radio" name="gender" checked>
                                     Male
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="female">
+                                    <input type="radio" name="gender">
                                     Female
                                 </label>
                                 <label class="radio-option">
-                                    <input type="radio" name="gender" value="other">
+                                    <input type="radio" name="gender">
                                     Other
                                 </label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="religion" class="form-label">Religion</label>
-                            <input type="text" id="religion" name="religion" value="Hindu" class="form-control" required>
+                            <input type="text" placeholder="Select Your Religion" id="religion" name="religion"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="category" class="form-label">Category</label>
                             <select id="category" name="category" class="form-control form-select" required>
-                                <option value="">Select Category</option>
-                                <option value="general" selected>General</option>
-                                <option value="obc">OBC</option>
-                                <option value="sc">SC</option>
-                                <option value="st">ST</option>
-                                <option value="other">Other</option>
+                                <option>Select Category</option>
+                                <option>General</option>
+                                <option>OBC</option>
+                                <option>SC</option>
+                                <option>ST</option>
+                                <option>Other</option>
                             </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mobile" class="form-label">Mobile Number</label>
+                            <input type="tel" placeholder="Enter your Mobile Number" id="mobile" name="mobile"
+                                class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="aadhar" class="form-label">Aadhar Number</label>
-                            <input type="text" id="aadhar" name="aadhar" value="1234-5678-9012" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="mobile" class="form-label">Mobile Number</label>
-                            <input type="tel" id="mobile" name="mobile" value="9876543210" class="form-control" required>
+                            <input type="text" placeholder="Enter your Aadhar Number" id="aadhar" name="aadhar"
+                                class="form-control" required>
                         </div>
                     </div>
                 </div>
 
                 <!-- Form Actions -->
                 <div class="form-actions">
-                    <a href="#">Reset Password</a>
+                    <a href="{{url_for('reset_password')}}">Reset Password</a>
                     <button type="submit" class="btn btn-primary">Update Profile</button>
                 </div>
             </form>
@@ -132,11 +141,11 @@
         document.querySelector('.mobile-toggle').addEventListener('click', function () {
             document.querySelector('.nav-links').classList.toggle('active');
         });
-        
+
         // Auto-hide flash messages
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const flashMessages = document.querySelectorAll('.alert');
-            
+
             flashMessages.forEach(message => {
                 setTimeout(() => {
                     message.style.opacity = '0';
@@ -146,4 +155,5 @@
         });
     </script>
 </body>
+
 </html>
