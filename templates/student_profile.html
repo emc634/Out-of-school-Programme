@@ -150,72 +150,68 @@
                             <input type="text" id="canId" name="canId" value="{{ form_data.can_id or '' }}"
                                 class="form-control" required>
                         </div>
+
                         <div class="form-group">
-                            <label for="center" class="form-label">Center</label>
-                            <select id="center" name="center" class="form-control form-select" required
-                                onchange="updateSubCenters()">
-                                <option value="">Select Center</option>
-                                <option value="Bilaspur" {% if form_data.center == 'Bilaspur' %}selected{% endif %}>
+                            <label for="district" class="form-label">District</label>
+                            <select id="district" name="district" class="form-control form-select" required>
+                                <option value="">Select District</option>
+                                <option value="Bilaspur" {% if form_data.district == 'Bilaspur' %}selected{% endif %}>
                                     Bilaspur
                                 </option>
-                                <option value="Chamba" {% if form_data.center == 'Chamba' %}selected{% endif %}>Chamba
+                                <option value="Chamba" {% if form_data.district == 'Chamba' %}selected{% endif %}>Chamba
                                 </option>
-                                <option value="Hamirpur" {% if form_data.center == 'Hamirpur' %}selected{% endif %}>
+                                <option value="Hamirpur" {% if form_data.district == 'Hamirpur' %}selected{% endif %}>
                                     Hamirpur
                                 </option>
-                                <option value="Kangra" {% if form_data.center == 'Kangra' %}selected{% endif %}>Kangra
+                                <option value="Kangra" {% if form_data.district == 'Kangra' %}selected{% endif %}>Kangra
                                 </option>
-                                <option value="Kullu" {% if form_data.center == 'Kullu' %}selected{% endif %}>Kullu
+                                <option value="Kullu" {% if form_data.district == 'Kullu' %}selected{% endif %}>Kullu
                                 </option>
-                                <option value="Mandi" {% if form_data.center == 'Mandi' %}selected{% endif %}>Mandi
+                                <option value="Mandi" {% if form_data.district == 'Mandi' %}selected{% endif %}>Mandi
                                 </option>
-                                <option value="Sirmour" {% if form_data.center == 'Sirmour' %}selected{% endif %}>
-                                    Sirmour</option>
-                                <option value="Solan" {% if form_data.center == 'Solan' %}selected{% endif %}>Solan
+                                <option value="Sirmour" {% if form_data.district == 'Sirmour' %}selected{% endif %}>
+                                    Sirmour
                                 </option>
-                                <option value="Una" {% if form_data.center == 'Una' %}selected{% endif %}>Una</option>
+                                <option value="Solan" {% if form_data.district == 'Solan' %}selected{% endif %}>Solan
+                                </option>
+                                <option value="Una" {% if form_data.district == 'Una' %}selected{% endif %}>Una</option>
                             </select>
                         </div>
 
-                        <!-- Sub-Center Selection -->
+                        <!-- Center Selection -->
                         <div class="form-group">
-                            <label for="subCenter" class="form-label">Sub-Center</label>
-                            <select id="subCenter" name="subCenter" class="form-control form-select" required>
-                                <option value="">Select Sub-Center</option>
+                            <label for="center" class="form-label">Center</label>
+                            <select id="center" name="center" class="form-control form-select" required>
+                                <option value="">Select Center</option>
                                 <!-- Options will be populated by JavaScript -->
                             </select>
                         </div>
-
-
-
 
                         <div class="form-group">
                             <label for="trade" class="form-label">Trade</label>
                             <select id="trade" name="trade" class="form-control form-select" required>
                                 <option value="">Select Trade</option>
                                 <option value="agriculture"
-                                    {% if form_data.trade == 'agriculture' %}selected{% endif %}>
+                                    {% if form_data.trade == 'Agriculture' %}selected{% endif %}>
                                     Agriculture</option>
                                 <option value="beauty_wellness"
-                                    {% if form_data.trade == 'beauty_wellness' %}selected{% endif %}>
-                                    Beauty & Wellness</option>
-                                <option value="plumbing" {% if form_data.trade == 'plumbing' %}selected{% endif %}>
+                                    {% if form_data.trade == 'Beauty & wellness' %}selected{% endif %}>Beauty & Wellness
+                                </option>
+                                <option value="plumbing" {% if form_data.trade == 'Plumbing' %}selected{% endif %}>
                                     Plumbing
                                 </option>
                                 <option value="food_processing"
-                                    {% if form_data.trade == 'food_processing' %}selected{% endif %}>
-                                    Food Processing</option>
-                                <option value="automotive" {% if form_data.trade == 'automotive' %}selected{% endif %}>
-                                    Automotive
+                                    {% if form_data.trade == 'Food Processing' %}selected{% endif %}>Food Processing
                                 </option>
+                                <option value="automotive" {% if form_data.trade == 'Automotive' %}selected{% endif %}>
+                                    Automotive</option>
                                 <option value="electronics"
-                                    {% if form_data.trade == 'electronics' %}selected{% endif %}>
+                                    {% if form_data.trade == 'Electronics' %}selected{% endif %}>
                                     Electronics</option>
                                 <option value="tourism_hospitality"
-                                    {% if form_data.trade == 'tourism_hospitality' %}selected{% endif %}>Tourism &
-                                    Hospitality
-                                </option>
-                                <option value="ites" {% if form_data.trade == 'ites' %}selected{% endif %}>ITeS</option>
+                                    {% if form_data.trade == 'Tourism & hospitality' %}selected{% endif %}>Tourism &
+                                    Hospitality</option>
+                                <option value="ites" {% if form_data.trade == 'ITeS' %}selected{% endif %}>ITeS</option>
                             </select>
                         </div>
                     </div>
@@ -254,7 +250,7 @@
                     </h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="ojt" class="form-label">OJT Status</label>
+                            <label for="ojt" class="form-label">OJIT Status</label>
                             <select id="ojt" name="ojt" class="form-control form-select" required>
                                 <option value="">SELECT</option>
                                 <option value="completed" {% if form_data.ojt == 'completed' %}selected{% endif %}>
@@ -305,80 +301,91 @@
                         </div>
                     </div>
                 </div>
-                <a href="{{ url_for('reset_password') }}">Reset Password</a>
 
                 <!-- Form Actions -->
                 <div class="form-actions">
+                    <a href="{{ url_for('reset_password') }}" class="btn btn-link">Reset Password</a>
                     <button type="submit" class="btn btn-primary">Update Profile</button>
                 </div>
             </form>
         </div>
     </main>
 
+    <script>
+        // Center data for each district (consistent with signup form)
+        const centerData = {
+            "Bilaspur": ["JHANDUTTA", "SADAR", "SHRI NAINA DEVI JI"],
+            "Chamba": ["BANIKHET", "CHAMBA", "CHOWARI", "GAROLA", "GEHRA", "HARDASPURA", "KALHEL", "KIANI", "MEHLA",
+                "SALOONI", "SIHUNTA", "SUNDLA", "TISSA"
+            ],
+            "Hamirpur": ["HAMIRPUR"],
+            "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
+            "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
+            "Mandi": ["SADAR-2", "SERAJ-2"],
+            "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA", "MAJRA"],
+            "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
+            "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
+        };
 
-</body>
-<script>
-    const centerData = {
-        "Bilaspur": ["JHANDUTTA", "SADAR", "SHRI NAINA DEVI JI"],
-        "Chamba": ["BANIKHET", "CHAMBA", "CHOWARI", "GAROLA", "GEHRA", "HARDASPURA", "KALHEL", "KIANI", "MEHLA",
-            "SALOONI", "SIHUNTA", "SUNDLA", "TISSA"
-        ],
-        "Hamirpur": ["HAMIRPUR"],
-        "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
-        "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
-        "Mandi": ["SADAR-2", "SERAJ-2"],
-        "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA", "MAJRA"],
-        "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
-        "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
-    };
+        // Function to update centers based on selected district
+        function updateCenters() {
+            const districtSelect = document.getElementById('district');
+            const centerSelect = document.getElementById('center');
+            const selectedDistrict = districtSelect.value;
+            const currentCenter = "{{ form_data.center if form_data.center else '' }}";
 
-    function updateSubCenters() {
-        const mainPlaceSelect = document.getElementById('center');
-        const subCenterSelect = document.getElementById('subCenter');
-        const selectedPlace = mainPlaceSelect.value;
-        const currentSubCenter = "{{ subcenter }}"; // Get current subcenter value
+            // Clear existing options
+            centerSelect.innerHTML = '<option value="">Select Center</option>';
 
-        // Clear existing options
-        subCenterSelect.innerHTML = '<option value="">Select Sub-Center</option>';
+            if (selectedDistrict && centerData[selectedDistrict]) {
+                centerSelect.disabled = false;
 
-        if (selectedPlace && centerData[selectedPlace]) {
-            subCenterSelect.disabled = false;
+                // Add new options
+                centerData[selectedDistrict].forEach(center => {
+                    const option = document.createElement('option');
+                    const centerValue = center.toLowerCase().replace(/\s+/g, '_');
+                    option.value = centerValue;
+                    option.textContent = center;
 
-            // Add new options
-            centerData[selectedPlace].forEach(center => {
-                const option = document.createElement('option');
-                const centerValue = center.toLowerCase().replace(/\s+/g, '_');
-                option.value = centerValue;
-                option.textContent = center;
+                    // Preserve selected center if it matches
+                    if (centerValue === currentCenter) {
+                        option.selected = true;
+                    }
 
-                // Preserve selected subcenter
-                if (centerValue === currentSubCenter) {
-                    option.selected = true;
-                }
-
-                subCenterSelect.appendChild(option);
-            });
-        } else {
-            subCenterSelect.disabled = true;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        if (document.getElementById('center').value) {
-            updateSubCenters();
+                    centerSelect.appendChild(option);
+                });
+            } else {
+                centerSelect.disabled = true;
+            }
         }
 
-        flashMessages.forEach(message => {
-            setTimeout(() => {
-                message.style.opacity = '0';
-                setTimeout(() => message.remove(), 500); // Match this with CSS transition
-            }, 3000); // 3000ms = 3 seconds
+        // Initialize the form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add event listener for district change
+            document.getElementById('district').addEventListener('change', updateCenters);
+
+            // Initialize centers based on current district selection
+            updateCenters();
+
+            // If there's a form error and district was selected, make sure centers are properly populated
+            const districtValue = "{{ form_data.district if form_data.district else '' }}";
+            if (districtValue) {
+                updateCenters();
+            }
         });
-    });
 
-    document.querySelector('.mobile-toggle').addEventListener('click', function () {
-        document.querySelector('.nav-links').classList.toggle('active');
-    });
-</script>
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
 
+        // Fade out flash messages after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.classList.add('fade-out');
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 3000);
+    </script>
+</body>
 </html>
