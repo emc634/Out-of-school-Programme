@@ -243,7 +243,7 @@ def profile_display():
 
 @app.route("/update_profile")
 def update_profile():
-    return render_template("update.html")
+    return render_template("update_profile.html")
 
 
 
