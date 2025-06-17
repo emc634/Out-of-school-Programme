@@ -58,7 +58,7 @@
                 {% endif %}
                 {% endwith %}
             </div>
-            <form action="/update_profile" method="POST" class="form-container">
+            <form action="/student_profile" method="POST" class="form-container">
                 <!-- Personal Information Section -->
                 <div class="form-section">
                     <h3 class="section-title">
@@ -110,18 +110,36 @@
                             <label for="religion" class="form-label">Religion</label>
                             <input type="text" id="religion" name="religion" value="{{ form_data.religion or '' }}"
                                 class="form-control" required>
+                            <select id="religion" name="religion" class="form-control form-select" required>
+                                <option value="">Select Religion</option>
+                                <option value="hindu" {% if form_data.religion == 'hindu' %}selected{% endif %}>Hindu
+                                </option>
+                                <option value="muslim" {% if form_data.religion == 'muslim' %}selected{% endif %}>Muslim
+                                </option>
+                                <option value="christian" {% if form_data.religion == 'christian' %}selected{% endif %}>
+                                    Christian</option>
+                                <option value="sikh" {% if form_data.religion == 'sikh' %}selected{% endif %}>Sikh
+                                </option>
+                                <option value="jain" {% if form_data.religion == 'jain' %}selected{% endif %}>Jain
+                                </option>
+                                <option value="buddhist" {% if form_data.religion == 'buddhist' %}selected{% endif %}>
+                                    Buddhist</option>
+                                <option value="other" {% if form_data.religion == 'other' %}selected{% endif %}>Other
+                                </option>
+                            </select>
+
                         </div>
                         <div class="form-group">
                             <label for="category" class="form-label">Category</label>
                             <select id="category" name="category" class="form-control form-select" required>
                                 <option value="">Select Category</option>
-                                <option value="general" {% if form_data.category == 'general' %}selected{% endif %}>
+                                <option value="general" {% if form_data.category == 'General' %}selected{% endif %}>
                                     General
                                 </option>
-                                <option value="obc" {% if form_data.category == 'obc' %}selected{% endif %}>OBC</option>
-                                <option value="sc" {% if form_data.category == 'sc' %}selected{% endif %}>SC</option>
-                                <option value="st" {% if form_data.category == 'st' %}selected{% endif %}>ST</option>
-                                <option value="other" {% if form_data.category == 'other' %}selected{% endif %}>Other
+                                <option value="obc" {% if form_data.category == 'OBC' %}selected{% endif %}>OBC</option>
+                                <option value="sc" {% if form_data.category == 'SC' %}selected{% endif %}>SC</option>
+                                <option value="st" {% if form_data.category == 'ST' %}selected{% endif %}>ST</option>
+                                <option value="other" {% if form_data.category == 'Other' %}selected{% endif %}>Other
                                 </option>
                             </select>
                         </div>
@@ -253,11 +271,11 @@
                             <label for="ojt" class="form-label">OJIT Status</label>
                             <select id="ojt" name="ojt" class="form-control form-select" required>
                                 <option value="">SELECT</option>
-                                <option value="completed" {% if form_data.ojt == 'completed' %}selected{% endif %}>
+                                <option value="completed" {% if form_data.ojt == 'Completed' %}selected{% endif %}>
                                     COMPLETED
                                 </option>
                                 <option value="not_completed"
-                                    {% if form_data.ojt == 'not_completed' %}selected{% endif %}>NOT
+                                    {% if form_data.ojt == 'Not Completed' %}selected{% endif %}>NOT
                                     COMPLETED</option>
                             </select>
                         </div>
@@ -266,10 +284,10 @@
                             <select id="guestLecture" name="guestLecture" class="form-control form-select" required>
                                 <option value="">SELECT</option>
                                 <option value="completed"
-                                    {% if form_data.guest_lecture == 'completed' %}selected{% endif %}>
+                                    {% if form_data.guest_lecture == 'Completed' %}selected{% endif %}>
                                     COMPLETED</option>
                                 <option value="not_completed"
-                                    {% if form_data.guest_lecture == 'not_completed' %}selected{% endif %}>NOT COMPLETED
+                                    {% if form_data.guest_lecture == 'Not Completed' %}selected{% endif %}>NOT COMPLETED
                                 </option>
                             </select>
                         </div>
@@ -279,10 +297,10 @@
                                 required>
                                 <option value="">SELECT</option>
                                 <option value="completed"
-                                    {% if form_data.industrial_visit == 'completed' %}selected{% endif %}>
+                                    {% if form_data.industrial_visit == 'Completed' %}selected{% endif %}>
                                     COMPLETED</option>
                                 <option value="not_completed"
-                                    {% if form_data.industrial_visit == 'not_completed' %}selected{% endif %}>NOT
+                                    {% if form_data.industrial_visit == 'Not Completed' %}selected{% endif %}>NOT
                                     COMPLETED
                                 </option>
                             </select>
@@ -292,10 +310,10 @@
                             <select id="assessment" name="assessment" class="form-control form-select" required>
                                 <option value="">SELECT</option>
                                 <option value="completed"
-                                    {% if form_data.assessment == 'completed' %}selected{% endif %}>
+                                    {% if form_data.assessment == 'Completed' %}selected{% endif %}>
                                     COMPLETED</option>
                                 <option value="not_completed"
-                                    {% if form_data.assessment == 'not_completed' %}selected{% endif %}>
+                                    {% if form_data.assessment == 'Not Completed' %}selected{% endif %}>
                                     NOT COMPLETED</option>
                             </select>
                         </div>
@@ -305,7 +323,7 @@
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <a href="{{ url_for('reset_password') }}" class="btn btn-link">Reset Password</a>
-                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                    <button type="submit" class="btn btn-primary">Complete Profile</button>
                 </div>
             </form>
         </div>
@@ -322,7 +340,9 @@
             "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
             "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
             "Mandi": ["SADAR-2", "SERAJ-2"],
-            "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA", "MAJRA"],
+            "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA",
+                "MAJRA"
+            ],
             "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
             "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
         };
@@ -388,4 +408,5 @@
         }, 3000);
     </script>
 </body>
+
 </html>
