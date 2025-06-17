@@ -53,6 +53,20 @@
             </div>
 
             <form action="/update_profile" method="POST" class="form-container">
+        
+                <!-- Security Verification Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-lock"></i>
+                        Security Verification
+                    </h3>
+                    <div class="form-group">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <input type="password" id="current_password" name="current_password" class="form-control" required>
+                        <small class="form-text">Please enter your current password to verify your identity</small>
+                    </div>
+                </div>
+
                 <!-- Personal Information Section -->
                 <div class="form-section">
                     <h3 class="section-title">
@@ -152,6 +166,16 @@
                     setTimeout(() => message.remove(), 500);
                 }, 3000);
             });
+        });
+
+        // Client-side password verification (optional - server-side verification is essential)
+        document.getElementById('updateForm').addEventListener('submit', function(event) {
+            const currentPassword = document.getElementById('current_password').value;
+            
+            if (!currentPassword) {
+                alert('Please enter your current password to proceed with updates.');
+                event.preventDefault();
+            }
         });
     </script>
 </body>
