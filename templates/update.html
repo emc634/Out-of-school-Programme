@@ -58,6 +58,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="studentName" class="form-label">Student's Name</label>
+<<<<<<< HEAD
                             <input type="text" id="studentName" name="studentName" value="Rahul Sharma" class="form-control" required>
                         </div>
                         <div class="form-group">
@@ -71,13 +72,32 @@
                         <div class="form-group">
                             <label for="dob" class="form-label">Date of Birth</label>
                             <input type="date" id="dob" name="dob" value="2002-05-15" class="form-control" required>
+=======
+                            <input type="text" id="studentName" name="studentName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fatherName" class="form-label">Father's Name</label>
+                            <input type="text" id="fatherName" name="fatherName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="motherName" class="form-label">Mother's Name</label>
+                            <input type="text" id="motherName" name="motherName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" class="form-control" required>
+>>>>>>> d0524b96461d68059a1786ec53ae60dc704c298a
                         </div>
                         <div class="form-group">
                             <label class="form-label">Gender</label>
                             <div class="radio-group">
                                 <label class="radio-option">
+<<<<<<< HEAD
                                     <input type="radio" name="gender" value="male" checked>
                                     Male
+=======
+                                    <input type="radio" name="gender" value="male">Male
+>>>>>>> d0524b96461d68059a1786ec53ae60dc704c298a
                                 </label>
                                 <label class="radio-option">
                                     <input type="radio" name="gender" value="female">
@@ -91,26 +111,94 @@
                         </div>
                         <div class="form-group">
                             <label for="religion" class="form-label">Religion</label>
+<<<<<<< HEAD
                             <input type="text" id="religion" name="religion" value="Hindu" class="form-control" required>
+=======
+                            <input type="text" id="religion" name="religion" class="form-control" required>
+>>>>>>> d0524b96461d68059a1786ec53ae60dc704c298a
                         </div>
                         <div class="form-group">
                             <label for="category" class="form-label">Category</label>
                             <select id="category" name="category" class="form-control form-select" required>
                                 <option value="">Select Category</option>
+<<<<<<< HEAD
                                 <option value="general" selected>General</option>
                                 <option value="obc">OBC</option>
                                 <option value="sc">SC</option>
                                 <option value="st">ST</option>
                                 <option value="other">Other</option>
+=======
+                                <option value="general">
+                                    General
+                                </option>
+                                <option value="obc">OBC</option>
+                                <option value="sc">SC</option>
+                                <option value="st">ST</option>
+                                <option value="other">Other
+                                </option>
+>>>>>>> d0524b96461d68059a1786ec53ae60dc704c298a
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="aadhar" class="form-label">Aadhar Number</label>
+<<<<<<< HEAD
                             <input type="text" id="aadhar" name="aadhar" value="1234-5678-9012" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="mobile" class="form-label">Mobile Number</label>
                             <input type="tel" id="mobile" name="mobile" value="9876543210" class="form-control" required>
+=======
+                            <input type="text" id="aadhar" name="aadhar" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile" class="form-label">Mobile Number</label>
+                            <input type="tel" id="mobile" name="mobile" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Center Information
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for=district class="form-label">District</label>
+                            <select id=district name=district class="form-control form-select" required
+                                onchange="updateSubCenters()">
+                                <option value="">Select Center</option>
+                                <option>
+                                    Bilaspur
+                                </option>
+                                <option value="Chamba">Chamba
+                                </option>
+                                <option value="Hamirpur"></option>
+                                Hamirpur
+                                </option>
+                                <option>Kangra
+                                </option>
+                                <option>Kullu
+                                </option>
+                                <option>Mandi
+                                </option>
+                                <option>
+                                    Sirmour</option>
+                                <option>Solan
+                                </option>
+                                <option>Una</option>
+                            </select>
+                        </div>
+
+                        <!-- Sub-Center Selection -->
+                        <div class="form-group">
+                            <label for="subCenter" class="form-label">Sub-Center</label>
+                            <select id="subCenter" name="subCenter" class="form-control form-select" required>
+                                <option value="">Select Sub-Center</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+>>>>>>> d0524b96461d68059a1786ec53ae60dc704c298a
                         </div>
                     </div>
                 </div>
@@ -125,6 +213,7 @@
     </main>
 
     <script>
+<<<<<<< HEAD
         // Mobile menu toggle functionality
         document.querySelector('.mobile-toggle').addEventListener('click', function () {
             document.querySelector('.nav-links').classList.toggle('active');
@@ -132,6 +221,61 @@
         
         // Auto-hide flash messages
         document.addEventListener('DOMContentLoaded', function() {
+=======
+        const centerData = {
+            "Bilaspur": ["JHANDUTTA", "SADAR", "SHRI NAINA DEVI JI"],
+            "Chamba": ["BANIKHET", "CHAMBA", "CHOWARI", "GAROLA", "GEHRA", "HARDASPURA", "KALHEL", "KIANI", "MEHLA",
+                "SALOONI", "SIHUNTA", "SUNDLA", "TISSA"
+            ],
+            "Hamirpur": ["HAMIRPUR"],
+            "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
+            "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
+            "Mandi": ["SADAR-2", "SERAJ-2"],
+            "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA",
+                "MAJRA"
+            ],
+            "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
+            "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
+        };
+
+        function updateSubCenters() {
+            const mainPlaceSelect = document.getElementById('district');
+            const subCenterSelect = document.getElementById('subCenter');
+            const selectedPlace = mainPlaceSelect.value;
+            const currentSubCenter = mainPlaceSelect; // Get current subcenter value
+
+            // Clear existing options
+            subCenterSelect.innerHTML = '<option value="">Select Sub-Center</option>';
+
+            if (selectedPlace && centerData[selectedPlace]) {
+                subCenterSelect.disabled = false;
+
+                // Add new options
+                centerData[selectedPlace].forEach(center => {
+                    const option = document.createElement('option');
+                    const centerValue = center.toLowerCase().replace(/\s+/g, '_');
+                    option.value = centerValue;
+                    option.textContent = center;
+
+                    // Preserve selected subcenter
+                    if (centerValue === currentSubCenter) {
+                        option.selected = true;
+                    }
+
+                    subCenterSelect.appendChild(option);
+                });
+            } else {
+                subCenterSelect.disabled = true;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            if (document.getElementById('center').value) {
+                updateSubCenters();
+            }
+
+            // Initialize flash messages fade out
+>>>>>>> d0524b96461d68059a1786ec53ae60dc704c298a
             const flashMessages = document.querySelectorAll('.alert');
             
             flashMessages.forEach(message => {
@@ -143,4 +287,5 @@
         });
     </script>
 </body>
+
 </html>

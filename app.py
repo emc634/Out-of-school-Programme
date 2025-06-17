@@ -27,8 +27,8 @@ def student_signup():
         religion=request.form.get("religion")
         category=request.form.get("category")
         dob=request.form.get('dob')
-        center=request.form.get("center")
-        subcenter=request.form.get('subCenter')
+        district=request.form.get("district")
+        center=request.form.get('center')
         trade=request.form.get("trade")
         gender=request.form.get("gender")
         password = request.form.get("password")
@@ -45,13 +45,13 @@ def student_signup():
             'religion':religion,
             'category':category,
             'dob':dob,
-            'center':center,
+            'district':district,
             'trade':trade,
-            'subcenter':subcenter,
+            'center':center,
         }
         
         if not all([student_name, father_name, mother_name, gender, mobile,
-                    can_id, religion, category, dob, center, trade, subcenter, password, confirmation]):
+                    can_id, religion, category, dob, district, trade, center, password, confirmation]):
             flash("Please fill in all required fields", "error")
             return redirect(url_for("student_signup"))
             
@@ -64,8 +64,8 @@ def student_signup():
         try:
             conn = get_db_connection("student_data.db")
             conn.execute(
-                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, center, subcenter, trade, gender, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, center, subcenter, trade, gender, password_hash)
+                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password_hash)
             )
             conn.commit()
             
@@ -98,13 +98,12 @@ def student_signup():
 
 
 # Student data entry
-@app.route('/update_profile', methods=["GET", "POST"])
+@app.route('/student_profile', methods=["GET", "POST"])
 def student_profile():
     form_data=session.get("form_data",{})
     
     if request.method == "POST":
         can_id = form_data.get('can_id')
-        
         aadhar=request.form.get('aadhar')
         account_number=request.form.get('accountNumber')
         account_holder=request.form.get("accountHolder")
@@ -145,7 +144,7 @@ def student_profile():
                 )
 
             conn.commit()
-            flash("Student data saved successfully!", "success")
+            flash("Profile Completion Successful", "success")
             session['can_id']=form_data.can_id
             session.pop('form_data',None)
             return redirect(url_for('profile_display'))
