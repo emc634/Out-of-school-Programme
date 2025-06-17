@@ -52,6 +52,20 @@
             </div>
 
             <form action="/update_profile" method="POST" class="form-container">
+        
+                <!-- Security Verification Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-lock"></i>
+                        Security Verification
+                    </h3>
+                    <div class="form-group">
+                        <label for="current_password" class="form-label">Current Password</label>
+                        <input type="password" id="current_password" name="current_password" class="form-control" required>
+                        <small class="form-text">Please enter your current password to verify your identity</small>
+                    </div>
+                </div>
+
                 <!-- Personal Information Section -->
                 <div class="form-section">
                     <h3 class="section-title">
@@ -59,62 +73,61 @@
                         Personal Information
                     </h3>
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label for="studentName" class="form-label">Student's Name</label>
-                            <input type="text" id="studentName" name="studentName" value="Rahul Sharma" class="form-control" required>
+                    <div class="form-group">
+                        <label for="studentName" class="form-label">Student's Name</label>
+                        <input type="text" id="studentName" name="studentName" value="{{ form_data.studentName or '' }}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fatherName" class="form-label">Father's Name</label>
+                        <input type="text" id="fatherName" name="fatherName" value="{{ form_data.fatherName or '' }}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="motherName" class="form-label">Mother's Name</label>
+                        <input type="text" id="motherName" name="motherName" value="{{ form_data.motherName or '' }}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" id="dob" name="dob" value="{{ form_data.dob or '' }}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gender</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="male" {% if form_data.gender == 'male' %}checked{% endif %}>
+                                Male
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="female" {% if form_data.gender == 'female' %}checked{% endif %}>
+                                Female
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="gender" value="other" {% if form_data.gender == 'other' %}checked{% endif %}>
+                                Other
+                            </label>
                         </div>
-                        <div class="form-group">
-                            <label for="fatherName" class="form-label">Father's Name</label>
-                            <input type="text" id="fatherName" name="fatherName" value="Rajesh Sharma" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="motherName" class="form-label">Mother's Name</label>
-                            <input type="text" id="motherName" name="motherName" value="Sunita Sharma" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="dob" class="form-label">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" value="2002-05-15" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Gender</label>
-                            <div class="radio-group">
-                                <label class="radio-option">
-                                    <input type="radio" name="gender" value="male" checked>
-                                    Male
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="gender" value="female">
-                                    Female
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="gender" value="other">
-                                    Other
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="religion" class="form-label">Religion</label>
-                            <input type="text" id="religion" name="religion" value="Hindu" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="category" class="form-label">Category</label>
-                            <select id="category" name="category" class="form-control form-select" required>
-                                <option value="">Select Category</option>
-                                <option value="general" selected>General</option>
-                                <option value="obc">OBC</option>
-                                <option value="sc">SC</option>
-                                <option value="st">ST</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="aadhar" class="form-label">Aadhar Number</label>
-                            <input type="text" id="aadhar" name="aadhar" value="1234-5678-9012" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="mobile" class="form-label">Mobile Number</label>
-                            <input type="tel" id="mobile" name="mobile" value="9876543210" class="form-control" required>
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="religion" class="form-label">Religion</label>
+                        <input type="text" id="religion" name="religion" value="{{ form_data.religion or '' }}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" name="category" class="form-control form-select" required>
+                            <option value="">Select Category</option>
+                            <option value="general" {% if form_data.category == 'general' %}selected{% endif %}>General</option>
+                            <option value="obc" {% if form_data.category == 'obc' %}selected{% endif %}>OBC</option>
+                            <option value="sc" {% if form_data.category == 'sc' %}selected{% endif %}>SC</option>
+                            <option value="st" {% if form_data.category == 'st' %}selected{% endif %}>ST</option>
+                            <option value="other" {% if form_data.category == 'other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="aadhar" class="form-label">Aadhar Number</label>
+                        <input type="text" id="aadhar" name="aadhar" value="{{ form_data.aadhar or '' }}" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" value="{{ form_data.mobile or '' }}" class="form-control" required>
                     </div>
                 </div>
 
@@ -143,6 +156,16 @@
                     setTimeout(() => message.remove(), 500);
                 }, 3000);
             });
+        });
+
+        // Client-side password verification (optional - server-side verification is essential)
+        document.getElementById('updateForm').addEventListener('submit', function(event) {
+            const currentPassword = document.getElementById('current_password').value;
+            
+            if (!currentPassword) {
+                alert('Please enter your current password to proceed with updates.');
+                event.preventDefault();
+            }
         });
     </script>
 </body>
