@@ -241,6 +241,10 @@ def profile_display():
     conn.close()
     return render_template("profile_display.html",student=student)
 
+@app.route("/update_profile")
+def update_profile():
+    return render_template("update.html")
+
 
 
 @app.route('/admin_login')
