@@ -182,8 +182,83 @@ def student_profile():
     return render_template('student_profile.html', form_data=form_data)
 
 
-@app.route("/reset_password")
+
+#Password Reset
+
+@app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
+    # Check if user is logged in
+    can_id = session.get('can_id')
+    if not can_id:
+        flash("Please login to access this page", "error")
+        return redirect(url_for('student_signin'))
+    
+    if request.method == "POST":
+        current_password = request.form.get("currentPassword")
+        new_password = request.form.get("newPassword")
+        confirm_password = request.form.get("confirmPassword")
+        
+        # Validate form inputs
+        if not all([current_password, new_password, confirm_password]):
+            flash("Please fill in all password fields", "error")
+            return redirect(url_for("reset_password"))
+        
+        # Check if new passwords match
+        if new_password != confirm_password:
+            flash("New passwords don't match. Please try again.", "error")
+            return redirect(url_for("reset_password"))
+        
+        
+        # Check if new password is different from current password
+        if current_password == new_password:
+            flash("New password must be different from current password", "error")
+            return redirect(url_for("reset_password"))
+        
+        conn = None
+        try:
+            # Connect to database and verify current password
+            conn = get_db_connection("student_data.db")
+            user = conn.execute(
+                'SELECT password FROM students WHERE can_id = ?', 
+                (can_id,)
+            ).fetchone()
+            
+            if user is None:
+                flash("User not found. Please login again.", "error")
+                session.pop('can_id', None)
+                return redirect(url_for("student_signin"))
+            
+            # Verify current password
+            if not check_password_hash(user['password'], current_password):
+                flash("Current password is incorrect", "error")
+                return redirect(url_for("reset_password"))
+            
+            # Hash the new password
+            new_password_hash = generate_password_hash(new_password)
+            
+            # Update password in database
+            conn.execute(
+                'UPDATE students SET password = ? WHERE can_id = ?',
+                (new_password_hash, can_id)
+            )
+            conn.commit()
+            
+            flash("Password updated successfully!", "success")
+            return redirect(url_for('profile_display'))
+            
+        except sqlite3.OperationalError as e:
+            flash(f"Database operational error: {str(e)}", "error")
+            return redirect(url_for('reset_password'))
+            
+        except Exception as e:
+            flash(f"An unexpected error occurred: {str(e)}", "error")
+            return redirect(url_for('reset_password'))
+            
+        finally:
+            if conn:
+                conn.close()
+    
+    # GET request - render the template
     return render_template("reset_password.html")
 
 
@@ -242,9 +317,152 @@ def profile_display():
     conn.close()
     return render_template("profile_display.html",student=student)
 
-@app.route("/update_profile")
+
+@app.route("/update_profile", methods=["GET", "POST"])
 def update_profile():
-    return render_template("update_profile.html")
+    # Check if user is logged in
+    can_id = session.get('can_id')
+    if not can_id:
+        flash("Please login to access this page", "error")
+        return redirect(url_for('student_signin'))
+
+    if request.method == "POST":
+        # Get form data
+        student_name = request.form.get("studentName")   
+        father_name = request.form.get("fatherName")
+        mother_name = request.form.get("motherName")
+        dob = request.form.get("dob")
+        gender = request.form.get("gender")
+        religion = request.form.get("religion")
+        category = request.form.get("category")
+        mobile = request.form.get("mobile")
+
+        current_password = request.form.get("current_password")
+        
+        # Store form data in session (excluding password)
+        session['update_form_data'] = {
+            'studentName': student_name,
+            'fatherName': father_name,
+            'motherName': mother_name,
+            'dob': dob,
+            'gender': gender,
+            'religion': religion,
+            'category': category,
+            'mobile': mobile
+        }
+        
+        # Validate required field - only current password is mandatory
+        if not current_password:
+            flash("Current password is required to update profile", "error")
+            return redirect(url_for("update_profile"))
+        
+        # Validate mobile number format (if provided)
+        if mobile and (not mobile.isdigit() or len(mobile) != 10):
+            flash("Please enter a valid 10-digit mobile number", "error")
+            return redirect(url_for("update_profile"))
+        
+        conn = None
+        try:
+            # Connect to database and verify current password
+            conn = get_db_connection("student_data.db")
+            user = conn.execute(
+                'SELECT password FROM students WHERE can_id = ?', 
+                (can_id,)
+            ).fetchone()
+            
+            if user is None:
+                flash("User not found. Please login again.", "error")
+                session.pop('can_id', None)
+                return redirect(url_for("student_signin"))
+            
+            # Verify current password
+            if not check_password_hash(user['password'], current_password):
+                flash("Current password is incorrect", "error")
+                return redirect(url_for("update_profile"))
+            
+            # Check if mobile number already exists for other users (if mobile is being updated)
+            if mobile:
+                existing_mobile = conn.execute(
+                    'SELECT can_id FROM students WHERE mobile = ? AND can_id != ?', 
+                    (mobile, can_id)
+                ).fetchone()
+                
+                if existing_mobile:
+                    flash("Mobile number already registered with another account", "error")
+                    return redirect(url_for("update_profile"))
+            
+            # Build dynamic UPDATE query based on provided fields
+            update_fields = []
+            update_values = []
+            
+            if student_name:
+                update_fields.append("student_name = ?")
+                update_values.append(student_name)
+            if father_name:
+                update_fields.append("father_name = ?")
+                update_values.append(father_name)
+            if mother_name:
+                update_fields.append("mother_name = ?")
+                update_values.append(mother_name)
+            if dob:
+                update_fields.append("dob = ?")
+                update_values.append(dob)
+            if gender:
+                update_fields.append("gender = ?")
+                update_values.append(gender)
+            if religion:
+                update_fields.append("religion = ?")
+                update_values.append(religion)
+            if category:
+                update_fields.append("category = ?")
+                update_values.append(category)
+            if mobile:
+                update_fields.append("mobile = ?")
+                update_values.append(mobile)
+            
+            # Only proceed if there are fields to update
+            if update_fields:
+                update_values.append(can_id)  # Add can_id for WHERE clause
+                
+                update_query = f"UPDATE students SET {', '.join(update_fields)} WHERE can_id = ?"
+                conn.execute(update_query, update_values)
+                conn.commit()
+                
+                # Success - clear form data from session and redirect
+                session.pop('update_form_data', None)
+                flash("Profile updated successfully!", "success")
+                return redirect(url_for('profile_display'))
+            else:
+                flash("No changes detected. Please modify at least one field to update.", "info")
+                return redirect(url_for('update_profile'))
+            
+        except sqlite3.IntegrityError as e:
+            error_msg = str(e).lower()
+            if "mobile" in error_msg:
+                flash("Mobile number already registered", "error")
+            else:
+                flash(f"Database integrity error: {str(e)}", "error")
+            return redirect(url_for('update_profile'))
+            
+        except sqlite3.OperationalError as e:
+            flash(f"Database operational error: {str(e)}", "error")
+            return redirect(url_for('update_profile'))
+            
+        except ValueError as e:
+            flash(f"Invalid input data: {str(e)}", "error")
+            return redirect(url_for('update_profile'))
+            
+        except Exception as e:
+            flash(f"An unexpected error occurred: {str(e)}", "error")
+            return redirect(url_for('update_profile'))
+            
+        finally:
+            if conn:
+                conn.close()
+    
+    # GET request - get form data from session and render template
+    form_data = session.get('update_form_data', {})
+    return render_template('update_profile.html', form_data=form_data)
 
 
 
