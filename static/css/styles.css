@@ -1,0 +1,109 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+}
+
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1000px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.attendance-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #eee;
+    padding: 20px;
+}
+
+.training-section {
+    flex: 1;
+    padding: 20px;
+}
+
+.progress-circle {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+}
+
+.progress-circle svg {
+    transform: rotate(-90deg);
+}
+
+.progress-bg {
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 8;
+}
+
+.progress-bar {
+    fill: none;
+    stroke-width: 8;
+    stroke: transparent;
+    stroke-linecap: round;
+    stroke-dasharray: 283; /* 2 * π * 45 */
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+}
+
+.percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.training-section h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.status-item:hover {
+    background-color: #f0f0f0;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.not-completed {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.completed {
+    background-color: #4CAF50;
+    color: white;
+}

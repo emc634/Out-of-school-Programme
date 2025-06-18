@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Dashboard</title>
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <!-- Layout Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="attendance-section">
+            <div class="progress-circle" id="progressCircle" onclick="toggleAttendance()">
+                <svg viewBox="0 0 100 100">
+                    <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
+                    <circle class="progress-bar" cx="50" cy="50" r="45"></circle>
+                </svg>
+                <div class="percentage" id="percentage">0%</div>
+            </div>
+        </div>
+        
+        <div class="training-section">
+            <h1>Training Status</h1>
+            <div class="status-item" onclick="toggleStatus(this)">
+                <span>OJIT Status</span>
+                <div class="status not-completed">NOT COMPLETED</div>
+            </div>
+            <div class="status-item" onclick="toggleStatus(this)">
+                <span>Guest Lecture</span>
+                <div class="status not-completed">NOT COMPLETED</div>
+            </div>
+            <div class="status-item" onclick="toggleStatus(this)">
+                <span>Industrial Visit</span>
+                <div class="status not-completed">NOT COMPLETED</div>
+            </div>
+            <div class="status-item" onclick="toggleStatus(this)">
+                <span>Assessment</span>
+                <div class="status not-completed">NOT COMPLETED</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let attendanceMarked = false;
+        const progressBar = document.querySelector('.progress-bar');
+        const percentageDisplay = document.getElementById('percentage');
+
+        function toggleAttendance() {
+            attendanceMarked = !attendanceMarked;
+            const percentage = attendanceMarked ? 100 : 0;
+            const circumference = 2 * Math.PI * 45;
+            
+            progressBar.style.strokeDashoffset = circumference * (1 - percentage / 100);
+            percentageDisplay.textContent = `${percentage}%`;
+            progressBar.style.stroke = attendanceMarked ? '#4CAF50' : 'transparent';
+        }
+
+        function toggleStatus(element) {
+            const statusElement = element.querySelector('.status');
+            if (statusElement.classList.contains('not-completed')) {
+                statusElement.classList.remove('not-completed');
+                statusElement.classList.add('completed');
+                statusElement.textContent = 'COMPLETED';
+            } else {
+                statusElement.classList.remove('completed');
+                statusElement.classList.add('not-completed');
+                statusElement.textContent = 'NOT COMPLETED';
+            }
+        }
+    </script>
+</body>
+</html>
