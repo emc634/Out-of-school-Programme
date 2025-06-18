@@ -464,7 +464,9 @@ def update_profile():
     form_data = session.get('update_form_data', {})
     return render_template('update_profile.html', form_data=form_data)
 
-
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
 
 @app.route('/admin_login')
 def admin_login():
