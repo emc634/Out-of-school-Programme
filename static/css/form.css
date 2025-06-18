@@ -1,4 +1,3 @@
-
 .form-container {
     max-width: 1000px;
     margin: var(--space-xl) auto;
@@ -186,13 +185,210 @@
     box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
 }
 
+/* Enhanced Responsive Breakpoints */
+
+/* Large tablets and small desktops (1024px and below) */
+@media (max-width: 1024px) {
+    .form-container {
+        max-width: 90%;
+        margin: var(--space-lg) auto;
+        padding: var(--space-md);
+    }
+    
+    .form-title {
+        font-size: 1.8rem;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+    }
+}
+
+/* Tablets (768px and below) */
 @media (max-width: 768px) {
+    .form-container {
+        max-width: 95%;
+        margin: var(--space-md) auto;
+        padding: var(--space-sm);
+        border-radius: var(--border-radius);
+    }
+    
     .form-grid {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: var(--space-md);
     }
 
     .form-full-width {
         grid-column: span 1;
+    }
+    
+    .form-title {
+        font-size: 1.6rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        flex-wrap: wrap;
+    }
+    
+    .form-control {
+        padding: 0.6rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-section {
+        margin-bottom: var(--space-lg);
+        padding-bottom: var(--space-md);
+    }
+    
+    .radio-group {
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+    
+    .btn-submit {
+        font-size: 1rem;
+        padding: var(--space-sm);
+    }
+    
+    .password-toggle {
+        width: 32px;
+        height: 32px;
+        right: 10px;
+        padding: 6px;
+    }
+}
+
+/* Mobile devices (480px and below) */
+@media (max-width: 480px) {
+    .form-container {
+        max-width: 100%;
+        margin: var(--space-sm) auto;
+        padding: var(--space-xs);
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .form-header {
+        margin-top: var(--space-md);
+        margin-bottom: var(--space-xs);
+    }
+    
+    .form-title {
+        font-size: 1.4rem;
+        line-height: 1.3;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: var(--space-xs);
+        margin-top: var(--space-xs);
+    }
+    
+    .form-grid {
+        gap: var(--space-sm);
+    }
+    
+    .form-control {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+        border-radius: var(--border-radius-sm);
+    }
+    
+    .form-label {
+        margin-bottom: 2px;
+        font-size: 0.9rem;
+    }
+    
+    .form-section {
+        margin-bottom: var(--space-md);
+        padding-bottom: var(--space-sm);
+    }
+    
+    .radio-group {
+        flex-direction: column;
+        gap: var(--space-xs);
+        align-items: flex-start;
+    }
+    
+    .radio-option {
+        width: 100%;
+        padding: var(--space-xs) 0;
+    }
+    
+    .btn-submit {
+        font-size: 0.95rem;
+        padding: var(--space-xs);
+        letter-spacing: 0.3px;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(52, 152, 219, 0.25);
+    }
+    
+    .password-toggle {
+        width: 28px;
+        height: 28px;
+        right: 8px;
+        padding: 4px;
+    }
+    
+    .password-input-container .form-control {
+        padding-right: 40px;
+    }
+    
+    .form-select {
+        background-position: right 0.6rem center;
+        background-size: 0.9rem;
+    }
+    
+    .alt-action {
+        padding: var(--space-sm);
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small devices (320px and below) */
+@media (max-width: 320px) {
+    .form-container {
+        padding: var(--space-xxs);
+    }
+    
+    .form-title {
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-size: 0.95rem;
+    }
+    
+    .form-control {
+        padding: 0.4rem;
+        font-size: 0.85rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+    }
+    
+    .btn-submit {
+        font-size: 0.9rem;
+        padding: 0.4rem;
+    }
+    
+    .password-toggle {
+        width: 24px;
+        height: 24px;
+        right: 6px;
+    }
+    
+    .password-input-container .form-control {
+        padding-right: 35px;
     }
 }
