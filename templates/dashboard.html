@@ -13,6 +13,29 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="logo">
+                <i class="fas fa-user-graduate"></i>
+                <span>Student Portal</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('originaldash') }}" class="nav-link active">Dashboard</a></li>
+                <li><a href="{{ url_for('profile_display') }}" class="nav-link">Profile</a></li>
+                <li><a href="{{ url_for('student_profile') }}" class="nav-link">Update</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="btn btn-outline-primary btn-sm">Logout</button>
+            </div>
+
+            <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="attendance-section">
             <div class="progress-circle" id="progressCircle" onclick="toggleAttendance()">
