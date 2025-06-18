@@ -1,22 +1,21 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f0f2f5;
+/* Use base.css variables */
+:root {
+    --completed-color: #4CAF50;
+    --not-completed-color: #ff4d4d;
+    --progress-bg-color: #e0e0e0;
+    --status-bg: #f9f9f9;
+    --status-hover: #f0f0f0;
 }
 
 .container {
     display: flex;
     width: 90%;
     max-width: 1000px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    background-color: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-md);
+    margin: var(--space-xl) auto;
 }
 
 .attendance-section {
@@ -24,13 +23,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-right: 1px solid #eee;
-    padding: 20px;
+    border-right: 1px solid var(--border);
+    padding: var(--space-md);
 }
 
 .training-section {
     flex: 1;
-    padding: 20px;
+    padding: var(--space-md);
 }
 
 .progress-circle {
@@ -38,6 +37,11 @@ body {
     width: 200px;
     height: 200px;
     cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.progress-circle:hover {
+    transform: scale(1.05);
 }
 
 .progress-circle svg {
@@ -46,18 +50,18 @@ body {
 
 .progress-bg {
     fill: none;
-    stroke: #e0e0e0;
+    stroke: var(--progress-bg-color);
     stroke-width: 8;
 }
 
 .progress-bar {
     fill: none;
     stroke-width: 8;
-    stroke: transparent;
     stroke-linecap: round;
-    stroke-dasharray: 283; /* 2 * π * 45 */
-    stroke-dashoffset: 283;
-    transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+    stroke: transparent;
+    transition: 
+        stroke-dashoffset 0.5s ease, 
+        stroke 0.3s ease;
 }
 
 .percentage {
@@ -65,45 +69,58 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
+    font-size: 1.8rem;
     font-weight: bold;
-    color: #333;
-}
-
-.training-section h1 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 30px;
+    color: var(--text);
 }
 
 .status-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    margin-bottom: 15px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
+    padding: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    background-color: var(--status-bg);
+    border-radius: var(--border-radius);
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: 
+        background-color 0.3s ease,
+        transform 0.2s ease;
 }
 
 .status-item:hover {
-    background-color: #f0f0f0;
+    background-color: var(--status-hover);
+    transform: translateY(-2px);
 }
 
 .status {
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--border-radius);
     font-weight: bold;
+    font-size: 0.9rem;
+    min-width: 120px;
+    text-align: center;
 }
 
 .not-completed {
-    background-color: #ff4d4d;
-    color: white;
+    background-color: var(--not-completed-color);
+    color: var(--white);
 }
 
 .completed {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--completed-color);
+    color: var(--white);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .attendance-section {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: var(--space-lg);
+    }
 }
