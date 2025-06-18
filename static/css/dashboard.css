@@ -1,126 +1,233 @@
-/* Use base.css variables */
-:root {
-    --completed-color: #4CAF50;
-    --not-completed-color: #ff4d4d;
-    --progress-bg-color: #e0e0e0;
-    --status-bg: #f9f9f9;
-    --status-hover: #f0f0f0;
-}
-
-.container {
-    display: flex;
-    width: 90%;
-    max-width: 1000px;
-    background-color: var(--white);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    padding: var(--space-md);
-    margin: var(--space-xl) auto;
-}
-
-.attendance-section {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-right: 1px solid var(--border);
-    padding: var(--space-md);
-}
-
-.training-section {
-    flex: 1;
-    padding: var(--space-md);
-}
-
-.progress-circle {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.progress-circle:hover {
-    transform: scale(1.05);
-}
-
-.progress-circle svg {
-    transform: rotate(-90deg);
-}
-
-.progress-bg {
-    fill: none;
-    stroke: var(--progress-bg-color);
-    stroke-width: 8;
-}
-
-.progress-bar {
-    fill: none;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke: transparent;
-    transition: 
-        stroke-dashoffset 0.5s ease, 
-        stroke 0.3s ease;
-}
-
-.percentage {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--text);
-}
-
-.status-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-sm);
-    margin-bottom: var(--space-sm);
-    background-color: var(--status-bg);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: 
-        background-color 0.3s ease,
-        transform 0.2s ease;
-}
-
-.status-item:hover {
-    background-color: var(--status-hover);
-    transform: translateY(-2px);
-}
-
-.status {
-    padding: var(--space-xs) var(--space-sm);
-    border-radius: var(--border-radius);
-    font-weight: bold;
-    font-size: 0.9rem;
-    min-width: 120px;
-    text-align: center;
-}
-
-.not-completed {
-    background-color: var(--not-completed-color);
-    color: var(--white);
-}
-
-.completed {
-    background-color: var(--completed-color);
-    color: var(--white);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-    
-    .attendance-section {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: var(--space-lg);
-    }
-}
+       :root {
+            --attendance-color: #3498db;
+            --completed-color: #2ecc71;
+            --not-completed-color: #e74c3c;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            color: var(--primary-dark);
+        }
+        
+        /* Attendance circle styles */
+        .attendance-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .attendance-section:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .progress-circle {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 2rem 0;
+            cursor: pointer;
+        }
+        
+        .circle-background {
+            fill: none;
+            stroke: var(--light-bg);
+            stroke-width: 10;
+        }
+        
+        .circle-progress {
+            fill: none;
+            stroke: var(--attendance-color);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .circle-text {
+            font-size: 2.5rem;
+            font-weight: 700;
+            fill: var(--text);
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+        
+        .circle-label {
+            font-size: 1rem;
+            fill: var(--text-secondary);
+            text-anchor: middle;
+        }
+        
+        .attendance-info {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        
+        /* Training status styles */
+        .training-section {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        
+        .training-section:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .training-item {
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--not-completed-color);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .training-item.completed {
+            background-color: var(--completed-color);
+        }
+        
+        .training-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .training-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .training-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .training-status {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        /* Attendance history */
+        .history-container {
+            margin-top: 2rem;
+            width: 100%;
+        }
+        
+        .history-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .history-days {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .day-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--light-bg);
+            transition: background-color 0.3s ease;
+        }
+        
+        .day-indicator.present {
+            background-color: var(--attendance-color);
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            width: 100%;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Header styles */
+        .dashboard-header {
+            text-align: center;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            margin-bottom: 2rem;
+            border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dashboard-header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        .dashboard-footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--text-secondary);
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+        }

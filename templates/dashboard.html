@@ -39,65 +39,258 @@
         </div>
     </nav>
 
-    <div class="container">
-        <div class="attendance-section">
-            <div class="progress-circle" id="progressCircle" onclick="toggleAttendance()">
-                <svg viewBox="0 0 100 100">
-                    <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
-                    <circle class="progress-bar" cx="50" cy="50" r="45"></circle>
-                </svg>
-                <div class="percentage" id="percentage">0%</div>
-            </div>
-        </div>
-
-        <div class="training-section">
-            <h1>Training Status</h1>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>OJIT Status</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>Guest Lecture</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>Industrial Visit</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>Assessment</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-        </div>
+<div class="dashboard-header">
+        <h1>Training Dashboard</h1>
+        <p>Track your attendance and training progress in real-time</p>
     </div>
+    
+    <div class="dashboard-container">
+        <!-- Attendance Section -->
+        <section class="attendance-section">
+            <h2 class="section-title">Attendance Tracker</h2>
+            
+            <div class="progress-circle" id="attendanceCircle">
+                <svg viewBox="0 0 100 100">
+                    <circle class="circle-background" cx="50" cy="50" r="45"></circle>
+                    <circle class="circle-progress" cx="50" cy="50" r="45" 
+                            stroke-dasharray="283" stroke-dashoffset="283"></circle>
+                    <text class="circle-text" x="50" y="45">0%</text>
+                    <text class="circle-label" x="50" y="60">ATTENDANCE</text>
+                </svg>
+            </div>
+            
+            <p class="attendance-info">Click on the circle to mark today's attendance</p>
+            
+            <div class="history-container">
+                <h3 class="history-title">Attendance History (Last 7 Days)</h3>
+                <div class="history-days" id="historyDays">
+                    <!-- Day indicators will be inserted here by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-value" id="presentDays">0</div>
+                    <div class="stat-label">Present</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalDays">0</div>
+                    <div class="stat-label">Total Days</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="attendanceRate">0%</div>
+                    <div class="stat-label">Rate</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Training Status Section -->
+        <section class="training-section">
+            <h2 class="section-title">Training Status</h2>
+            
+            <div class="training-grid">
+                <div class="training-item" data-type="ojit">
+                    <span class="training-icon">📚</span>
+                    <div class="training-title">OJIT Status</div>
+                    <div class="training-status">NOT COMPLETED</div>
+                </div>
+                
+                <div class="training-item" data-type="lecture">
+                    <span class="training-icon">🎤</span>
+                    <div class="training-title">Guest Lecture</div>
+                    <div class="training-status">NOT COMPLETED</div>
+                </div>
+                
+                <div class="training-item" data-type="visit">
+                    <span class="training-icon">🏭</span>
+                    <div class="training-title">Industrial Visit</div>
+                    <div class="training-status">NOT COMPLETED</div>
+                </div>
+                
+                <div class="training-item" data-type="assessment">
+                    <span class="training-icon">📝</span>
+                    <div class="training-title">Assessment</div>
+                    <div class="training-status">NOT COMPLETED</div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <footer class="dashboard-footer">
+        <p>Original Dashboard &copy; 2023 | All rights reserved</p>
+    </footer>
 
     <script>
-        let attendanceMarked = false;
-        const progressBar = document.querySelector('.progress-bar');
-        const percentageDisplay = document.getElementById('percentage');
-
-        function toggleAttendance() {
-            attendanceMarked = !attendanceMarked;
-            const percentage = attendanceMarked ? 100 : 0;
-            const circumference = 2 * Math.PI * 45;
-
-            progressBar.style.strokeDashoffset = circumference * (1 - percentage / 100);
-            percentageDisplay.textContent = `${percentage}%`;
-            progressBar.style.stroke = attendanceMarked ? '#4CAF50' : 'transparent';
-        }
-
-        function toggleStatus(element) {
-            const statusElement = element.querySelector('.status');
-            if (statusElement.classList.contains('not-completed')) {
-                statusElement.classList.remove('not-completed');
-                statusElement.classList.add('completed');
-                statusElement.textContent = 'COMPLETED';
-            } else {
-                statusElement.classList.remove('completed');
-                statusElement.classList.add('not-completed');
-                statusElement.textContent = 'NOT COMPLETED';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attendance variables
+            let attendanceData = JSON.parse(localStorage.getItem('attendanceData')) || {
+                presentDays: 0,
+                totalDays: 0,
+                lastAttendanceDate: null,
+                history: []
+            };
+            
+            // Training status
+            let trainingStatus = JSON.parse(localStorage.getItem('trainingStatus')) || {
+                ojit: false,
+                lecture: false,
+                visit: false,
+                assessment: false
+            };
+            
+            // DOM Elements
+            const attendanceCircle = document.getElementById('attendanceCircle');
+            const circleProgress = document.querySelector('.circle-progress');
+            const circleText = document.querySelector('.circle-text');
+            const presentDaysEl = document.getElementById('presentDays');
+            const totalDaysEl = document.getElementById('totalDays');
+            const attendanceRateEl = document.getElementById('attendanceRate');
+            const historyDays = document.getElementById('historyDays');
+            const trainingItems = document.querySelectorAll('.training-item');
+            
+            // Initialize dashboard
+            function initDashboard() {
+                // Initialize attendance
+                updateAttendanceDisplay();
+                renderHistory();
+                
+                // Initialize training status
+                trainingItems.forEach(item => {
+                    const type = item.dataset.type;
+                    if (trainingStatus[type]) {
+                        item.classList.add('completed');
+                        item.querySelector('.training-status').textContent = 'COMPLETED';
+                    }
+                });
             }
-        }
+            
+            // Update attendance display
+            function updateAttendanceDisplay() {
+                const attendancePercentage = attendanceData.totalDays > 0 ? 
+                    Math.round((attendanceData.presentDays / attendanceData.totalDays) * 100) : 0;
+                
+                // Update circle
+                const circumference = 283; // 2 * π * r ≈ 2 * 3.14 * 45 = 283
+                const offset = circumference - (circumference * attendancePercentage / 100);
+                circleProgress.style.strokeDashoffset = offset;
+                circleText.textContent = `${attendancePercentage}%`;
+                
+                // Update stats
+                presentDaysEl.textContent = attendanceData.presentDays;
+                totalDaysEl.textContent = attendanceData.totalDays;
+                attendanceRateEl.textContent = `${attendancePercentage}%`;
+            }
+            
+            // Render attendance history
+            function renderHistory() {
+                historyDays.innerHTML = '';
+                
+                // Show last 7 days
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateStr = formatDate(date);
+                    
+                    const dayEl = document.createElement('div');
+                    dayEl.className = 'day-indicator';
+                    dayEl.title = dateStr;
+                    
+                    if (attendanceData.history.includes(dateStr)) {
+                        dayEl.classList.add('present');
+                    }
+                    
+                    historyDays.appendChild(dayEl);
+                }
+            }
+            
+            // Format date as YYYY-MM-DD
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            // Mark attendance
+            function markAttendance() {
+                const today = new Date();
+                const todayStr = formatDate(today);
+                
+                // Check if already marked today
+                if (attendanceData.lastAttendanceDate === todayStr) {
+                    alert('Attendance already marked for today!');
+                    return;
+                }
+                
+                // Increment counters
+                attendanceData.presentDays++;
+                attendanceData.totalDays++;
+                attendanceData.lastAttendanceDate = todayStr;
+                attendanceData.history.push(todayStr);
+                
+                // Keep only last 30 days in history
+                if (attendanceData.history.length > 30) {
+                    attendanceData.history.shift();
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('attendanceData', JSON.stringify(attendanceData));
+                
+                // Update display
+                updateAttendanceDisplay();
+                renderHistory();
+                
+                // Animation effect
+                attendanceCircle.classList.add('pulse');
+                setTimeout(() => {
+                    attendanceCircle.classList.remove('pulse');
+                }, 500);
+            }
+            
+            // Toggle training status
+            function toggleTrainingStatus(item) {
+                const type = item.dataset.type;
+                trainingStatus[type] = !trainingStatus[type];
+                
+                // Update UI
+                if (trainingStatus[type]) {
+                    item.classList.add('completed');
+                    item.querySelector('.training-status').textContent = 'COMPLETED';
+                } else {
+                    item.classList.remove('completed');
+                    item.querySelector('.training-status').textContent = 'NOT COMPLETED';
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('trainingStatus', JSON.stringify(trainingStatus));
+            }
+            
+            // Event listeners
+            attendanceCircle.addEventListener('click', markAttendance);
+            
+            trainingItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    toggleTrainingStatus(this);
+                });
+            });
+            
+            // Initialize dashboard
+            initDashboard();
+            
+            // Add pulse animation to CSS
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                    100% { transform: scale(1); }
+                }
+                .pulse {
+                    animation: pulse 0.5s ease;
+                }
+            `;
+            document.head.appendChild(style);
+        });
     </script>
 </body>
 
