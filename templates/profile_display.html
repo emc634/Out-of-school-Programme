@@ -25,6 +25,10 @@
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
                 <li><a href="{{ url_for('profile_display') }}" class="nav-link active">Profile</a></li>
                 <li><a href="{{ url_for('update_profile') }}" class="nav-link">Update</a></li>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6ab7e319959e260b11c290b28d7e0c6652e353d4
             </ul>
 
             <div class="nav-actions">
@@ -193,18 +197,18 @@
     </footer>
 
     <!-- Scripts -->
-     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
             const mobileToggle = document.querySelector('.mobile-toggle');
             const navLinks = document.querySelector('.nav-links');
-            
+
             // Toggle mobile menu
-            mobileToggle.addEventListener('click', function() {
+            mobileToggle.addEventListener('click', function () {
                 const icon = this.querySelector('i');
-                
+
                 // Toggle active class
                 navLinks.classList.toggle('active');
-                
+
                 // Change icon
                 if (navLinks.classList.contains('active')) {
                     icon.classList.replace('fa-bars', 'fa-times');
@@ -212,15 +216,15 @@
                     icon.classList.replace('fa-times', 'fa-bars');
                 }
             });
-            
+
             // Close menu when clicking on links
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', function() {
+                link.addEventListener('click', function () {
                     navLinks.classList.remove('active');
                     mobileToggle.querySelector('i').classList.replace('fa-times', 'fa-bars');
                 });
             });
-            
+
             // Auto-dismiss flash messages (if any)
             const flashMessages = document.querySelectorAll('.alert');
             flashMessages.forEach(message => {
