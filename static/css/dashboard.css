@@ -1,126 +1,183 @@
-/* Use base.css variables */
-:root {
-    --completed-color: #4CAF50;
-    --not-completed-color: #ff4d4d;
-    --progress-bg-color: #e0e0e0;
-    --status-bg: #f9f9f9;
-    --status-hover: #f0f0f0;
-}
-
-.container {
-    display: flex;
-    width: 90%;
-    max-width: 1000px;
-    background-color: var(--white);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    padding: var(--space-md);
-    margin: var(--space-xl) auto;
-}
-
-.attendance-section {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-right: 1px solid var(--border);
-    padding: var(--space-md);
-}
-
-.training-section {
-    flex: 1;
-    padding: var(--space-md);
-}
-
-.progress-circle {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.progress-circle:hover {
-    transform: scale(1.05);
-}
-
-.progress-circle svg {
-    transform: rotate(-90deg);
-}
-
-.progress-bg {
-    fill: none;
-    stroke: var(--progress-bg-color);
-    stroke-width: 8;
-}
-
-.progress-bar {
-    fill: none;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke: transparent;
-    transition: 
-        stroke-dashoffset 0.5s ease, 
-        stroke 0.3s ease;
-}
-
-.percentage {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--text);
-}
-
-.status-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-sm);
-    margin-bottom: var(--space-sm);
-    background-color: var(--status-bg);
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: 
-        background-color 0.3s ease,
-        transform 0.2s ease;
-}
-
-.status-item:hover {
-    background-color: var(--status-hover);
-    transform: translateY(-2px);
-}
-
-.status {
-    padding: var(--space-xs) var(--space-sm);
-    border-radius: var(--border-radius);
-    font-weight: bold;
-    font-size: 0.9rem;
-    min-width: 120px;
-    text-align: center;
-}
-
-.not-completed {
-    background-color: var(--not-completed-color);
-    color: var(--white);
-}
-
-.completed {
-    background-color: var(--completed-color);
-    color: var(--white);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-    
-    .attendance-section {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: var(--space-lg);
-    }
-}
+        /* Dashboard-specific styles */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+            color: var(--primary-dark);
+        }
+        
+        .dashboard-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: var(--space-sm);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Glow effects for status */
+        .stat-card.not-completed {
+            box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        
+        .stat-card.completed {
+            box-shadow: 0 0 12px rgba(52, 152, 219, 0.5);
+            border: 1px solid rgba(52, 152, 219, 0.4);
+        }
+        
+        .stat-card.completed:hover {
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
+        }
+        
+        .progress-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+        }
+        
+        .progress-circle {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-bg {
+            fill: none;
+            stroke: var(--light-bg);
+            stroke-width: 8;
+        }
+        
+        .progress-bar {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+        }
+        
+        .percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        
+        .stat-card h3 {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+            color: var(--text);
+        }
+        
+        .status-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.3rem;
+            border-radius: var(--border-radius);
+            margin-top: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .status {
+            font-weight: bold;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .status.not-completed {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--secondary);
+        }
+        
+        .status.completed {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary);
+        }
+        
+        .stat-icon {
+            font-size: 1.8rem;
+            margin: 0.5rem 0;
+            color: var(--primary);
+        }
+        
+        .training-section {
+            margin-top: var(--space-xl);
+        }
+        
+        .training-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: var(--space-lg);
+            color: var(--primary-dark);
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: var(--space-sm);
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .progress-container {
+                width: 85px;
+                height: 85px;
+            }
+            
+            .stat-card {
+                height: 180px;
+            }
+        }

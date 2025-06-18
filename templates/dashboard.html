@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Training Dashboard</title>
+    <title>Student Dashboard</title>
     <!-- Base Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <!-- Layout Styles -->
@@ -12,9 +11,10 @@
     <!-- Component Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-content">
             <a href="#" class="logo">
@@ -25,8 +25,7 @@
             <ul class="nav-links">
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a></li>
                 <li><a href="{{ url_for('profile_display') }}" class="nav-link">Profile</a></li>
-                <li><a href="{{ url_for('update_profile') }}" class="nav-link">Update</a></li>
-
+                <li><a href="{{ url_for('student_profile') }}" class="nav-link">Update</a></li>
             </ul>
 
             <div class="nav-actions">
@@ -39,66 +38,201 @@
         </div>
     </nav>
 
-    <div class="container">
-        <div class="attendance-section">
-            <div class="progress-circle" id="progressCircle" onclick="toggleAttendance()">
-                <svg viewBox="0 0 100 100">
-                    <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
-                    <circle class="progress-bar" cx="50" cy="50" r="45"></circle>
-                </svg>
-                <div class="percentage" id="percentage">0%</div>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Student Dashboard</h1>
+                <p>Track your training progress and attendance in real-time</p>
+            </div>
+            
+            <div class="stats-grid">
+                <!-- Attendance Tracker -->
+                <div class="stat-card not-completed" id="attendanceCard">
+                    <div class="progress-container">
+                        <div class="progress-circle" id="progressCircle">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-bar" cx="50" cy="50" r="45"></circle>
+                            </svg>
+                            <div class="percentage" id="percentage">0%</div>
+                        </div>
+                    </div>
+                    <h3>Attendance</h3>
+                    <div class="status-container">
+                        <div class="status not-completed" id="attendanceStatus">NOT COMPLETED</div>
+                    </div>
+                </div>
+                
+                <!-- OJIT Status -->
+                <div class="stat-card not-completed status-item" data-status="ojt">
+                    <div class="stat-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>OJIT Status</h3>
+                    <div class="status-container">
+                        <div class="status not-completed">NOT COMPLETED</div>
+                    </div>
+                </div>
+                
+                <!-- Guest Lecture -->
+                <div class="stat-card not-completed status-item" data-status="guestLecture">
+                    <div class="stat-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>Guest Lecture</h3>
+                    <div class="status-container">
+                        <div class="status not-completed">NOT COMPLETED</div>
+                    </div>
+                </div>
+                
+                <!-- Industrial Visit -->
+                <div class="stat-card not-completed status-item" data-status="industrialVisit">
+                    <div class="stat-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3>Industrial Visit</h3>
+                    <div class="status-container">
+                        <div class="status not-completed">NOT COMPLETED</div>
+                    </div>
+                </div>
+                
+                <!-- Assessment -->
+                <div class="stat-card not-completed status-item" data-status="assessment">
+                    <div class="stat-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3>Assessment</h3>
+                    <div class="status-container">
+                        <div class="status not-completed">NOT COMPLETED</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional content area -->
+            <div class="training-section">
+                <h2>Training Progress Overview</h2>
+                <!-- More content will be added here later -->
+                <div class="text-center">
+                    <p class="section-subtitle">Detailed progress reports and upcoming activities will be displayed here</p>
+                </div>
             </div>
         </div>
-
-        <div class="training-section">
-            <h1>Training Status</h1>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>OJIT Status</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>Guest Lecture</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>Industrial Visit</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-            <div class="status-item" onclick="toggleStatus(this)">
-                <span>Assessment</span>
-                <div class="status not-completed">NOT COMPLETED</div>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <script>
+        // Attendance tracking variables
         let attendanceMarked = false;
+        let totalDays = 30; // Total training days
+        let attendedDays = 0; // Days attended
         const progressBar = document.querySelector('.progress-bar');
         const percentageDisplay = document.getElementById('percentage');
-
-        function toggleAttendance() {
-            attendanceMarked = !attendanceMarked;
-            const percentage = attendanceMarked ? 100 : 0;
+        const attendanceStatus = document.getElementById('attendanceStatus');
+        const attendanceCard = document.getElementById('attendanceCard');
+        
+        // Initialize attendance
+        updateAttendanceDisplay();
+        
+        // Toggle attendance when clicked
+        attendanceCard.addEventListener('click', function() {
+            // Only allow marking attendance once per day
+            if (!attendanceMarked) {
+                attendedDays++;
+                attendanceMarked = true;
+                attendanceStatus.textContent = "COMPLETED";
+                attendanceStatus.classList.remove('not-completed');
+                attendanceStatus.classList.add('completed');
+                
+                // Update card glow
+                attendanceCard.classList.remove('not-completed');
+                attendanceCard.classList.add('completed');
+            } else {
+                attendedDays--;
+                attendanceMarked = false;
+                attendanceStatus.textContent = "NOT COMPLETED";
+                attendanceStatus.classList.remove('completed');
+                attendanceStatus.classList.add('not-completed');
+                
+                // Update card glow
+                attendanceCard.classList.remove('completed');
+                attendanceCard.classList.add('not-completed');
+            }
+            
+            updateAttendanceDisplay();
+        });
+        
+        // Update attendance display
+        function updateAttendanceDisplay() {
+            const percentage = Math.round((attendedDays / totalDays) * 100);
             const circumference = 2 * Math.PI * 45;
-
+            
             progressBar.style.strokeDashoffset = circumference * (1 - percentage / 100);
             percentageDisplay.textContent = `${percentage}%`;
-            progressBar.style.stroke = attendanceMarked ? '#4CAF50' : 'transparent';
+            progressBar.style.stroke = percentage >= 75 ? '#4CAF50' : 
+                                      percentage >= 50 ? '#f39c12' : 
+                                      '#e74c3c';
         }
-
-        function toggleStatus(element) {
-            const statusElement = element.querySelector('.status');
-            if (statusElement.classList.contains('not-completed')) {
-                statusElement.classList.remove('not-completed');
-                statusElement.classList.add('completed');
-                statusElement.textContent = 'COMPLETED';
-            } else {
-                statusElement.classList.remove('completed');
-                statusElement.classList.add('not-completed');
-                statusElement.textContent = 'NOT COMPLETED';
+        
+        // Toggle training status
+        document.querySelectorAll('.status-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const statusElement = this.querySelector('.status');
+                
+                if (statusElement.classList.contains('not-completed')) {
+                    statusElement.classList.remove('not-completed');
+                    statusElement.classList.add('completed');
+                    statusElement.textContent = 'COMPLETED';
+                    
+                    // Update card glow
+                    this.classList.remove('not-completed');
+                    this.classList.add('completed');
+                    
+                    // Add pulse effect
+                    this.style.animation = 'pulse-green 0.5s';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                } else {
+                    statusElement.classList.remove('completed');
+                    statusElement.classList.add('not-completed');
+                    statusElement.textContent = 'NOT COMPLETED';
+                    
+                    // Update card glow
+                    this.classList.remove('completed');
+                    this.classList.add('not-completed');
+                    
+                    // Add pulse effect
+                    this.style.animation = 'pulse-red 0.5s';
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 500);
+                }
+            });
+        });
+        
+        // Mobile menu toggle
+        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+        
+        // Initialize progress bar color
+        progressBar.style.stroke = '#e74c3c';
+        
+        // Add CSS animations for pulse effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse-green {
+                0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
+                70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
             }
-        }
+            
+            @keyframes pulse-red {
+                0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+                70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
-
 </html>
