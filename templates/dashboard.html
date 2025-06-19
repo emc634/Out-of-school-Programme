@@ -54,13 +54,13 @@
                                 <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
                                 <circle class="progress-bar" cx="50" cy="50" r="45"></circle>
                             </svg>
-                            <div class="percentage" id="percentage">0%</div>
+                            <div class="percentage-container">
+                                <div class="percentage" id="percentage">0%</div>
+                                <div class="attendance-label">Attendance</div>
+                            </div>
                         </div>
                     </div>
-                    <h3>Attendance</h3>
-                    <div class="status-container">
-                        <div class="status not-completed" id="attendanceStatus">NOT COMPLETED</div>
-                    </div>
+                    <!-- Status container removed -->
                 </div>
                 
                 <!-- OJIT Status -->
@@ -120,56 +120,77 @@
     </main>
 
     <script>
-        // Attendance tracking variables
+        // Attendance tracking variables (declare these only once)
         let attendanceMarked = false;
-        let totalDays = 30; // Total training days
-        let attendedDays = 0; // Days attended
+        let totalDays = 30;
+        let attendedDays = 0;
         const progressBar = document.querySelector('.progress-bar');
         const percentageDisplay = document.getElementById('percentage');
-        const attendanceStatus = document.getElementById('attendanceStatus');
         const attendanceCard = document.getElementById('attendanceCard');
-        
-        // Initialize attendance
-        updateAttendanceDisplay();
-        
-        // Toggle attendance when clicked
+
+        // Initialize with circumference value
+        const circumference = 2 * Math.PI * 45;
+        progressBar.style.strokeDasharray = circumference;
+        progressBar.style.strokeDashoffset = circumference;
+
+        // Toggle attendance with progressive animation
         attendanceCard.addEventListener('click', function() {
-            // Only allow marking attendance once per day
             if (!attendanceMarked) {
                 attendedDays++;
                 attendanceMarked = true;
-                attendanceStatus.textContent = "COMPLETED";
-                attendanceStatus.classList.remove('not-completed');
-                attendanceStatus.classList.add('completed');
-                
-                // Update card glow
-                attendanceCard.classList.remove('not-completed');
-                attendanceCard.classList.add('completed');
             } else {
                 attendedDays--;
                 attendanceMarked = false;
-                attendanceStatus.textContent = "NOT COMPLETED";
-                attendanceStatus.classList.remove('completed');
-                attendanceStatus.classList.add('not-completed');
-                
-                // Update card glow
+            }
+            
+            // Calculate new progress
+            const percentage = Math.round((attendedDays / totalDays) * 100);
+            const offset = circumference - (attendedDays / totalDays) * circumference;
+            
+            // Animate the progress bar
+            progressBar.style.transition = 'stroke-dashoffset 0.8s ease-out';
+            progressBar.style.strokeDashoffset = offset;
+            
+            // Update display
+            updateAttendanceDisplay();
+            
+            // Visual feedback
+            this.style.animation = attendanceMarked ? 'pulse-green 0.5s' : 'pulse-red 0.5s';
+            setTimeout(() => {
+                this.style.animation = '';
+            }, 500);
+        });
+
+        function updateAttendanceDisplay() {
+            const percentage = Math.round((attendedDays / totalDays) * 100);
+            percentageDisplay.textContent = `${percentage}%`;
+            
+            // Set colors based on percentage
+            if (percentage > 0) {
+                if (percentage >= 75) {
+                    progressBar.style.stroke = '#4CAF50'; // Green
+                    percentageDisplay.style.color = '#4CAF50';
+                } else if (percentage >= 50) {
+                    progressBar.style.stroke = '#f39c12'; // Orange
+                    percentageDisplay.style.color = '#f39c12';
+                } else {
+                    progressBar.style.stroke = '#e74c3c'; // Red
+                    percentageDisplay.style.color = '#e74c3c';
+                }
+            } else {
+                // Initial state (0%)
+                progressBar.style.stroke = '#e0e0e0'; // Light gray
+                percentageDisplay.style.color = '#777'; // Dark gray text
+            }
+            
+            // Update card status
+            if (attendanceMarked) {
+                attendanceCard.classList.remove('not-completed');
+                attendanceCard.classList.add('completed');
+            } else {
                 attendanceCard.classList.remove('completed');
                 attendanceCard.classList.add('not-completed');
             }
-            
-            updateAttendanceDisplay();
-        });
-        
-        // Update attendance display
-        function updateAttendanceDisplay() {
-            const percentage = Math.round((attendedDays / totalDays) * 100);
-            const circumference = 2 * Math.PI * 45;
-            
-            progressBar.style.strokeDashoffset = circumference * (1 - percentage / 100);
-            percentageDisplay.textContent = `${percentage}%`;
-            progressBar.style.stroke = percentage >= 75 ? '#4CAF50' : 
-                                      percentage >= 50 ? '#f39c12' : 
-                                      '#e74c3c';
         }
         
         // Toggle training status
