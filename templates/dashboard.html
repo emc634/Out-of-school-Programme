@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
-    <!-- Base Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <!-- Layout Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <!-- Component Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
 </head>
 <body>
     <!-- Navbar -->
@@ -21,17 +19,14 @@
                 <i class="fas fa-user-graduate"></i>
                 <span>Student Portal</span>
             </a>
-
             <ul class="nav-links">
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a></li>
-                <li><a href="{{ url_for('profile_display') }}" class="nav-link">Profile</a></li>
-                <li><a href="{{ url_for('student_profile') }}" class="nav-link">Update</a></li>
+                <li><a href="{{ url_for('profile_display') }}" class="nav-link ">Profile</a></li>
+                <li><a href="{{ url_for('update_profile') }}" class="nav-link">Update</a></li>
             </ul>
-
             <div class="nav-actions">
                 <button class="btn btn-outline-primary btn-sm">Logout</button>
             </div>
-
             <button class="mobile-toggle">
                 <i class="fas fa-bars"></i>
             </button>
@@ -46,64 +41,78 @@
             </div>
             
             <div class="stats-grid">
-                <!-- Attendance Tracker -->
-                <div class="stat-card not-completed" id="attendanceCard">
-                    <div class="progress-container">
-                        <div class="progress-circle" id="progressCircle">
-                            <svg viewBox="0 0 100 100">
-                                <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
-                                <circle class="progress-bar" cx="50" cy="50" r="45"></circle>
-                            </svg>
-                            <div class="percentage-container">
-                                <div class="percentage" id="percentage">0%</div>
-                                <div class="attendance-label">Attendance</div>
+                <!-- Attendance Card (Full Width) -->
+                <div class="attendance-card">
+                    <div class="attendance-progress">
+                        <div class="progress-container">
+                            <div class="progress-circle" id="progressCircle">
+                                <svg viewBox="0 0 140 140">
+                                    <circle class="progress-bg" cx="70" cy="70" r="65"></circle>
+                                    <circle class="progress-bar" cx="70" cy="70" r="65"></circle>
+                                </svg>
+                                <div class="percentage-container">
+                                    <div class="percentage" id="percentage">0%</div>
+                                    <div class="attendance-label">Attendance</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- Status container removed -->
-                </div>
-                
-                <!-- OJIT Status -->
-                <div class="stat-card not-completed status-item" data-status="ojt">
-                    <div class="stat-icon">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                    <h3>OJIT Status</h3>
-                    <div class="status-container">
-                        <div class="status not-completed">NOT COMPLETED</div>
-                    </div>
-                </div>
-                
-                <!-- Guest Lecture -->
-                <div class="stat-card not-completed status-item" data-status="guestLecture">
-                    <div class="stat-icon">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <h3>Guest Lecture</h3>
-                    <div class="status-container">
-                        <div class="status not-completed">NOT COMPLETED</div>
+                    
+                    <div class="attendance-details">
+                        <div class="attendance-stats">
+                            <div class="stat-item">
+                                <h4>Total Days</h4>
+                                <div class="value" id="totalDays">30</div>
+                            </div>
+                            <div class="stat-item">
+                                <h4>Attended</h4>
+                                <div class="value" id="attendedDays">0</div>
+                            </div>
+                        </div>
+                        
+                        <button id="markAttendanceBtn">
+                            <i class="fas fa-check-circle"></i>
+                            Mark Today's Attendance
+                        </button>
                     </div>
                 </div>
                 
-                <!-- Industrial Visit -->
-                <div class="stat-card not-completed status-item" data-status="industrialVisit">
-                    <div class="stat-icon">
-                        <i class="fas fa-industry"></i>
+                <!-- Status Cards (4 in a row) -->
+                <div class="status-container">
+                    <!-- OJT Status -->
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>OJT Status</h3>
+                        <div class="status-badge not-completed">NOT COMPLETED</div>
                     </div>
-                    <h3>Industrial Visit</h3>
-                    <div class="status-container">
-                        <div class="status not-completed">NOT COMPLETED</div>
+                    
+                    <!-- Guest Lecture -->
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h3>Guest Lecture</h3>
+                        <div class="status-badge not-completed">NOT COMPLETED</div>
                     </div>
-                </div>
-                
-                <!-- Assessment -->
-                <div class="stat-card not-completed status-item" data-status="assessment">
-                    <div class="stat-icon">
-                        <i class="fas fa-clipboard-check"></i>
+                    
+                    <!-- Industrial Visit -->
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <h3>Industrial Visit</h3>
+                        <div class="status-badge not-completed">NOT COMPLETED</div>
                     </div>
-                    <h3>Assessment</h3>
-                    <div class="status-container">
-                        <div class="status not-completed">NOT COMPLETED</div>
+                    
+                    <!-- Assessment -->
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3>Assessment</h3>
+                        <div class="status-badge not-completed">NOT COMPLETED</div>
                     </div>
                 </div>
             </div>
@@ -111,7 +120,6 @@
             <!-- Additional content area -->
             <div class="training-section">
                 <h2>Training Progress Overview</h2>
-                <!-- More content will be added here later -->
                 <div class="text-center">
                     <p class="section-subtitle">Detailed progress reports and upcoming activities will be displayed here</p>
                 </div>
@@ -120,30 +128,24 @@
     </main>
 
     <script>
-        // Attendance tracking variables (declare these only once)
+        // Attendance tracking variables
         let attendanceMarked = false;
         let totalDays = 30;
         let attendedDays = 0;
         const progressBar = document.querySelector('.progress-bar');
         const percentageDisplay = document.getElementById('percentage');
-        const attendanceCard = document.getElementById('attendanceCard');
-
+        const attendedDaysElement = document.getElementById('attendedDays');
+        const totalDaysElement = document.getElementById('totalDays');
+        const markBtn = document.getElementById('markAttendanceBtn');
+        
         // Initialize with circumference value
-        const circumference = 2 * Math.PI * 45;
+        const radius = 65;
+        const circumference = 2 * Math.PI * radius;
         progressBar.style.strokeDasharray = circumference;
         progressBar.style.strokeDashoffset = circumference;
 
-        // Toggle attendance with progressive animation
-        attendanceCard.addEventListener('click', function() {
-            if (!attendanceMarked) {
-                attendedDays++;
-                attendanceMarked = true;
-            } else {
-                attendedDays--;
-                attendanceMarked = false;
-            }
-            
-            // Calculate new progress
+        // Function to update attendance display
+        function updateAttendanceDisplay() {
             const percentage = Math.round((attendedDays / totalDays) * 100);
             const offset = circumference - (attendedDays / totalDays) * circumference;
             
@@ -152,83 +154,87 @@
             progressBar.style.strokeDashoffset = offset;
             
             // Update display
-            updateAttendanceDisplay();
-            
-            // Visual feedback
-            this.style.animation = attendanceMarked ? 'pulse-green 0.5s' : 'pulse-red 0.5s';
-            setTimeout(() => {
-                this.style.animation = '';
-            }, 500);
-        });
-
-        function updateAttendanceDisplay() {
-            const percentage = Math.round((attendedDays / totalDays) * 100);
             percentageDisplay.textContent = `${percentage}%`;
+            attendedDaysElement.textContent = attendedDays;
             
             // Set colors based on percentage
             if (percentage > 0) {
-                if (percentage >= 75) {
-                    progressBar.style.stroke = '#4CAF50'; // Green
-                    percentageDisplay.style.color = '#4CAF50';
-                } else if (percentage >= 50) {
-                    progressBar.style.stroke = '#f39c12'; // Orange
-                    percentageDisplay.style.color = '#f39c12';
+                if (percentage >= 85) {
+                    progressBar.style.stroke = '#10b981'; // Green
+                    percentageDisplay.style.color = '#10b981';
+                } else if (percentage >= 70) {
+                    progressBar.style.stroke = '#f59e0b'; // Orange
+                    percentageDisplay.style.color = '#f59e0b';
                 } else {
-                    progressBar.style.stroke = '#e74c3c'; // Red
-                    percentageDisplay.style.color = '#e74c3c';
+                    progressBar.style.stroke = '#ef4444'; // Red
+                    percentageDisplay.style.color = '#ef4444';
                 }
             } else {
                 // Initial state (0%)
                 progressBar.style.stroke = '#e0e0e0'; // Light gray
                 percentageDisplay.style.color = '#777'; // Dark gray text
             }
-            
-            // Update card status
-            if (attendanceMarked) {
-                attendanceCard.classList.remove('not-completed');
-                attendanceCard.classList.add('completed');
-            } else {
-                attendanceCard.classList.remove('completed');
-                attendanceCard.classList.add('not-completed');
-            }
         }
         
-        // Toggle training status
-        document.querySelectorAll('.status-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const statusElement = this.querySelector('.status');
-                
-                if (statusElement.classList.contains('not-completed')) {
-                    statusElement.classList.remove('not-completed');
-                    statusElement.classList.add('completed');
-                    statusElement.textContent = 'COMPLETED';
-                    
-                    // Update card glow
-                    this.classList.remove('not-completed');
-                    this.classList.add('completed');
-                    
-                    // Add pulse effect
-                    this.style.animation = 'pulse-green 0.5s';
-                    setTimeout(() => {
-                        this.style.animation = '';
-                    }, 500);
-                } else {
-                    statusElement.classList.remove('completed');
-                    statusElement.classList.add('not-completed');
-                    statusElement.textContent = 'NOT COMPLETED';
-                    
-                    // Update card glow
-                    this.classList.remove('completed');
-                    this.classList.add('not-completed');
-                    
-                    // Add pulse effect
-                    this.style.animation = 'pulse-red 0.5s';
-                    setTimeout(() => {
-                        this.style.animation = '';
-                    }, 500);
-                }
-            });
+        // Function to get attendance data
+        function getAttendanceData() {
+            return {
+                totalDays: totalDays,
+                attendedDays: attendedDays,
+                percentage: Math.round((attendedDays / totalDays) * 100)
+            };
+        }
+        
+        // Toggle attendance with progressive animation
+        markBtn.addEventListener('click', function() {
+            // Check if already marked today
+            const today = new Date().toDateString();
+            const lastMarked = localStorage.getItem('lastMarked');
+            
+            if (lastMarked === today) {
+                alert('Attendance already marked for today!');
+                return;
+            }
+            
+            attendedDays++;
+            attendanceMarked = true;
+            localStorage.setItem('lastMarked', today);
+            localStorage.setItem('attendedDays', attendedDays);
+            
+            // Update display
+            updateAttendanceDisplay();
+            
+            // Disable button for today
+            markBtn.disabled = true;
+            markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
+            
+            // Visual feedback
+            document.querySelector('.attendance-card').style.animation = 'pulse 0.6s, pulse-green 1.5s';
+            setTimeout(() => {
+                document.querySelector('.attendance-card').style.animation = '';
+            }, 1600);
+            
+            console.log('Attendance data:', getAttendanceData());
         });
+        
+        // Initialize from localStorage
+        function initAttendance() {
+            const savedAttended = localStorage.getItem('attendedDays');
+            const lastMarked = localStorage.getItem('lastMarked');
+            const today = new Date().toDateString();
+            
+            if (savedAttended) {
+                attendedDays = parseInt(savedAttended);
+            }
+            
+            if (lastMarked === today) {
+                attendanceMarked = true;
+                markBtn.disabled = true;
+                markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
+            }
+            
+            updateAttendanceDisplay();
+        }
         
         // Mobile menu toggle
         document.querySelector('.mobile-toggle').addEventListener('click', function() {
@@ -236,24 +242,10 @@
         });
         
         // Initialize progress bar color
-        progressBar.style.stroke = '#e74c3c';
+        progressBar.style.stroke = '#ef4444';
         
-        // Add CSS animations for pulse effect
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes pulse-green {
-                0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7); }
-                70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
-                100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
-            }
-            
-            @keyframes pulse-red {
-                0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-                70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-                100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-            }
-        `;
-        document.head.appendChild(style);
+        // Initialize attendance
+        initAttendance();
     </script>
 </body>
 </html>
