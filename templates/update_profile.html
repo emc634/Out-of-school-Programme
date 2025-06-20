@@ -168,17 +168,7 @@
                     message.style.opacity = '0';
                     setTimeout(() => message.remove(), 500);
                 }, 3000);
-            });
-        });
-
-        // Client-side password verification (optional - server-side verification is essential)
-        document.getElementById('updateForm').addEventListener('submit', function (event) {
-            const currentPassword = document.getElementById('current_password').value;
-
-            if (!currentPassword) {
-                alert('Please enter your current password to proceed with updates.');
-                event.preventDefault();
-            }
+            });W
         });
     </script>
 </body>

@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, flash, redirect, url_for,session
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
+import psycopg2
+import psycopg2.extras
 import os
+from psycopg2 import IntegrityError, OperationalError
 
 from functions import get_db_connection
 
@@ -61,10 +63,15 @@ def student_signup():
             
         password_hash = generate_password_hash(password)
         
+        conn = None
         try:
-            conn = get_db_connection("student_data.db")
-            conn.execute(
-                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            conn = get_db_connection()
+            if conn is None:
+                flash("Database connection failed. Please try again.", "error")
+                return redirect(url_for("student_signup"))
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password_hash)
             )
             conn.commit()
@@ -72,17 +79,17 @@ def student_signup():
             flash("Account created successfully", "success")
             return redirect(url_for("student_profile"))
             
-        except sqlite3.IntegrityError as e:
+        except IntegrityError as e:
             # Handle duplicate primary key (can_id) or NOT NULL violations
-            if 'UNIQUE constraint failed: students.can_id' in str(e):
+            if 'duplicate key value violates unique constraint' in str(e):
                 flash("Candidate ID already exists. Please use a different ID.", "error")
-            elif 'NOT NULL constraint failed' in str(e):
+            elif 'null value in column' in str(e):
                 flash("Some required fields are missing. Please fill all fields.", "error")
             else:
                 flash("Data integrity error: " + str(e), "error")
             return redirect(url_for('student_signup'))
 
-        except sqlite3.OperationalError as e:
+        except OperationalError as e:
             flash("Database operational error: " + str(e), "error")
             return redirect(url_for('student_signup'))
 
@@ -90,7 +97,9 @@ def student_signup():
             flash("An unexpected error occurred: " + str(e), "error")
             return redirect(url_for('student_signup'))
         finally:
-            conn.close()
+            if conn:
+                cursor.close()
+                conn.close()
     
     # Clear any old form data when rendering the template for GET requests
     form_data = session.pop('form_data', {})
@@ -130,17 +139,21 @@ def student_profile():
         
         # Database operations
         conn = None
+        cursor = None
         try:
-            conn = get_db_connection("student_data.db")
+            conn = get_db_connection()
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            student=conn.execute("SELECT * FROM students WHERE can_id = ?", (can_id,)).fetchone()
+            cursor.execute("SELECT * FROM students WHERE can_id = %s", (can_id,))
+            student = cursor.fetchone()
             if student is None:
                 flash("Candidate ID does not exist", "error")
                 return redirect(url_for('student_profile'))
-            conn.execute(
-                """UPDATE students SET aadhar=?, account_number=?, account_holder=?, ifsc=?,
-                   ojt=?, guest_lecture=?, industrial_visit=?, assessment=? WHERE can_id=?""",
-                (aadhar, account_number, account_holder, ifsc, ojt, guest_lecture, industrial_visit, assessment,can_id)
+            
+            cursor.execute(
+                """UPDATE students SET aadhar=%s, account_number=%s, account_holder=%s, ifsc=%s,
+                   ojt=%s, guest_lecture=%s, industrial_visit=%s, assessment=%s WHERE can_id=%s""",
+                (aadhar, account_number, account_holder, ifsc, ojt, guest_lecture, industrial_visit, assessment, can_id)
                 )
 
             conn.commit()
@@ -150,7 +163,7 @@ def student_profile():
             session.pop('form_data',None)
             return redirect(url_for('profile_display'))
 
-        except sqlite3.IntegrityError as e:
+        except IntegrityError as e:
             error_msg = str(e).lower()
             if "aadhar" in error_msg:
                 flash("Aadhar number already registered", "error")
@@ -162,7 +175,7 @@ def student_profile():
                 flash(f"Database integrity error: {str(e)}", "error")
             return redirect(url_for('student_profile'))
 
-        except sqlite3.OperationalError as e:
+        except OperationalError as e:
             flash(f"Database operational error: {str(e)}", "error")
             return redirect(url_for('student_profile'))
 
@@ -176,6 +189,8 @@ def student_profile():
             return redirect(url_for('student_profile'))
 
         finally:
+            if cursor:
+                cursor.close()
             if conn:
                 conn.close()
     form_data=session.get('form_data',{})
@@ -215,13 +230,16 @@ def reset_password():
             return redirect(url_for("reset_password"))
         
         conn = None
+        cursor = None
         try:
             # Connect to database and verify current password
-            conn = get_db_connection("student_data.db")
-            user = conn.execute(
-                'SELECT password FROM students WHERE can_id = ?', 
+            conn = get_db_connection()
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            cursor.execute(
+                'SELECT password FROM students WHERE can_id = %s', 
                 (can_id,)
-            ).fetchone()
+            )
+            user = cursor.fetchone()
             
             if user is None:
                 flash("User not found. Please login again.", "error")
@@ -237,8 +255,8 @@ def reset_password():
             new_password_hash = generate_password_hash(new_password)
             
             # Update password in database
-            conn.execute(
-                'UPDATE students SET password = ? WHERE can_id = ?',
+            cursor.execute(
+                'UPDATE students SET password = %s WHERE can_id = %s',
                 (new_password_hash, can_id)
             )
             conn.commit()
@@ -246,7 +264,7 @@ def reset_password():
             flash("Password updated successfully!", "success")
             return redirect(url_for('profile_display'))
             
-        except sqlite3.OperationalError as e:
+        except OperationalError as e:
             flash(f"Database operational error: {str(e)}", "error")
             return redirect(url_for('reset_password'))
             
@@ -255,6 +273,8 @@ def reset_password():
             return redirect(url_for('reset_password'))
             
         finally:
+            if cursor:
+                cursor.close()
             if conn:
                 conn.close()
     
@@ -276,13 +296,16 @@ def student_signin():
             return redirect(url_for("student_signin"))
         
         conn = None
+        cursor = None
         try:
             # Connect to database
-            conn = get_db_connection("student_data.db")
-            user = conn.execute(
-                'SELECT * FROM students WHERE can_id = ?', 
+            conn = get_db_connection()
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            cursor.execute(
+                'SELECT * FROM students WHERE can_id = %s', 
                 (can_id,)
-            ).fetchone()
+            )
+            user = cursor.fetchone()
             
             # Verify credentials
             if user is None or not check_password_hash(user['password'], password):
@@ -295,11 +318,13 @@ def student_signin():
             flash("Login successful!", "success")
             return redirect(url_for("profile_display"))
         
-        except sqlite3.Error as e:
+        except psycopg2.Error as e:
             flash("Database error. Please try again.", "error")
             return redirect(url_for("student_signin"))
         
         finally:
+            if cursor:
+                cursor.close()
             if conn:
                 conn.close()  # Ensure connection always closes
         
@@ -312,8 +337,11 @@ def profile_display():
     if not can_id:
         return redirect(url_for('student_signin'))
 
-    conn = get_db_connection('student_data.db')
-    student=conn.execute('SELECT * FROM students WHERE can_id = ?', (can_id,)).fetchone()
+    conn = get_db_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT * FROM students WHERE can_id = %s', (can_id,))
+    student = cursor.fetchone()
+    cursor.close()
     conn.close()
     return render_template("profile_display.html",student=student)
 
@@ -362,13 +390,16 @@ def update_profile():
             return redirect(url_for("update_profile"))
         
         conn = None
+        cursor = None
         try:
             # Connect to database and verify current password
-            conn = get_db_connection("student_data.db")
-            user = conn.execute(
-                'SELECT password FROM students WHERE can_id = ?', 
+            conn = get_db_connection()
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            cursor.execute(
+                'SELECT password FROM students WHERE can_id = %s', 
                 (can_id,)
-            ).fetchone()
+            )
+            user = cursor.fetchone()
             
             if user is None:
                 flash("User not found. Please login again.", "error")
@@ -382,10 +413,11 @@ def update_profile():
             
             # Check if mobile number already exists for other users (if mobile is being updated)
             if mobile:
-                existing_mobile = conn.execute(
-                    'SELECT can_id FROM students WHERE mobile = ? AND can_id != ?', 
+                cursor.execute(
+                    'SELECT can_id FROM students WHERE mobile = %s AND can_id != %s', 
                     (mobile, can_id)
-                ).fetchone()
+                )
+                existing_mobile = cursor.fetchone()
                 
                 if existing_mobile:
                     flash("Mobile number already registered with another account", "error")
@@ -396,36 +428,36 @@ def update_profile():
             update_values = []
             
             if student_name:
-                update_fields.append("student_name = ?")
+                update_fields.append("student_name = %s")
                 update_values.append(student_name)
             if father_name:
-                update_fields.append("father_name = ?")
+                update_fields.append("father_name = %s")
                 update_values.append(father_name)
             if mother_name:
-                update_fields.append("mother_name = ?")
+                update_fields.append("mother_name = %s")
                 update_values.append(mother_name)
             if dob:
-                update_fields.append("dob = ?")
+                update_fields.append("dob = %s")
                 update_values.append(dob)
             if gender:
-                update_fields.append("gender = ?")
+                update_fields.append("gender = %s")
                 update_values.append(gender)
             if religion:
-                update_fields.append("religion = ?")
+                update_fields.append("religion = %s")
                 update_values.append(religion)
             if category:
-                update_fields.append("category = ?")
+                update_fields.append("category = %s")
                 update_values.append(category)
             if mobile:
-                update_fields.append("mobile = ?")
+                update_fields.append("mobile = %s")
                 update_values.append(mobile)
             
             # Only proceed if there are fields to update
             if update_fields:
                 update_values.append(can_id)  # Add can_id for WHERE clause
                 
-                update_query = f"UPDATE students SET {', '.join(update_fields)} WHERE can_id = ?"
-                conn.execute(update_query, update_values)
+                update_query = f"UPDATE students SET {', '.join(update_fields)} WHERE can_id = %s"
+                cursor.execute(update_query, update_values)
                 conn.commit()
                 
                 # Success - clear form data from session and redirect
@@ -436,7 +468,7 @@ def update_profile():
                 flash("No changes detected. Please modify at least one field to update.", "info")
                 return redirect(url_for('update_profile'))
             
-        except sqlite3.IntegrityError as e:
+        except IntegrityError as e:
             error_msg = str(e).lower()
             if "mobile" in error_msg:
                 flash("Mobile number already registered", "error")
@@ -444,7 +476,7 @@ def update_profile():
                 flash(f"Database integrity error: {str(e)}", "error")
             return redirect(url_for('update_profile'))
             
-        except sqlite3.OperationalError as e:
+        except OperationalError as e:
             flash(f"Database operational error: {str(e)}", "error")
             return redirect(url_for('update_profile'))
             
@@ -457,6 +489,8 @@ def update_profile():
             return redirect(url_for('update_profile'))
             
         finally:
+            if cursor:
+                cursor.close()
             if conn:
                 conn.close()
     
