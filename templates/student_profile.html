@@ -259,66 +259,6 @@
                     </div>
                 </div>
 
-                <!-- Training Status Section -->
-                <div class="form-section">
-                    <h3 class="section-title">
-                        <i class="fas fa-tasks"></i>
-                        Training Status
-                    </h3>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="ojt" class="form-label">OJIT Status</label>
-                            <select id="ojt" name="ojt" class="form-control form-select" required>
-                                <option value="">SELECT</option>
-                                <option value="Completed" {% if form_data.ojt == 'Completed' %}selected{% endif %}>
-                                    COMPLETED
-                                </option>
-                                <option value="Not Completed"
-                                    {% if form_data.ojt == 'Not Completed' %}selected{% endif %}>NOT
-                                    COMPLETED</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="guestLecture" class="form-label">Guest Lecture</label>
-                            <select id="guestLecture" name="guestLecture" class="form-control form-select" required>
-                                <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.guest_lecture == 'Completed' %}selected{% endif %}>
-                                    COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.guest_lecture == 'Not Completed' %}selected{% endif %}>NOT COMPLETED
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="industrialVisit" class="form-label">Industrial Visit</label>
-                            <select id="industrialVisit" name="industrialVisit" class="form-control form-select"
-                                required>
-                                <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.industrial_visit == 'Completed' %}selected{% endif %}>
-                                    COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.industrial_visit == 'Not Completed' %}selected{% endif %}>NOT
-                                    COMPLETED
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="assessment" class="form-label">Assessment</label>
-                            <select id="assessment" name="assessment" class="form-control form-select" required>
-                                <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.assessment == 'Completed' %}selected{% endif %}>
-                                    COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.assessment == 'Not Completed' %}selected{% endif %}>
-                                    NOT COMPLETED</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Form Actions -->
                 <div class="form-actions">
                     <a href="{{ url_for('reset_password') }}" class="btn btn-link">Reset Password</a>
