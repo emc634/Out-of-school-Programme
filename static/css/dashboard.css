@@ -79,7 +79,7 @@
 }
 
 .attendance-card {
-    background: var(--white);
+    background: var(--primary-light);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     padding: var(--space-md);
@@ -154,7 +154,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--text-secondary);
+    color: var(--primary-dark);
 }
 
 .attendance-details {
@@ -168,7 +168,7 @@
 
 .attendance-stats {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     margin-bottom: 1.5rem;
 }
 
@@ -179,7 +179,7 @@
 
 .stat-item h4 {
     font-size: 0.95rem;
-    color: var(--text-secondary);
+    color: var(--primary-dark);
     margin-bottom: 0.5rem;
     font-weight: 600;
 }

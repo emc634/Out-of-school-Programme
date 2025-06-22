@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -21,7 +22,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a></li>
-                <li><a href="{{ url_for('profile_display') }}" class="nav-link ">Profile</a></li>
+                <li><a href="{{ url_for('profile_display') }}" class="nav-link">Profile</a></li>
                 <li><a href="{{ url_for('update_profile') }}" class="nav-link">Update</a></li>
             </ul>
             <div class="nav-actions">
@@ -39,9 +40,22 @@
                 <h1>Student Dashboard</h1>
                 <p>Track your training progress and attendance in real-time</p>
             </div>
-            
+
+                        <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+
             <div class="stats-grid">
-                <!-- Attendance Card (Full Width) -->
+                <!-- Attendance Card -->
                 <div class="attendance-card">
                     <div class="attendance-progress">
                         <div class="progress-container">
@@ -57,195 +71,200 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="attendance-details">
                         <div class="attendance-stats">
                             <div class="stat-item">
                                 <h4>Total Days</h4>
-                                <div class="value" id="totalDays">30</div>
+                                <div class="value" id="totalDays">{{ student.total_days if student else 0 }}</div>
                             </div>
                             <div class="stat-item">
                                 <h4>Attended</h4>
-                                <div class="value" id="attendedDays">0</div>
+                                <div class="value" id="attendedDays">{{ student.attendance if student else 0 }}</div>
                             </div>
                         </div>
-                        
+
                         <button id="markAttendanceBtn">
                             <i class="fas fa-check-circle"></i>
                             Mark Today's Attendance
                         </button>
                     </div>
                 </div>
-                
-                <!-- Status Cards (4 in a row) -->
+
+                <!-- Status Cards -->
                 <div class="status-container">
-                    <!-- OJT Status -->
                     <div class="status-card">
                         <div class="status-icon">
                             <i class="fas fa-briefcase"></i>
                         </div>
                         <h3>OJT Status</h3>
-                        <div class="status-badge not-completed">NOT COMPLETED</div>
+                        <div class="status-badge {{ 'completed' if student.ojt == 'Completed' else 'not-completed' }}">
+                            {{ student.ojt if student else 'Not Started' }}
+                        </div>
                     </div>
-                    
-                    <!-- Guest Lecture -->
                     <div class="status-card">
                         <div class="status-icon">
                             <i class="fas fa-chalkboard-teacher"></i>
                         </div>
                         <h3>Guest Lecture</h3>
-                        <div class="status-badge not-completed">NOT COMPLETED</div>
+                        <div
+                            class="status-badge {{ 'completed' if student.guest_lecture == 'Completed' else 'not-completed' }}">
+                            {{ student.guest_lecture if student else 'Not Started' }}
+                        </div>
                     </div>
-                    
-                    <!-- Industrial Visit -->
                     <div class="status-card">
                         <div class="status-icon">
                             <i class="fas fa-industry"></i>
                         </div>
                         <h3>Industrial Visit</h3>
-                        <div class="status-badge not-completed">NOT COMPLETED</div>
+                        <div
+                            class="status-badge {{ 'completed' if student.industrial_visit == 'Completed' else 'not-completed' }}">
+                            {{ student.industrial_visit if student else 'Not Started' }}
+                        </div>
                     </div>
-                    
-                    <!-- Assessment -->
                     <div class="status-card">
                         <div class="status-icon">
                             <i class="fas fa-clipboard-check"></i>
                         </div>
                         <h3>Assessment</h3>
-                        <div class="status-badge not-completed">NOT COMPLETED</div>
+                        <div
+                            class="status-badge {{ 'completed' if student.assessment == 'Completed' else 'not-completed' }}">
+                            {{ student.assessment if student else 'Not Started' }}
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="training-section">
+                    <h2>Training Progress Overview</h2>
+                    <div class="text-center">
+                        <p class="section-subtitle">Detailed progress reports and upcoming activities will be displayed
+                            here</p>
                     </div>
                 </div>
             </div>
-            
-            <!-- Additional content area -->
-            <div class="training-section">
-                <h2>Training Progress Overview</h2>
-                <div class="text-center">
-                    <p class="section-subtitle">Detailed progress reports and upcoming activities will be displayed here</p>
-                </div>
-            </div>
-        </div>
     </main>
 
     <script>
-        // Attendance tracking variables
         let attendanceMarked = false;
-        let totalDays = 30;
-        let attendedDays = 0;
+        let totalDays = parseInt(document.getElementById('totalDays').textContent) || 0;
+        let attendedDays = parseInt(document.getElementById('attendedDays').textContent) || 0;
+
         const progressBar = document.querySelector('.progress-bar');
         const percentageDisplay = document.getElementById('percentage');
         const attendedDaysElement = document.getElementById('attendedDays');
-        const totalDaysElement = document.getElementById('totalDays');
         const markBtn = document.getElementById('markAttendanceBtn');
-        
-        // Initialize with circumference value
+
         const radius = 65;
         const circumference = 2 * Math.PI * radius;
         progressBar.style.strokeDasharray = circumference;
         progressBar.style.strokeDashoffset = circumference;
 
-        // Function to update attendance display
         function updateAttendanceDisplay() {
-            const percentage = Math.round((attendedDays / totalDays) * 100);
-            const offset = circumference - (attendedDays / totalDays) * circumference;
-            
-            // Animate the progress bar
+            const percentage = totalDays > 0 ? Math.round((attendedDays / totalDays) * 100) : 0;
+            const offset = totalDays > 0 ? circumference - (attendedDays / totalDays) * circumference : circumference;
+
             progressBar.style.transition = 'stroke-dashoffset 0.8s ease-out';
             progressBar.style.strokeDashoffset = offset;
-            
-            // Update display
+
             percentageDisplay.textContent = `${percentage}%`;
             attendedDaysElement.textContent = attendedDays;
-            
-            // Set colors based on percentage
+
             if (percentage > 0) {
                 if (percentage >= 85) {
-                    progressBar.style.stroke = '#10b981'; // Green
+                    progressBar.style.stroke = '#10b981';
                     percentageDisplay.style.color = '#10b981';
                 } else if (percentage >= 70) {
-                    progressBar.style.stroke = '#f59e0b'; // Orange
+                    progressBar.style.stroke = '#f59e0b';
                     percentageDisplay.style.color = '#f59e0b';
                 } else {
-                    progressBar.style.stroke = '#ef4444'; // Red
+                    progressBar.style.stroke = '#ef4444';
                     percentageDisplay.style.color = '#ef4444';
                 }
             } else {
-                // Initial state (0%)
-                progressBar.style.stroke = '#e0e0e0'; // Light gray
-                percentageDisplay.style.color = '#777'; // Dark gray text
+                progressBar.style.stroke = '#e0e0e0';
+                percentageDisplay.style.color = '#777';
             }
         }
-        
-        // Function to get attendance data
-        function getAttendanceData() {
-            return {
-                totalDays: totalDays,
-                attendedDays: attendedDays,
-                percentage: Math.round((attendedDays / totalDays) * 100)
-            };
-        }
-        
-        // Toggle attendance with progressive animation
-        markBtn.addEventListener('click', function() {
-            // Check if already marked today
+
+        markBtn.addEventListener('click', function () {
             const today = new Date().toDateString();
-            const lastMarked = localStorage.getItem('lastMarked');
-            
+            const lastMarked = sessionStorage.getItem('lastMarked');
+
             if (lastMarked === today) {
                 alert('Attendance already marked for today!');
                 return;
             }
-            
+
             attendedDays++;
             attendanceMarked = true;
-            localStorage.setItem('lastMarked', today);
-            localStorage.setItem('attendedDays', attendedDays);
-            
-            // Update display
+            sessionStorage.setItem('lastMarked', today);
+
             updateAttendanceDisplay();
-            
-            // Disable button for today
+
             markBtn.disabled = true;
             markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
-            
-            // Visual feedback
+
             document.querySelector('.attendance-card').style.animation = 'pulse 0.6s, pulse-green 1.5s';
             setTimeout(() => {
                 document.querySelector('.attendance-card').style.animation = '';
             }, 1600);
-            
-            console.log('Attendance data:', getAttendanceData());
+
+            // Send to Flask
+            fetch('/dashboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        attendedDays: attendedDays
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Attendance updated successfully');
+                        // Page will reload automatically due to redirect
+                    } else {
+                        console.error('Failed to update attendance');
+                        // Revert changes if server update failed
+                        attendedDays--;
+                        updateAttendanceDisplay();
+                        markBtn.disabled = false;
+                        markBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark Today\'s Attendance';
+                        alert('Failed to update attendance. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending attendance:', error);
+                    // Revert changes if request failed
+                    attendedDays--;
+                    updateAttendanceDisplay();
+                    markBtn.disabled = false;
+                    markBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark Today\'s Attendance';
+                    alert('Network error. Please try again.');
+                });
         });
-        
-        // Initialize from localStorage
+
         function initAttendance() {
-            const savedAttended = localStorage.getItem('attendedDays');
-            const lastMarked = localStorage.getItem('lastMarked');
+            const lastMarked = sessionStorage.getItem('lastMarked');
             const today = new Date().toDateString();
-            
-            if (savedAttended) {
-                attendedDays = parseInt(savedAttended);
-            }
-            
+
             if (lastMarked === today) {
                 attendanceMarked = true;
                 markBtn.disabled = true;
                 markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
             }
-            
+
             updateAttendanceDisplay();
         }
-        
-        // Mobile menu toggle
-        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
             document.querySelector('.nav-links').classList.toggle('active');
         });
-        
-        // Initialize progress bar color
-        progressBar.style.stroke = '#ef4444';
-        
-        // Initialize attendance
+
+        // Initialize attendance display on page load
         initAttendance();
     </script>
 </body>
+
 </html>

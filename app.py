@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import psycopg2.extras
+import json
 import os
 from psycopg2 import IntegrityError, OperationalError
 
@@ -10,6 +11,17 @@ from functions import get_db_connection
 app = Flask(__name__)
 app.secret_key = 'bhuvnn'
 
+
+course_days={
+   "Agriculture":50,
+   "Beauty & Wellness": 70,
+   "Plumbing":70,
+   "Food Processing":50,
+   "Automotive":50,
+   "Electronics":100,
+   "Tourism & Hospitality" :66,
+   "ITeS":65
+}
 
 @app.route('/')
 def index():
@@ -71,8 +83,8 @@ def student_signup():
                 return redirect(url_for("student_signup"))
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password_hash)
+                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password,total_days) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password_hash, course_days[trade])
             )
             conn.commit()
             
@@ -117,20 +129,13 @@ def student_profile():
         account_number=request.form.get('accountNumber')
         account_holder=request.form.get("accountHolder")
         ifsc=request.form.get('ifsc')
-        ojt=request.form.get('ojt')
-        guest_lecture=request.form.get('guestLecture')
-        industrial_visit=request.form.get('industrialVisit')
-        assessment=request.form.get('assessment')
+
         
         current_data={
             'aadhar':aadhar,
             'account_number':account_number,
             'account_holder':account_holder,
-            'ifsc':ifsc,
-            'ojt':ojt,
-            'guest_lecture':guest_lecture,
-            'industrial_visit':industrial_visit,
-            'assessment':assessment
+            'ifsc':ifsc
         }
         
         merged_data={**form_data, **current_data}
@@ -151,9 +156,9 @@ def student_profile():
                 return redirect(url_for('student_profile'))
             
             cursor.execute(
-                """UPDATE students SET aadhar=%s, account_number=%s, account_holder=%s, ifsc=%s,
-                   ojt=%s, guest_lecture=%s, industrial_visit=%s, assessment=%s WHERE can_id=%s""",
-                (aadhar, account_number, account_holder, ifsc, ojt, guest_lecture, industrial_visit, assessment, can_id)
+                """UPDATE students SET aadhar=%s, account_number=%s, account_holder=%s, ifsc=%s
+                   WHERE can_id=%s""",
+                (aadhar, account_number, account_holder, ifsc, can_id)
                 )
 
             conn.commit()
@@ -364,6 +369,10 @@ def update_profile():
         religion = request.form.get("religion")
         category = request.form.get("category")
         mobile = request.form.get("mobile")
+        ojt=request.form.get('ojt')
+        guest_lecture=request.form.get('guestLecture')
+        industrial_visit=request.form.get('industrialVisit')
+        assessment=request.form.get('assessment')
 
         current_password = request.form.get("current_password")
         
@@ -376,7 +385,11 @@ def update_profile():
             'gender': gender,
             'religion': religion,
             'category': category,
-            'mobile': mobile
+            'mobile': mobile,
+            'ojt':ojt,
+            'guest_lecture':guest_lecture,
+            'industrial_visit':industrial_visit,
+            'assessment':assessment
         }
         
         # Validate required field - only current password is mandatory
@@ -451,6 +464,20 @@ def update_profile():
             if mobile:
                 update_fields.append("mobile = %s")
                 update_values.append(mobile)
+            if ojt:
+                update_fields.append("ojt = %s")
+                update_values.append(ojt)
+            if assessment:
+                update_fields.append("assessment = %s")
+                update_values.append(assessment)
+            if guest_lecture:
+                update_fields.append("guest_lecture = %s")
+                update_values.append(guest_lecture)
+            if industrial_visit:
+                update_fields.append("industrial_visit = %s")
+                update_values.append(industrial_visit)
+                
+                
             
             # Only proceed if there are fields to update
             if update_fields:
@@ -498,10 +525,147 @@ def update_profile():
     form_data = session.get('update_form_data', {})
     return render_template('update_profile.html', form_data=form_data)
 
-@app.route("/dashboard")
+@app.route("/dashboard", methods=['GET', 'POST'])
 def dashboard():
-    return render_template("dashboard.html")
-
+    can_id = session.get('can_id')
+    conn = None
+    cursor = None
+    student = None
+    
+    # Check if user is authenticated
+    if not can_id:
+        flash("Please log in to access the dashboard", "error")
+        return redirect(url_for('login'))
+    
+    if request.method == "POST":
+        try:
+            data = request.get_json()
+            
+            # Validate input data
+            if not data:
+                flash("No data provided", "error")
+                return redirect(url_for('dashboard'))
+            
+            attended_days = data.get('attendedDays')
+            
+            # Validate attendance value
+            if attended_days is None:
+                flash("Attendance data is required", "error")
+                return redirect(url_for('dashboard'))
+            
+            # Validate attendance range
+            try:
+                attended_days = int(attended_days)
+                if attended_days < 0:
+                    flash("Attendance cannot be negative", "error")
+                    return redirect(url_for('dashboard'))
+            except (ValueError, TypeError):
+                flash("Invalid attendance format", "error")
+                return redirect(url_for('dashboard'))
+            
+            # Database operations
+            try:
+                conn = get_db_connection()
+                if not conn:
+                    flash("Database connection failed", "error")
+                    return redirect(url_for('dashboard'))
+                
+                cursor = conn.cursor()
+                
+                # Check if student exists and get current attendance
+                cursor.execute('SELECT attendance FROM students WHERE can_id = %s', (can_id,))
+                result = cursor.fetchone()
+                if not result:
+                    flash("Student not found", "error")
+                    return redirect(url_for('dashboard'))
+                
+                # Update attendance
+                cursor.execute('UPDATE students SET attendance = %s WHERE can_id = %s', (attended_days, can_id))
+                
+                if cursor.rowcount == 0:
+                    flash("Failed to update attendance", "error")
+                    return redirect(url_for('dashboard'))
+                
+                conn.commit()
+                flash("Attendance updated successfully", "success")
+                return redirect(url_for('dashboard'))
+                
+            except psycopg2.Error as e:
+                if conn:
+                    conn.rollback()
+                flash(f"Database error: {str(e)}", "error")
+                return redirect(url_for('dashboard'))
+            
+            except Exception as e:
+                if conn:
+                    conn.rollback()
+                flash("An unexpected error occurred while updating attendance", "error")
+                return redirect(url_for('dashboard'))
+            
+            finally:
+                if cursor:
+                    cursor.close()
+                if conn:
+                    conn.close()
+                    
+        except json.JSONDecodeError:
+            flash("Invalid JSON format", "error")
+            return redirect(url_for('dashboard'))
+        
+        except Exception as e:
+            flash("An unexpected error occurred", "error")
+            return redirect(url_for('dashboard'))
+    
+    # GET request - Fetch student data
+    try:
+        conn = get_db_connection()
+        if not conn:
+            flash("Database connection failed", "error")
+            return render_template("dashboard.html", student=None, error="Database connection failed")
+        
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute('''
+            SELECT attendance, total_days, ojt, industrial_visit, assessment, guest_lecture 
+            FROM students 
+            WHERE can_id = %s
+        ''', (can_id,))
+        student = cursor.fetchone()
+        
+        if not student:
+            flash("Student data not found", "warning")
+            return render_template("dashboard.html", student=None, error="Student data not found")
+    
+    except psycopg2.DatabaseError as e:
+        flash(f"Database error: {str(e)}", "error")
+        return render_template("dashboard.html", student=None, error="Database error occurred")
+    
+    except psycopg2.InterfaceError as e:
+        flash("Database interface error", "error")
+        return render_template("dashboard.html", student=None, error="Database connection issue")
+    
+    except psycopg2.OperationalError as e:
+        flash("Database operational error", "error")
+        return render_template("dashboard.html", student=None, error="Database is temporarily unavailable")
+    
+    except psycopg2.Error as e:
+        flash(f"Database error: {str(e)}", "error")
+        return render_template("dashboard.html", student=None, error="Database operation failed")
+    
+    except AttributeError as e:
+        flash("Configuration error", "error")
+        return render_template("dashboard.html", student=None, error="Application configuration issue")
+    
+    except Exception as e:
+        flash("An unexpected error occurred while fetching data", "error")
+        return render_template("dashboard.html", student=None, error="Internal server error")
+    
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+    
+    return render_template("dashboard.html", student=student)
 @app.route('/admin_login')
 def admin_login():
     return render_template('admin_login.html')

@@ -83,12 +83,13 @@ def get_db_connection():
             account_number VARCHAR(20) UNIQUE,
             account_holder VARCHAR(100),
             ifsc VARCHAR(11),
-            ojt VARCHAR(50),
-            guest_lecture VARCHAR(50),
-            industrial_visit VARCHAR(50),
-            assessment VARCHAR(50),
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ojt VARCHAR(50) DEFAULT 'Not Completed',
+            guest_lecture VARCHAR(50) DEFAULT 'Not Completed',
+            industrial_visit VARCHAR(50) DEFAULT 'Not Completed',
+            assessment VARCHAR(50) DEFAULT 'Not Completed',
+            total_days INT DEFAULT 0,
+            attendance INT DEFAULT 0
+            
         );
         """
         
