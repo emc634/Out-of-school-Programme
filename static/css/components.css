@@ -336,7 +336,6 @@
         display: block;
         padding: 1rem;
         border-radius: 0;
-        border-bottom: 1px solid var(--border);
     }
 
     .nav-actions {
