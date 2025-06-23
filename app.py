@@ -321,7 +321,7 @@ def student_signin():
             session['can_id'] = can_id  # Store CAN ID in session
             
             flash("Login successful!", "success")
-            return redirect(url_for("profile_display"))
+            return redirect(url_for("dashboard"))
         
         except psycopg2.Error as e:
             flash("Database error. Please try again.", "error")

@@ -212,7 +212,6 @@
 }
 
 #markAttendanceBtn:disabled {
-    background: var(--primary-100);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
