@@ -61,7 +61,7 @@ def student_signup():
             'dob':dob,
             'district':district,
             'trade':trade,
-            'center':center,
+            'center':center
         }
         
         if not all([student_name, father_name, mother_name, gender, mobile,
