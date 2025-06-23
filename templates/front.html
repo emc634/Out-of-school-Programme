@@ -86,7 +86,8 @@
                 counters.forEach(counter => {
                     const target = +counter.innerText.replace(/\D/g, '');
                     const count = +counter.innerText.replace(/\D/g, '');
-                    const suffix = counter.innerText.match(/\D+$/) ? . [0] || '';
+                    const suffix = counter.innerText.match(/\D+$/)?.[0] || '';
+
 
                     if (count < target) {
                         counter.innerText = Math.ceil(count + target / speed) + suffix;
