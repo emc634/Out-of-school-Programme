@@ -183,6 +183,7 @@
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     transition: var(--transition);
+    outline: none;
 }
 
 .nav-link:hover {
@@ -335,7 +336,6 @@
     .nav-link {
         display: block;
         padding: 1rem;
-        border-radius: 0;
     }
 
     .nav-actions {
