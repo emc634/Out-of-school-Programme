@@ -17,7 +17,13 @@
 <body>
     <main class="main-content">
         <div class="container">
+
             <div class="form-header">
+                <div class="logo-container">
+                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
+                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
+                    <img src="{{ url_for('static', filename='Images/logo3.png') }}" class="logo-img" alt="Right Logo">
+                </div>
                 <h2 class="form-title">Create Student Account</h2>
                 <p class="section-subtitle">Join our learning community today</p>
             </div>
@@ -43,24 +49,21 @@
                     <div class="form-group">
                         <label for="studentName" class="form-label">Student Name</label>
                         <input type="text" id="studentName" name="studentName" class="form-control"
-                            placeholder="Enter student name" required
-                            value="{{ form_data.student_name}}">
+                            placeholder="Enter student name" required value="{{ form_data.student_name}}">
                     </div>
 
                     <!-- Father's Name -->
                     <div class="form-group">
                         <label for="fatherName" class="form-label">Father's Name</label>
                         <input type="text" id="fatherName" name="fatherName" class="form-control"
-                            placeholder="Enter father's name" required
-                            value="{{ form_data.father_name}}">
+                            placeholder="Enter father's name" required value="{{ form_data.father_name}}">
                     </div>
 
                     <!-- Mother's Name -->
                     <div class="form-group">
                         <label for="motherName" class="form-label">Mother's Name</label>
                         <input type="text" id="motherName" name="motherName" class="form-control"
-                            placeholder="Enter mother's name" required
-                            value="{{ form_data.mother_name}}">
+                            placeholder="Enter mother's name" required value="{{ form_data.mother_name}}">
                     </div>
 
                     <!-- Gender Dropdown -->
@@ -128,8 +131,7 @@
                     <!-- Date of Birth -->
                     <div class="form-group">
                         <label for="dob" class="form-label">Date of Birth</label>
-                        <input type="date" id="dob" name="dob" class="form-control" required
-                            value="{{ form_data.dob}}">
+                        <input type="date" id="dob" name="dob" class="form-control" required value="{{ form_data.dob}}">
                     </div>
 
                     <!--District Name Dropdown -->
@@ -317,13 +319,13 @@
         }
 
         // Initialize the form when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Add event listener for district change
             document.getElementById('district').addEventListener('change', updateCenters);
-            
+
             // Initialize centers based on current district selection
             updateCenters();
-            
+
             // If there's a form error and district was selected, make sure centers are properly populated
             const districtValue = "{{ form_data.district if form_data.district else '' }}";
             if (districtValue) {
@@ -332,4 +334,5 @@
         });
     </script>
 </body>
+
 </html>
