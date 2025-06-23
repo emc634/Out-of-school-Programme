@@ -1,4 +1,3 @@
-
 .hero {
     min-height: 100vh;
     display: flex;
@@ -101,29 +100,20 @@
 }
 
 
-        /* Logo Navigation Bar */
-        .logo-nav {
-            background-color: #f8f9fa;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e1e1e1;
-            height: 60px; /* Thin navigation bar */
-        }
-        
-        .left-logo {
-            height: 40px; /* Adjust based on your logo size */
-        }
-        
-        .right-logos {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .right-logo {
-            height: 30px; /* Slightly smaller than left logo */
-        }
+/* Logo Navigation Bar */
+.logo-container {
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+}
+
+.logo-img
+{
+    width: 20%;
+
+}
 
 
 /* Button Group */

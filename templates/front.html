@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,21 +12,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/front.css') }}">
 
 </head>
-<body>
 
-    <!-- Logo Navigation Bar -->
-    <nav class="logo-nav">
-        <!-- Left Logo -->
-        <div class="left-logo-container">
-            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Left Logo" class="left-logo">
-        </div>
-        
-        <!-- Right Logos -->
-        <div class="right-logos">
-            <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Right Logo 1" class="right-logo">
-            <img src="{{ url_for('static', filename='images/logo3.png') }}" alt="Right Logo 2" class="right-logo">
-        </div>
-    </nav>
+<body>
 
     <!-- Modern Hero Section -->
     <section class="hero">
@@ -33,29 +21,36 @@
             <div class="hero-grid">
                 <!-- Left Content -->
                 <div class="hero-left">
+                    <div class="logo-container">
+                        <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
+                        <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
+                        <img src="{{ url_for('static', filename='Images/logo3.png') }}" class="logo-img" alt="Right Logo">
+                    </div>
                     <h1 class="welcome-heading">Out of School Programme</h1>
                     <p class="hero-tagline">From Streets to Schools – Building Brighter Futures</p>
-                    <p class="hero-description">We provide education opportunities for vulnerable children through innovative programs and community partnerships. Join us in creating lasting change for those who need it most.</p>
-                    
+                    <p class="hero-description">We provide education opportunities for vulnerable children through
+                        innovative programs and community partnerships. Join us in creating lasting change for those who
+                        need it most.</p>
+
                     <div class="button-group">
                         <a href="{{ url_for('student_signup') }}" class="btn btn-primary btn-hero">
                             <i class="fas fa-user-graduate"></i>
                             Student Portal
                         </a>
-                        
+
                         <a href="{{ url_for('admin_login') }}" class="btn btn-secondary btn-hero">
                             <i class="fas fa-lock"></i>
                             Admin Login
                         </a>
                     </div>
                 </div>
-                
+
                 <!-- Right Content -->
                 <div class="hero-right">
                     <div class="impact-statement">
                         Every child deserves quality education regardless of their circumstances
                     </div>
-                    
+
                     <div class="image-frames">
                         <div class="frame">
                             <div class="frame-image">
@@ -67,10 +62,10 @@
             </div>
         </div>
     </section>
-    
+
     <script>
         // Simple animation for elements
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Fade-in animation for hero elements
             const heroElements = document.querySelectorAll('.hero-left > *, .hero-right > *');
             heroElements.forEach((el, index) => {
@@ -82,36 +77,39 @@
                     el.style.transform = 'translateY(0)';
                 }, 150 * index);
             });
-            
+
             // Stats counter animation
             const counters = document.querySelectorAll('.stat-value');
             const speed = 200;
-            
+
             function animateStats() {
                 counters.forEach(counter => {
                     const target = +counter.innerText.replace(/\D/g, '');
                     const count = +counter.innerText.replace(/\D/g, '');
-                    const suffix = counter.innerText.match(/\D+$/)?.[0] || '';
-                    
+                    const suffix = counter.innerText.match(/\D+$/) ? . [0] || '';
+
                     if (count < target) {
-                        counter.innerText = Math.ceil(count + target/speed) + suffix;
+                        counter.innerText = Math.ceil(count + target / speed) + suffix;
                         setTimeout(animateStats, 1);
                     } else {
                         counter.innerText = target + suffix;
                     }
                 });
             }
-            
+
             // Only animate when stats section is in view
             const observer = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting) {
                     animateStats();
                     observer.disconnect();
                 }
-            }, {threshold: 0.5});
-            
+            }, {
+                threshold: 0.5
+            });
+
             observer.observe(document.querySelector('.stats-section'));
         });
     </script>
 </body>
+
 </html>
