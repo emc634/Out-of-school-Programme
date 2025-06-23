@@ -55,84 +55,11 @@
 .btn-secondary {
     /* Different gradient using secondary color */
     background: linear-gradient(135deg, var(--secondary) 0%, #c0392b 100%);
-    color: var(--white);
+    color: var(--primary-dark);
 }
 
-/* Outline button - transparent with colored border */
-.btn-outline {
-    background: transparent;
-    border: 2px solid var(--primary); /* Border matches primary color */
-    color: var(--primary); /* Text matches primary color */
-}
 
-/* Light outline variant for dark backgrounds */
-.btn-outline-light {
-    background: transparent;
-    border: 2px solid var(--white); /* White border */
-    color: var(--white); /* White text */
-}
 
-/* Primary outline variant */
-.btn-outline-primary {
-    background: transparent;
-    border: 2px solid var(--primary);
-    color: var(--primary);
-}
-
-/* Hover states for outline buttons */
-.btn-outline:hover {
-    background: var(--primary); /* Fill with primary color */
-    color: var(--white); /* White text on hover */
-}
-
-.btn-outline-light:hover {
-    background: var(--white); /* Fill with white */
-    color: var(--primary-dark); /* Dark text on hover */
-}
-
-.btn-outline-primary:hover {
-    background: var(--primary); /* Fill with primary */
-    color: var(--white); /* White text */
-}
-
-/* Large button variant */
-.btn-lg {
-    padding: 1rem 2rem; /* More padding */
-    font-size: 1.2rem; /* Larger text */
-}
-
-/* Small button variant */
-.btn-sm {
-    padding: 0.5rem 1rem; /* Less padding */
-    font-size: 0.9rem; /* Smaller text */
-}
-
-/* Circular icon button */
-.btn-icon {
-    width: 40px; /* Fixed dimensions */
-    height: 40px;
-    border-radius: 50%; /* Perfect circle */
-    padding: 0; /* No padding needed */
-    /* Center icon */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Text link styled as a button */
-.btn-link {
-    background: transparent; /* No background */
-    color: var(--primary); /* Primary color text */
-    box-shadow: none; /* No shadow */
-    padding: 0; /* No padding */
-    font-weight: 600;
-}
-
-.btn-link:hover {
-    transform: none; /* No transform */
-    box-shadow: none; /* No shadow change */
-    color: var(--primary-dark); /* Darker color on hover */
-}
 
 /* ======================
    NAVIGATION COMPONENTS 
