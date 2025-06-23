@@ -188,8 +188,8 @@
 .form-control {
     width: 100%;
     padding: var(--space-sm);
-    border: 2px solid var(--border);
-    border-radius: var(--radius); /* Updated to base variable */
+    border: 2px solid var(--border-blue);
+    border-radius: var(--border-radius-md); /* Updated to base variable */
     font-size: 1rem;
     transition: var(--transition);
     color: var(--text);
