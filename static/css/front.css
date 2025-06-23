@@ -79,11 +79,6 @@
     text-align: center;
 }
 
-.image-frames {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-}
 
 .frame {
     background: var(--white);
@@ -99,26 +94,14 @@
 }
 
 .frame-image {
-    width: 100%;
-    height: 190px;
+    width: 85%;
     background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-50) 100%);
-    display: flex;
     align-items: center;
     justify-content: center;
     color: var(--primary);
     font-size: 3rem;
 }
 
-.frame-content {
-    padding: var(--space-xs);
-    text-align: center;
-}
-
-.frame-text {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--gray-800);
-}
 
         /* Logo Navigation Bar */
         .logo-nav {

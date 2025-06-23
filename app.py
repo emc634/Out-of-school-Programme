@@ -3,7 +3,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import psycopg2.extras
 import json
-import os
 from psycopg2 import IntegrityError, OperationalError
 
 from functions import get_db_connection
@@ -61,7 +60,7 @@ def student_signup():
             'dob':dob,
             'district':district,
             'trade':trade,
-            'center':center,
+            'center':center
         }
         
         if not all([student_name, father_name, mother_name, gender, mobile,
