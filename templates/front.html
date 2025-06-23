@@ -12,6 +12,21 @@
 
 </head>
 <body>
+
+    <!-- Logo Navigation Bar -->
+    <nav class="logo-nav">
+        <!-- Left Logo -->
+        <div class="left-logo-container">
+            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Left Logo" class="left-logo">
+        </div>
+        
+        <!-- Right Logos -->
+        <div class="right-logos">
+            <img src="{{ url_for('static', filename='images/logo2.png') }}" alt="Right Logo 1" class="right-logo">
+            <img src="{{ url_for('static', filename='images/logo3.png') }}" alt="Right Logo 2" class="right-logo">
+        </div>
+    </nav>
+
     <!-- Modern Hero Section -->
     <section class="hero">
         <div class="hero-container">
