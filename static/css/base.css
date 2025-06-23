@@ -171,9 +171,6 @@ a::after {
     transition: var(--transition);
 }
 
-a:hover {
-    color: var(--primary-dark);
-}
 
 a:hover::after {
     width: 100%;
