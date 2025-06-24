@@ -2,6 +2,7 @@ import psycopg2
 import psycopg2.extras
 import os
 from urllib.parse import urlparse
+from datetime import date,datetime
 
 def get_db_connection():
     """
@@ -79,10 +80,11 @@ def get_db_connection():
             trade VARCHAR(100) NOT NULL,
             gender VARCHAR(10) NOT NULL,
             password TEXT NOT NULL,
-            aadhar VARCHAR(12) UNIQUE,
-            account_number VARCHAR(20) UNIQUE,
-            account_holder VARCHAR(100),
-            ifsc VARCHAR(11),
+            aadhar VARCHAR(12) UNIQUE NOT NULL,
+            account_number VARCHAR(20) UNIQUE NOT NULL,
+            account_holder VARCHAR(100) NOT NULL,
+            ifsc VARCHAR(11) NOT NULL,
+            counselling VARCHAR(50) DEFAULT 'Not Completed',
             ojt VARCHAR(50) DEFAULT 'Not Completed',
             guest_lecture VARCHAR(50) DEFAULT 'Not Completed',
             industrial_visit VARCHAR(50) DEFAULT 'Not Completed',
@@ -140,3 +142,14 @@ def get_db_connection():
     finally:
         if cursor:
             cursor.close()
+
+
+
+#Function to calculate the age 
+def age_calculator(date_of_birth):
+    dob=datetime.strptime(date_of_birth,'%Y-%m-%d').date()
+    today=date.today()
+    age=today.year-dob.year- ((today.month, today.day) < (dob.month, dob.day))
+    return age
+
+    

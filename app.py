@@ -5,7 +5,7 @@ import psycopg2.extras
 import json
 from psycopg2 import IntegrityError, OperationalError
 
-from functions import get_db_connection
+from functions import get_db_connection,age_calculator
 
 app = Flask(__name__)
 app.secret_key = 'bhuvnn'
@@ -71,7 +71,16 @@ def student_signup():
         if password != confirmation:
             flash("Password didn't match, Please Try again", "error")
             return redirect(url_for("student_signup"))
-            
+        
+        age=age_calculator(dob)
+        if age<14:
+            flash("Candidate must be atleast 14 to sign up", "error")
+            return redirect(url_for("student_signup"))
+        
+        if age>18:
+            flash("Candidate must be below 18 to sign up", "error")
+            return redirect(url_for("student_signup"))
+             
         password_hash = generate_password_hash(password)
         
         conn = None

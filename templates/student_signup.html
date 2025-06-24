@@ -22,7 +22,6 @@
                 <div class="logo-container">
                     <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
                     <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
-                    <img src="{{ url_for('static', filename='Images/logo3.png') }}" class="logo-img" alt="Right Logo">
                 </div>
                 <h2 class="form-title">Create Student Account</h2>
                 <p class="section-subtitle">Join our learning community today</p>
@@ -163,7 +162,7 @@
 
                     <!-- Sub-Center Selection -->
                     <div class="form-group">
-                        <label for="center" class="form-label">Center</label>
+                        <label for="center" class="form-label">Center/Block</label>
                         <select id="center" name="center" class="form-control form-select" required>
                             <option value="">Select Center</option>
                             <!-- Options will be populated by JavaScript -->
@@ -271,19 +270,19 @@
 
         // Center data for each district
         const centerData = {
-            "Bilaspur": ["JHANDUTTA", "SADAR", "SHRI NAINA DEVI JI"],
-            "Chamba": ["BANIKHET", "CHAMBA", "CHOWARI", "GAROLA", "GEHRA", "HARDASPURA", "KALHEL", "KIANI", "MEHLA",
-                "SALOONI", "SIHUNTA", "SUNDLA", "TISSA"
+            "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
+            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla",
+                "Salooni", "Sihunta", "Sundla", "Tissa"
             ],
-            "Hamirpur": ["HAMIRPUR"],
-            "Kangra": ["BAIJNATH", "NURPUR", "PANCHRUKHI", "RAIT"],
-            "Kullu": ["ANNI", "BANJAR", "KULLU-1", "KULLU-2", "NAGGAR", "NIRMAND"],
-            "Mandi": ["SADAR-2", "SERAJ-2"],
-            "Sirmour": ["BAKRAS", "DADAHU", "NARAG", "PAONTA SAHIB", "RAJGARH", "SATAUN", "SHILLAI", "SURLA",
-                "MAJRA"
+            "Hamirpur": ["Hamirpur"],
+            "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
+            "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
+            "Mandi": ["Sadar-2", "Seraj-2"],
+            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla",
+                "Majra"
             ],
-            "Solan": ["ARKI", "DHARAMPUR", "DHUNDAN", "KANDAGHAT", "NALAGARH", "RAMSHEHAR"],
-            "Una": ["AMB", "GAGRET-1", "HAROLI", "JOL", "UNA"]
+            "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
+            "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
 
         // Function to update centers based on selected district
