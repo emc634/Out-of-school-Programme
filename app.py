@@ -377,6 +377,7 @@ def update_profile():
         religion = request.form.get("religion")
         category = request.form.get("category")
         mobile = request.form.get("mobile")
+        counselling=request.form.get("counselling")
         ojt=request.form.get('ojt')
         guest_lecture=request.form.get('guestLecture')
         industrial_visit=request.form.get('industrialVisit')
@@ -397,7 +398,8 @@ def update_profile():
             'ojt':ojt,
             'guest_lecture':guest_lecture,
             'industrial_visit':industrial_visit,
-            'assessment':assessment
+            'assessment':assessment,
+            'counselling':counselling
         }
         
         # Validate required field - only current password is mandatory
@@ -472,6 +474,10 @@ def update_profile():
             if mobile:
                 update_fields.append("mobile = %s")
                 update_values.append(mobile)
+            
+            if counselling:
+                update_fields.append("counselling = %s")
+                update_values.append(counselling)
             if ojt:
                 update_fields.append("ojt = %s")
                 update_values.append(ojt)
@@ -633,7 +639,7 @@ def dashboard():
         
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
-            SELECT attendance, total_days, ojt, industrial_visit, assessment, guest_lecture 
+            SELECT attendance,counselling, total_days, ojt, industrial_visit, assessment, guest_lecture 
             FROM students 
             WHERE can_id = %s
         ''', (can_id,))
