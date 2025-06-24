@@ -134,6 +134,32 @@
                     </h3>
                     <div class="form-grid">
                         <div class="form-group">
+                            <div class="form-group">
+                                <label for="counselling" class="form-label">Counselling</label>
+                                <select id="counselling" name="counselling" class="form-control form-select">
+                                    <option value="">SELECT</option>
+                                    <option value="Completed"
+                                        {% if form_data.counselling == 'Completed' %}selected{% endif %}>
+                                        COMPLETED</option>
+                                    <option value="Not Completed"
+                                        {% if form_data.counselling == 'Not Completed' %}selected{% endif %}>NOT
+                                        COMPLETED
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="guestLecture" class="form-label">Guest Lecture</label>
+                                <select id="guestLecture" name="guestLecture" class="form-control form-select">
+                                    <option value="">SELECT</option>
+                                    <option value="Completed"
+                                        {% if form_data.guest_lecture == 'Completed' %}selected{% endif %}>
+                                        COMPLETED</option>
+                                    <option value="Not Completed"
+                                        {% if form_data.guest_lecture == 'Not Completed' %}selected{% endif %}>NOT
+                                        COMPLETED
+                                    </option>
+                                </select>
+                            </div>
                             <label for="ojt" class="form-label">OJIT Status</label>
                             <select id="ojt" name="ojt" class="form-control form-select">
                                 <option value="">SELECT</option>
@@ -146,21 +172,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="guestLecture" class="form-label">Guest Lecture</label>
-                            <select id="guestLecture" name="guestLecture" class="form-control form-select">
-                                <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.guest_lecture == 'Completed' %}selected{% endif %}>
-                                    COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.guest_lecture == 'Not Completed' %}selected{% endif %}>NOT COMPLETED
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label for="industrialVisit" class="form-label">Industrial Visit</label>
-                            <select id="industrialVisit" name="industrialVisit" class="form-control form-select"
-                                >
+                            <select id="industrialVisit" name="industrialVisit" class="form-control form-select">
                                 <option value="">SELECT</option>
                                 <option value="Completed"
                                     {% if form_data.industrial_visit == 'Completed' %}selected{% endif %}>

@@ -95,11 +95,11 @@
                 <div class="status-container">
                     <div class="status-card">
                         <div class="status-icon">
-                            <i class="fas fa-briefcase"></i>
+                            <i class="fas fa-user-tie"></i>
                         </div>
-                        <h3>OJT Status</h3>
+                        <h3>Counselling</h3>
                         <div class="status-badge {{ 'completed' if student.ojt == 'Completed' else 'not-completed' }}">
-                            {{ student.ojt if student else 'Not Started' }}
+                            {{ student.counselling if student else 'Not Completed' }}
                         </div>
                     </div>
                     <div class="status-card">
@@ -109,9 +109,19 @@
                         <h3>Guest Lecture</h3>
                         <div
                             class="status-badge {{ 'completed' if student.guest_lecture == 'Completed' else 'not-completed' }}">
-                            {{ student.guest_lecture if student else 'Not Started' }}
+                            {{ student.guest_lecture if student else 'Not Completed' }}
                         </div>
                     </div>
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>OJT Status</h3>
+                        <div class="status-badge {{ 'completed' if student.ojt == 'Completed' else 'not-completed' }}">
+                            {{ student.ojt if student else 'Complete' }}
+                        </div>
+                    </div>
+                    
                     <div class="status-card">
                         <div class="status-icon">
                             <i class="fas fa-industry"></i>
@@ -119,7 +129,7 @@
                         <h3>Industrial Visit</h3>
                         <div
                             class="status-badge {{ 'completed' if student.industrial_visit == 'Completed' else 'not-completed' }}">
-                            {{ student.industrial_visit if student else 'Not Started' }}
+                            {{ student.industrial_visit if student else 'Not Completed' }}
                         </div>
                     </div>
                     <div class="status-card">
@@ -129,14 +139,14 @@
                         <h3>Assessment</h3>
                         <div
                             class="status-badge {{ 'completed' if student.assessment == 'Completed' else 'not-completed' }}">
-                            {{ student.assessment if student else 'Not Started' }}
+                            {{ student.assessment if student else 'Not Completed' }}
                         </div>
                     </div>
                 </div>
 
 
                 <div class="training-section">
-                    <h2>Training Progress Overview</h2>
+                    <h2>Download your Syllabus/study Material</h2>
                     <div class="text-center">
                         <p class="section-subtitle">Detailed progress reports and upcoming activities will be displayed
                             here</p>
