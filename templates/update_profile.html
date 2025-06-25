@@ -7,10 +7,6 @@
     <title>Update Student Profile</title>
     <!-- Base Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <!-- Layout Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <!-- Component Styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -134,7 +130,6 @@
                     </h3>
                     <div class="form-grid">
                         <div class="form-group">
-                            <div class="form-group">
                                 <label for="counselling" class="form-label">Counselling</label>
                                 <select id="counselling" name="counselling" class="form-control form-select">
                                     <option value="">SELECT</option>
@@ -146,8 +141,8 @@
                                         COMPLETED
                                     </option>
                                 </select>
-                            </div>
-                            <div class="form-group">
+                        </div>
+                        <div class="form-group">
                                 <label for="guestLecture" class="form-label">Guest Lecture</label>
                                 <select id="guestLecture" name="guestLecture" class="form-control form-select">
                                     <option value="">SELECT</option>
@@ -159,7 +154,8 @@
                                         COMPLETED
                                     </option>
                                 </select>
-                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="ojt" class="form-label">OJIT Status</label>
                             <select id="ojt" name="ojt" class="form-control form-select">
                                 <option value="">SELECT</option>
