@@ -22,12 +22,7 @@
                 <h2 class="form-title">Student Sign In</h2>
                 <p class="section-subtitle">Enter your credentials to access your account</p>
             </div>
-
-
-
-            <form action="/student_signin" method="POST" class="form-container">
-                <!-- Flash Messages -->
-                <div class="flash-messages">
+            <div class="flash-messages">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                     {% for category, message in messages %}
@@ -38,6 +33,10 @@
                     {% endif %}
                     {% endwith %}
                 </div>
+
+
+
+            <form action="/student_signin" method="POST" class="form-container">
                 <div class="form-grid">
                     <!-- CAN ID Field -->
                     <div class="form-group">
