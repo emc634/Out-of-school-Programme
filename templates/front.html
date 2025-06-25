@@ -7,15 +7,12 @@
     <title>From Streets to School - Building Brighter Futures</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/front.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-    <!-- Logo Navigation -->
-    <div class="logo-container">
-        <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Organization Logo">
-        <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="Government Logo">
-    </div>
 
     <!-- Decorative background elements -->
     <div class="circle circle-1 decoration"></div>
@@ -28,44 +25,54 @@
             <div class="hero-content">
                 <!-- Left Column: Program Info and Login Options -->
                 <div class="program-info">
-                    <h1 class="welcome-heading">FROM STREETS TO SCHOOL</h1>
+                    <div class="logo-contaisner">
+                        <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img"
+                            alt="Organization Logo">
+                        <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img"
+                            alt="Government Logo">
+                    </div>
+                    <h1 class="welcome-heading">OUT OF SCHOOL PROGRAMME</h1>
                     <p class="tagline">Building <span>Brighter Futures</span> Through Education</p>
-                    <p class="hero-subtitle">Empowering out-of-school children with quality education and opportunities to transform their lives and communities. Join us in bridging the educational gap and creating a brighter tomorrow for every child.</p>
+                    <p class="hero-subtitle">Empowering out-of-school children with quality education and opportunities
+                        to transform their lives and communities. Join us in bridging the educational gap and creating a
+                        brighter tomorrow for every child.</p>
 
                     <div class="button-group">
                         <a href="{{ url_for('student_signup') }}" class="btn-hero btn-primary">
                             <i class="fas fa-user-graduate"></i>
                             Student Portal
                         </a>
-                        
+
                         <a href="{{ url_for('admin_login') }}" class="btn-hero btn-secondary">
                             <i class="fas fa-lock"></i>
                             Admin Portal
                         </a>
                     </div>
                 </div>
-                
+
                 <!-- Right Column: Visionaries Section -->
                 <div class="visionaries-section">
                     <h2 class="section-title">Our Visionaries</h2>
                     <p class="section-subtitle">The leaders behind our mission to bring education to every child</p>
-                    
+
                     <div class="visionaries-container">
                         <!-- Visionary 1: Chief Minister -->
                         <div class="visionary-card">
                             <div class="visionary-img-container">
-                                <img src="{{ url_for('static', filename='Images/cm.jpg') }}" alt="Honorable Chief Minister" class="visionary-img">
+                                <img src="{{ url_for('static', filename='Images/cm.jpg') }}"
+                                    alt="Honorable Chief Minister" class="visionary-img">
                             </div>
                             <div class="visionary-info">
                                 <h3 class="visionary-name">Mr. Sukhvinder Singh Sukhu</h3>
                                 <p class="visionary-title">Chief Minister</p>
                             </div>
                         </div>
-                        
+
                         <!-- Visionary 2: Education Minister -->
                         <div class="visionary-card">
                             <div class="visionary-img-container">
-                                <img src="{{ url_for('static', filename='Images/edu_minister.png') }}" alt="Honorable Education Minister" class="visionary-img">
+                                <img src="{{ url_for('static', filename='Images/edu_minister.png') }}"
+                                    alt="Honorable Education Minister" class="visionary-img">
                             </div>
                             <div class="visionary-info">
                                 <h3 class="visionary-name">Mr. Rohit Thakur</h3>
@@ -80,10 +87,10 @@
 
     <script>
         // Enhanced animations on scroll
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Intersection Observer for scroll animations
             const elements = document.querySelectorAll('.program-info, .visionary-card, .visionaries-section');
-            
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -95,18 +102,18 @@
                 threshold: 0.1,
                 rootMargin: '0px 0px -100px 0px'
             });
-            
+
             elements.forEach(el => {
                 el.style.opacity = 0;
                 el.style.transform = 'translateY(30px)';
                 el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
                 observer.observe(el);
             });
-            
+
             // Enhanced button hover effects
             const buttons = document.querySelectorAll('.btn-hero');
             buttons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
+                button.addEventListener('mouseenter', function () {
                     this.style.transform = 'translateY(-5px)';
                     if (this.classList.contains('btn-primary')) {
                         this.style.boxShadow = '0 15px 30px rgba(37, 99, 235, 0.4)';
@@ -114,8 +121,8 @@
                         this.style.boxShadow = '0 15px 30px rgba(37, 99, 235, 0.2)';
                     }
                 });
-                
-                button.addEventListener('mouseleave', function() {
+
+                button.addEventListener('mouseleave', function () {
                     this.style.transform = 'translateY(0)';
                     if (this.classList.contains('btn-primary')) {
                         this.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.3)';
@@ -131,7 +138,7 @@
                 if (img.complete) {
                     img.classList.add('loaded');
                 } else {
-                    img.addEventListener('load', function() {
+                    img.addEventListener('load', function () {
                         this.classList.add('loaded');
                     });
                     // Fallback in case image fails to load
@@ -145,17 +152,17 @@
 
             // Add ripple effect to buttons
             buttons.forEach(button => {
-                button.addEventListener('click', function(e) {
+                button.addEventListener('click', function (e) {
                     const x = e.clientX - e.target.getBoundingClientRect().left;
                     const y = e.clientY - e.target.getBoundingClientRect().top;
-                    
+
                     const ripple = document.createElement('span');
                     ripple.className = 'ripple';
                     ripple.style.left = `${x}px`;
                     ripple.style.top = `${y}px`;
-                    
+
                     this.appendChild(ripple);
-                    
+
                     setTimeout(() => {
                         ripple.remove();
                     }, 1000);
@@ -164,4 +171,5 @@
         });
     </script>
 </body>
+
 </html>
