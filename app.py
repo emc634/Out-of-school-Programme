@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import psycopg2.extras
+from datetime import datetime
 import json
 from psycopg2 import IntegrityError, OperationalError
 
@@ -103,8 +104,6 @@ def student_signup():
             # Handle duplicate primary key (can_id) or NOT NULL violations
             if 'duplicate key value violates unique constraint' in str(e):
                 flash("Candidate ID already exists. Please use a different ID.", "error")
-            elif 'null value in column' in str(e):
-                flash("Some required fields are missing. Please fill all fields.", "error")
             else:
                 flash("Data integrity error: " + str(e), "error")
             return redirect(url_for('student_signup'))
@@ -344,6 +343,8 @@ def student_signin():
     login_data=session.pop('can_id',{})
     return render_template("student_signin.html",login_data=login_data) 
 
+
+#displaying profile
 @app.route("/profile_display")
 def profile_display():
     can_id = session.get('can_id')
@@ -377,11 +378,14 @@ def update_profile():
         religion = request.form.get("religion")
         category = request.form.get("category")
         mobile = request.form.get("mobile")
-        counselling=request.form.get("counselling")
+        single_counselling=request.form.get("single_counselling")
+        group_counselling=request.form.get("group_counselling")
         ojt=request.form.get('ojt')
         guest_lecture=request.form.get('guestLecture')
         industrial_visit=request.form.get('industrialVisit')
         assessment=request.form.get('assessment')
+        school_name=request.form.get('schoolName').upper()
+
 
         current_password = request.form.get("current_password")
         
@@ -399,7 +403,9 @@ def update_profile():
             'guest_lecture':guest_lecture,
             'industrial_visit':industrial_visit,
             'assessment':assessment,
-            'counselling':counselling
+            'group_counselling':group_counselling,
+            'single_counselling':single_counselling,
+            'school_enrollment':school_name
         }
         
         # Validate required field - only current password is mandatory
@@ -474,22 +480,29 @@ def update_profile():
             if mobile:
                 update_fields.append("mobile = %s")
                 update_values.append(mobile)
-            
-            if counselling:
-                update_fields.append("counselling = %s")
-                update_values.append(counselling)
+            if single_counselling:
+                update_fields.append("single_counselling = %s")
+                update_values.append(single_counselling)
+            if group_counselling:
+                update_fields.append("group_counselling = %s")
+                update_values.append(group_counselling)
             if ojt:
                 update_fields.append("ojt = %s")
                 update_values.append(ojt)
             if assessment:
                 update_fields.append("assessment = %s")
+                update_fields.append("assessment_date=%s")
                 update_values.append(assessment)
+                update_values.append(datetime.today().date())
             if guest_lecture:
                 update_fields.append("guest_lecture = %s")
                 update_values.append(guest_lecture)
             if industrial_visit:
                 update_fields.append("industrial_visit = %s")
                 update_values.append(industrial_visit)
+            if school_name:
+                update_fields.append("school_enrollment = %s")
+                update_values.append(school_name)
                 
                 
             
@@ -639,7 +652,7 @@ def dashboard():
         
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
-            SELECT attendance,counselling, total_days, ojt, industrial_visit, assessment, guest_lecture 
+            SELECT attendance, single_counselling, group_counselling,total_days, ojt, industrial_visit, assessment, guest_lecture,school_enrollment
             FROM students 
             WHERE can_id = %s
         ''', (can_id,))
@@ -680,8 +693,46 @@ def dashboard():
             conn.close()
     
     return render_template("dashboard.html", student=student)
-@app.route('/admin_login')
+@app.route('/admin_login',methods=['GET','POST'])
 def admin_login():
+    if request.method=='POST':
+        email=request.form.get("email")
+        password=request.form.get('password')
+        if not email or not password:
+            flash("Please fill in both fields", "error")
+            return redirect(url_for("student_signin"))
+        
+        try:
+            conn = get_db_connection()
+            if not conn:
+                flash("Database connection failed", "error")
+                return redirect(url_for('admin_login'))
+            
+            cursor = conn.cursor()
+            
+            
+            # Check if admin exists and get current attendance
+            cursor.execute('SELECT * FROM admins WHERE email = %s', (email,))
+            result = cursor.fetchone()
+            if not result:
+                flash("Unexpected Email or Password, Please try again", "error")
+                return redirect(url_for('admin_login'))
+            
+            flash("Login Successful","success")
+            return redirect(url_for('admin_login'))
+            
+        except Exception as e:
+            print("Login error:", str(e))
+            flash("An error occurred during login", "error")
+            return redirect(url_for("admin_login"))
+
+        finally:
+            if conn:
+                cursor.close()
+                conn.close()
+            
+            
+            
     return render_template('admin_login.html')
 
 if __name__ == '__main__':

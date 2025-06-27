@@ -80,23 +80,38 @@ def get_db_connection():
             trade VARCHAR(100) NOT NULL,
             gender VARCHAR(10) NOT NULL,
             password TEXT NOT NULL,
-            aadhar VARCHAR(12) UNIQUE NOT NULL,
-            account_number VARCHAR(20) UNIQUE NOT NULL,
-            account_holder VARCHAR(100) NOT NULL,
-            ifsc VARCHAR(11) NOT NULL,
-            counselling VARCHAR(50) DEFAULT 'Not Completed',
+            aadhar VARCHAR(12) UNIQUE,
+            account_number VARCHAR(20) UNIQUE,
+            account_holder VARCHAR(100),
+            ifsc VARCHAR(11),
+            single_counselling VARCHAR(50) DEFAULT 'Not Completed',
+            group_counselling VARCHAR(50) DEFAULT 'Not Completed',
             ojt VARCHAR(50) DEFAULT 'Not Completed',
             guest_lecture VARCHAR(50) DEFAULT 'Not Completed',
             industrial_visit VARCHAR(50) DEFAULT 'Not Completed',
             assessment VARCHAR(50) DEFAULT 'Not Completed',
+            assessment_date VARCHAR(20),
+            school_enrollment VARCHAR(50) DEFAULT NULL,
             total_days INT DEFAULT 0,
             attendance INT DEFAULT 0
             
         );
         """
         
+        create_table_admin = """
+        CREATE TABLE IF NOT EXISTS admins (
+            id SERIAL PRIMARY KEY,
+            email varchar(50) NOT NULL,
+            password varchar(50) NOT NULL
+            
+        );
+        """
+        
         cursor.execute(create_table_query)
         print("Students table created/verified successfully!")
+        cursor.execute(create_table_admin)
+        print("Admin table created/verified successfully!")
+
         
         # Create an index on can_id for faster lookups (optional but recommended)
         index_query = """
