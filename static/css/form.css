@@ -5,7 +5,7 @@
     animation: fadeInDown 0.8s ease-out;
 }
 
-.logo-container {
+.logo-container1 {
     display: flex;
     justify-content: center;
     gap: var(--space-xl);
@@ -13,12 +13,12 @@
     animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.logo-img {
+.logo-img1 {
     max-height: 80px;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.logo-img:hover {
+.logo-img1:hover {
     transform: scale(1.05) rotate(2deg);
     filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
 }
@@ -378,7 +378,7 @@
         grid-template-columns: 1fr;
     }
     
-    .logo-container {
+    .logo-container1 {
         flex-direction: column;
         align-items: center;
         gap: var(--space-md);
