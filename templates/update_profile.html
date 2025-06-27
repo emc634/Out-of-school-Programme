@@ -12,7 +12,14 @@
 </head>
 
 <body class="has-navbar">
+    <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+    </button>
     <nav class="navbar">
+        <div class="logo-container">
+                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
+                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
+        </div>
         <div class="navbar-content">
             <a href="#" class="logo">
                 <i class="fas fa-user-graduate"></i>
@@ -27,10 +34,6 @@
             <div class="nav-actions">
                 <button class="btn btn-outline-primary btn-sm">Logout</button>
             </div>
-
-            <button class="mobile-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
     </nav>
 
@@ -208,6 +211,11 @@
                         <div class="form-group">
                             <label for="schoolName" class="form-label">Enrolled School</label>
                             <input type="text" placeholder="Enter the School's Name" id="schoolName" name="schoolName"
+                                class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="udsiCode" class="form-label">UDSI Code</label>
+                            <input type="text" placeholder="Enter the School's UDSI Code" id="udsicode" name="udsicode"
                                 class="form-control">
                         </div>
                     </div>

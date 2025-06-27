@@ -12,7 +12,14 @@
 </head>
 
 <body  class="has-navbar">
+    <button class="mobile-toggle">
+                <i class="fas fa-bars"></i>
+    </button>
     <nav class="navbar">
+        <div class="logo-container">
+                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
+                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
+        </div>
         <div class="navbar-content">
             <a href="#" class="logo">
                 <i class="fas fa-user-graduate"></i>
@@ -28,10 +35,6 @@
             <div class="nav-actions">
                 <button class="btn btn-outline-primary btn-sm">Logout</button>
             </div>
-
-            <button class="mobile-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
     </nav>
 

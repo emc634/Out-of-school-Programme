@@ -18,8 +18,6 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at top left, rgba(255,255,255,0.1) 0%, transparent 20%),
-                        radial-gradient(circle at bottom right, rgba(255,255,255,0.1) 0%, transparent 20%);
             z-index: -1;
         }
 
@@ -27,7 +25,7 @@
         .particle {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             z-index: -1;
         }
 
@@ -38,15 +36,19 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at center, var(--primary-100) 0%, var(--primary-50) 30%, transparent 70%);
             opacity: 0.3;
             z-index: -1;
             animation: rotate 30s linear infinite;
         }
 
         @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Profile Card - Glass Morphism Design */
@@ -55,7 +57,7 @@
             backdrop-filter: blur(12px);
             padding: var(--space-xl);
             border-radius: var(--border-radius-xl);
-            box-shadow: 
+            box-shadow:
                 0 15px 35px rgba(0, 0, 0, 0.1),
                 0 3px 10px rgba(0, 0, 0, 0.05),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.5);
@@ -64,7 +66,7 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
             position: relative;
             overflow: hidden;
-            animation: 
+            animation:
                 fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both,
                 breathing 6s ease-in-out infinite;
             transition: all 0.4s ease;
@@ -72,23 +74,30 @@
 
         .profile-card:hover {
             transform: translateY(-8px) scale(1.01);
-            box-shadow: 
+            box-shadow:
                 0 25px 50px rgba(67, 97, 238, 0.2),
                 0 10px 20px rgba(67, 97, 238, 0.15),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.8);
         }
 
         @keyframes breathing {
-            0%, 100% { box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.1),
-                0 3px 10px rgba(0, 0, 0, 0.05),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
-            50% { box-shadow: 
-                0 20px 45px rgba(0, 0, 0, 0.15),
-                0 8px 25px rgba(0, 0, 0, 0.08),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.7); }
-        }        
-        
+
+            0%,
+            100% {
+                box-shadow:
+                    0 15px 35px rgba(0, 0, 0, 0.1),
+                    0 3px 10px rgba(0, 0, 0, 0.05),
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            }
+
+            50% {
+                box-shadow:
+                    0 20px 45px rgba(0, 0, 0, 0.15),
+                    0 8px 25px rgba(0, 0, 0, 0.08),
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+            }
+        }
+
         /* ======================
            PROFILE HEADER 
            ====================== */
@@ -97,20 +106,20 @@
             align-items: center;
             gap: 1rem;
             animation: slideUp 0.8s ease-out;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: var(--border-radius-lg);
             padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0.2,0.2);
-            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0.2, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             position: relative;
             overflow: hidden;
-            background: linear-gradient(45deg, 
-                rgba(114, 9, 183, 0.1), 
-                rgba(67, 97, 238, 0.1),
-                rgba(6, 214, 160, 0.1));
+            background: linear-gradient(45deg,
+                    rgba(114, 9, 183, 0.1),
+                    rgba(67, 97, 238, 0.1),
+                    rgba(6, 214, 160, 0.1));
         }
-        
+
         .profile-header::before {
             content: '';
             position: absolute;
@@ -118,13 +127,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, 
-                rgba(114, 9, 183, 0.1), 
-                rgba(67, 97, 238, 0.1),
-                rgba(6, 214, 160, 0.1));
+            background: linear-gradient(45deg,
+                    rgba(114, 9, 183, 0.1),
+                    rgba(67, 97, 238, 0.1),
+                    rgba(6, 214, 160, 0.1));
             z-index: -1;
         }
-        
+
         .profile-avatar {
             width: 140px;
             height: 140px;
@@ -141,34 +150,32 @@
             overflow: hidden;
             transition: var(--transition-bounce);
         }
-        
+
         .profile-avatar::before {
             content: '';
             position: absolute;
             width: 200%;
             height: 200%;
-            background: conic-gradient(
-                transparent, 
-                rgba(255,255,255,0.8), 
-                transparent 30%
-            );
+            background: conic-gradient(transparent,
+                    rgba(255, 255, 255, 0.8),
+                    transparent 30%);
             animation: rotate 3s linear infinite;
         }
-        
+
         .profile-avatar:hover {
             transform: scale(1.05) rotate(5deg);
             box-shadow: 0 15px 35px rgba(67, 97, 238, 0.4);
         }
-        
+
         .profile-avatar span {
             position: relative;
             z-index: 2;
         }
-        
+
         .profile-info {
             flex: 1;
         }
-        
+
         .profile-name {
             font-size: 2.4rem;
             font-weight: 800;
@@ -179,7 +186,7 @@
             color: transparent;
             letter-spacing: -0.5px;
         }
-        
+
         .profile-id {
             font-size: 1.2rem;
             color: var(--primary);
@@ -188,14 +195,14 @@
             align-items: center;
             gap: 0.6rem;
         }
-        
+
         .profile-id::before {
             content: '';
             flex: 1;
             height: 2px;
             background: linear-gradient(to right, var(--primary), transparent);
         }
-        
+
         /* ======================
            PROFILE SECTIONS 
            ====================== */
@@ -211,7 +218,7 @@
             position: relative;
             animation: fadeIn 0.8s ease-out;
         }
-        
+
         .info-section::before {
             content: '';
             position: absolute;
@@ -221,12 +228,12 @@
             height: 100%;
             background: var(--gradient-primary);
         }
-        
+
         .info-section:hover {
             transform: translateY(-8px);
             box-shadow: var(--shadow-blue-lg);
         }
-        
+
         .section-title {
             display: flex;
             align-items: center;
@@ -235,7 +242,7 @@
             font-size: 1.6rem;
             color: var(--primary-dark);
         }
-        
+
         .section-title i {
             background: var(--gradient-primary);
             -webkit-background-clip: text;
@@ -250,7 +257,7 @@
             border-radius: 12px;
             background-color: rgba(67, 97, 238, 0.1);
         }
-        
+
         /* ======================
            INFO GRID 
            ====================== */
@@ -259,7 +266,7 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.8rem;
         }
-        
+
         .info-item {
             display: flex;
             flex-direction: column;
@@ -272,15 +279,15 @@
             position: relative;
             z-index: 1;
         }
-        
-         .info-item:hover {
+
+        .info-item:hover {
             transform: scale(1.03);
-            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
             background: rgba(67, 97, 238, 0.06);
             border-color: rgba(67, 97, 238, 0.15);
             z-index: 2;
         }
-        
+
         .info-label {
             font-weight: 600;
             color: var(--teal);
@@ -289,7 +296,7 @@
             align-items: center;
             gap: 0.6rem;
         }
-        
+
         .info-label::before {
             content: '';
             width: 8px;
@@ -298,50 +305,57 @@
             border-radius: 50%;
             display: block;
         }
-        
+
         .info-value {
             font-size: 1.2rem;
             font-weight: 500;
             padding-left: 1.5rem;
             color: var(--gray-800);
         }
-        
+
         /* ======================
            ANIMATIONS 
            ====================== */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
-        
+
         @keyframes slideUp {
             from {
                 opacity: 0;
                 transform: translateY(40px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @keyframes slideDown {
             from {
                 opacity: 0;
                 transform: translateY(-40px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @keyframes rotate {
             100% {
                 transform: rotate(360deg);
             }
         }
-        
+
         /* ======================
            FOOTER 
            ====================== */
@@ -355,7 +369,7 @@
             margin-top: 4rem;
             border-top: 1px solid var(--gray-200);
         }
-        
+
         /* ======================
            RESPONSIVE DESIGN 
            ====================== */
@@ -364,60 +378,161 @@
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .profile-id::before {
                 display: none;
             }
-            
+
             .profile-name {
                 font-size: 2rem;
             }
         }
-        
+
         @media (max-width: 768px) {
             .nav-links {
-                display: none;
+                display: flex;
             }
-            
+
             .mobile-toggle {
                 display: block;
             }
-            
-            .profile-name {
-                font-size: 1.8rem;
+
+            .profile-container {
+                padding: 0 var(--space-md);
+                gap: 1.5rem;
+                perspective: none;
+                /* Remove 3D perspective on mobile */
             }
-            
+
+            .profile-card {
+                padding: var(--space-lg);
+                margin-bottom: var(--space-md);
+                animation: none;
+                /* Disable complex animations on mobile */
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+                gap: 1.2rem;
+            }
+
             .profile-avatar {
                 width: 120px;
                 height: 120px;
-                font-size: 3.5rem;
+                font-size: 3.2rem;
+                margin: 0 auto;
             }
-            
-            .info-section {
-                padding: 1.8rem;
+
+            .profile-info {
+                width: 100%;
             }
-        }
-        
-        @media (max-width: 480px) {
+
             .profile-name {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
+                margin-bottom: 0.8rem;
             }
-            
+
             .profile-id {
+                justify-content: center;
                 font-size: 1rem;
             }
-            
-            .profile-avatar {
-                width: 100px;
-                height: 100px;
-                font-size: 2.8rem;
+
+            .profile-id::before {
+                display: none;
             }
-            
+
             .info-section {
                 padding: 1.5rem;
             }
-            
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                /* Stack items in single column */
+                gap: 1.2rem;
+            }
+
             .section-title {
                 font-size: 1.4rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .section-title i {
+                font-size: 1.5rem;
+                width: 40px;
+                height: 40px;
+            }
+
+            /* Disable hover effects on mobile */
+            .profile-card:hover,
+            .info-section:hover,
+            .info-item:hover,
+            .profile-avatar:hover {
+                transform: none !important;
+                box-shadow:
+                    0 15px 35px rgba(0, 0, 0, 0.1),
+                    0 3px 10px rgba(0, 0, 0, 0.05),
+                    inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+            .profile-id {
+                font-size: 1rem;
+            }
+
+            .profile-card {
+                padding: var(--space-md);
+            }
+
+            .profile-header {
+                padding: 1.2rem;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+
+            .profile-name {
+                font-size: 1.6rem;
+            }
+
+            .info-section {
+                padding: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .info-value {
+                font-size: 1.1rem;
+            }
+
+        }
+
+        @keyframes fadeInMobile {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Apply simpler animations for mobile */
+        @media (max-width: 768px) {
+
+            .profile-card,
+            .info-section {
+                animation: fadeInMobile 0.6s ease-out both !important;
             }
         }

@@ -11,8 +11,16 @@
 </head>
 
 <body class="has-navbar">
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
     <!-- Navbar -->
     <nav class="navbar">
+        <div class="logo-container">
+                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
+                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
+        </div>
         <div class="navbar-content">
             <a href="#" class="logo">
                 <i class="fas fa-user-graduate"></i>
@@ -26,9 +34,6 @@
             <div class="nav-actions">
                 <button class="btn btn-outline-primary btn-sm">Logout</button>
             </div>
-            <button class="mobile-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
     </nav>
 
@@ -240,14 +245,14 @@
 
             // Send to Flask
             fetch('/dashboard', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        attendedDays: attendedDays
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    attendedDays: attendedDays
                 })
+            })
                 .then(response => {
                     if (response.ok) {
                         console.log('Attendance updated successfully');
@@ -286,9 +291,36 @@
             updateAttendanceDisplay();
         }
 
-        document.querySelector('.mobile-toggle').addEventListener('click', function () {
-            document.querySelector('.nav-links').classList.toggle('active');
+        // Mobile Toggle for Navbar
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const navbar = document.querySelector('.navbar');
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', function (e) {
+                e.stopPropagation(); // prevent triggering the document click listener immediately
+                navbar.classList.toggle('active');
+                const icon = this.querySelector('i');
+                if (navbar.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        }
+        // Close navbar when clicking outside
+        document.addEventListener('click', function (e) {
+            if (navbar.classList.contains('active') && 
+                !navbar.contains(e.target) && 
+                e.target !== mobileToggle && 
+                !mobileToggle.contains(e.target)) {
+                navbar.classList.remove('active');
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
         });
+
 
         // Initialize attendance display on page load
         initAttendance();
