@@ -6,7 +6,6 @@
             margin: var(--space-xl) auto;
             padding: 0 var(--space-lg);
             width: 100%;
-            perspective: 1200px;
             position: relative;
             overflow: hidden;
         }
