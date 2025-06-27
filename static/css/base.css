@@ -333,7 +333,6 @@ img:hover {
     align-items: center; /* Center vertically */
     justify-content: flex-start; /* Align to left */
     gap: var(--space-sm); /* Reduced gap */
-    background: rgba(255, 255, 255, 0.95);
     padding: var(--space-sm) var(--space-md); /* Added padding */
     margin-bottom: var(--space-md); /* Reduced margin */
     border-radius: var(--border-radius);
