@@ -92,8 +92,12 @@ def student_signup():
                 return redirect(url_for("student_signup"))
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password,total_days) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade, gender, password_hash, course_days[trade])
+                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center,gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade,password_hash)
+            )
+            cursor.execute(
+                "INSERT INTO student_training (can_id, trade,total_days) VALUES (%s, %s, %s)",
+                (can_id,trade,course_days[trade])
             )
             conn.commit()
             
@@ -162,10 +166,8 @@ def student_profile():
                 flash("Candidate ID does not exist", "error")
                 return redirect(url_for('student_profile'))
             
-            cursor.execute(
-                """UPDATE students SET aadhar=%s, account_number=%s, account_holder=%s, ifsc=%s
-                   WHERE can_id=%s""",
-                (aadhar, account_number, account_holder, ifsc, can_id)
+            cursor.execute("""INSERT INTO bank_details (can_id,aadhar,account_number,account_holder,ifsc) VALUES (%s,%s,%s,%s,%s)"""
+                (can_id, aadhar, account_number, account_holder, ifsc)
                 )
 
             conn.commit()
@@ -355,9 +357,11 @@ def profile_display():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('SELECT * FROM students WHERE can_id = %s', (can_id,))
     student = cursor.fetchone()
+    cursor.execute('SELECT * FROM bank_details WHERE can_id = %s', (can_id,))
+    bank = cursor.fetchone()
     cursor.close()
     conn.close()
-    return render_template("profile_display.html",student=student)
+    return render_template("profile_display.html",student=student,bank=bank)
 
 
 @app.route("/update_profile", methods=["GET", "POST"])
@@ -453,74 +457,85 @@ def update_profile():
                     return redirect(url_for("update_profile"))
             
             # Build dynamic UPDATE query based on provided fields
-            update_fields = []
-            update_values = []
+            update_fields_student = []
+            update_values_student = []
+            
+            update_fields_training = []
+            update_values_training = []
             
             if student_name:
-                update_fields.append("student_name = %s")
-                update_values.append(student_name)
+                update_fields_student.append("student_name = %s")
+                update_values_student.append(student_name)
             if father_name:
-                update_fields.append("father_name = %s")
-                update_values.append(father_name)
+                update_fields_student.append("father_name = %s")
+                update_values_student.append(father_name)
             if mother_name:
-                update_fields.append("mother_name = %s")
-                update_values.append(mother_name)
+                update_fields_student.append("mother_name = %s")
+                update_values_student.append(mother_name)
             if dob:
-                update_fields.append("dob = %s")
-                update_values.append(dob)
+                update_fields_student.append("dob = %s")
+                update_values_student.append(dob)
             if gender:
-                update_fields.append("gender = %s")
-                update_values.append(gender)
+                update_fields_student.append("gender = %s")
+                update_values_student.append(gender)
             if religion:
-                update_fields.append("religion = %s")
-                update_values.append(religion)
+                update_fields_student.append("religion = %s")
+                update_values_student.append(religion)
             if category:
-                update_fields.append("category = %s")
-                update_values.append(category)
+                update_fields_student.append("category = %s")
+                update_values_student.append(category)
             if mobile:
-                update_fields.append("mobile = %s")
-                update_values.append(mobile)
+                update_fields_student.append("mobile = %s")
+                update_values_student.append(mobile)
             if single_counselling:
-                update_fields.append("single_counselling = %s")
-                update_values.append(single_counselling)
+                update_fields_training.append("single_counselling = %s")
+                update_values_training.append(single_counselling)
             if group_counselling:
-                update_fields.append("group_counselling = %s")
-                update_values.append(group_counselling)
+                update_fields_training.append("group_counselling = %s")
+                update_values_training.append(group_counselling)
             if ojt:
-                update_fields.append("ojt = %s")
-                update_values.append(ojt)
+                update_fields_training.append("ojt = %s")
+                update_values_training.append(ojt)
             if assessment:
-                update_fields.append("assessment = %s")
-                update_fields.append("assessment_date=%s")
-                update_values.append(assessment)
-                update_values.append(datetime.today().date())
+                update_fields_training.append("assessment = %s")
+                update_fields_training.append("assessment_date=%s")
+                update_values_training.append(assessment)
+                update_values_training.append(datetime.today().date())
             if guest_lecture:
-                update_fields.append("guest_lecture = %s")
-                update_values.append(guest_lecture)
+                update_fields_training.append("guest_lecture = %s")
+                update_values_training.append(guest_lecture)
             if industrial_visit:
-                update_fields.append("industrial_visit = %s")
-                update_values.append(industrial_visit)
+                update_fields_training.append("industrial_visit = %s")
+                update_values_training.append(industrial_visit)
             if school_name:
-                update_fields.append("school_enrollment = %s")
-                update_values.append(school_name)
+                update_fields_training.append("school_enrollment = %s")
+                update_values_training.append(school_name)
                 
                 
             
             # Only proceed if there are fields to update
-            if update_fields:
-                update_values.append(can_id)  # Add can_id for WHERE clause
+            if update_fields_student:
+                update_values_student.append(can_id)  # Add can_id for WHERE clause
                 
-                update_query = f"UPDATE students SET {', '.join(update_fields)} WHERE can_id = %s"
-                cursor.execute(update_query, update_values)
+                update_query = f"UPDATE students SET {', '.join(update_fields_student)} WHERE can_id = %s"
+                cursor.execute(update_query, update_values_student)
                 conn.commit()
                 
-                # Success - clear form data from session and redirect
-                session.pop('update_form_data', None)
-                flash("Profile updated successfully!", "success")
-                return redirect(url_for('profile_display'))
+            if update_fields_training:
+                update_values_training.append(can_id)  # Add can_id for WHERE clause
+                
+                update_query = f"UPDATE students_training SET {', '.join(update_fields_training)} WHERE can_id = %s"
+                cursor.execute(update_query, update_values_training)
+                conn.commit()    
             else:
                 flash("No changes detected. Please modify at least one field to update.", "info")
                 return redirect(url_for('update_profile'))
+            
+                            # Success - clear form data from session and redirect
+            session.pop('update_form_data', None)
+            flash("Profile updated successfully!", "success")
+            return redirect(url_for('profile_display'))
+            
             
         except IntegrityError as e:
             error_msg = str(e).lower()
@@ -600,14 +615,14 @@ def dashboard():
                 cursor = conn.cursor()
                 
                 # Check if student exists and get current attendance
-                cursor.execute('SELECT attendance FROM students WHERE can_id = %s', (can_id,))
+                cursor.execute('SELECT attendance FROM student_training WHERE can_id = %s', (can_id,))
                 result = cursor.fetchone()
                 if not result:
                     flash("Student not found", "error")
                     return redirect(url_for('dashboard'))
                 
                 # Update attendance
-                cursor.execute('UPDATE students SET attendance = %s WHERE can_id = %s', (attended_days, can_id))
+                cursor.execute('UPDATE student_training SET attendance = %s WHERE can_id = %s', (attended_days, can_id))
                 
                 if cursor.rowcount == 0:
                     flash("Failed to update attendance", "error")
@@ -653,7 +668,7 @@ def dashboard():
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
             SELECT attendance, single_counselling, group_counselling,total_days, ojt, industrial_visit, assessment, guest_lecture,school_enrollment
-            FROM students 
+            FROM student_training 
             WHERE can_id = %s
         ''', (can_id,))
         student = cursor.fetchone()
