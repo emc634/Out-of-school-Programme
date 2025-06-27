@@ -107,8 +107,8 @@
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     /* Navbar */
-    --navbar-width: 300px;
-    --navbar-bg: var(--primary-50);
+    --navbar-width: 240px;
+    --navbar-bg: var(--white);
     --navbar-active-bg: var(--primary-100);
     --navbar-text: var(--gray-700);
     --navbar-active-text: var(--primary);
