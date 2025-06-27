@@ -39,7 +39,7 @@
                 <p>Track your training progress and attendance in real-time</p>
             </div>
 
-                        <!-- Flash Messages -->
+            <!-- Flash Messages -->
             <div class="flash-messages">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -95,9 +95,20 @@
                         <div class="status-icon">
                             <i class="fas fa-user-tie"></i>
                         </div>
-                        <h3>Counselling</h3>
-                        <div class="status-badge {{ 'completed' if student.ojt == 'Completed' else 'not-completed' }}">
-                            {{ student.counselling if student else 'Not Completed' }}
+                        <h3>1:1 Career Counselling</h3>
+                        <div
+                            class="status-badge {{ 'completed' if student.single_counselling == 'Completed' else 'not-completed' }}">
+                            {{ student.single_counselling if student else 'Not Completed' }}
+                        </div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Group Career Counselling</h3>
+                        <div
+                            class="status-badge {{ 'completed' if student.group_counselling == 'Completed' else 'not-completed' }}">
+                            {{ student.group_counselling if student else 'Not Completed' }}
                         </div>
                     </div>
                     <div class="status-card">
@@ -112,22 +123,21 @@
                     </div>
                     <div class="status-card">
                         <div class="status-icon">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
-                        <h3>OJT Status</h3>
-                        <div class="status-badge {{ 'completed' if student.ojt == 'Completed' else 'not-completed' }}">
-                            {{ student.ojt if student else 'Complete' }}
-                        </div>
-                    </div>
-                    
-                    <div class="status-card">
-                        <div class="status-icon">
                             <i class="fas fa-industry"></i>
                         </div>
                         <h3>Industrial Visit</h3>
                         <div
                             class="status-badge {{ 'completed' if student.industrial_visit == 'Completed' else 'not-completed' }}">
                             {{ student.industrial_visit if student else 'Not Completed' }}
+                        </div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>OJT Status</h3>
+                        <div class="status-badge {{ 'completed' if student.ojt == 'Completed' else 'not-completed' }}">
+                            {{ student.ojt if student else 'Complete' }}
                         </div>
                     </div>
                     <div class="status-card">
@@ -140,7 +150,17 @@
                             {{ student.assessment if student else 'Not Completed' }}
                         </div>
                     </div>
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <h3>School Enrollment</h3>
+                        <div class="status-badge {{ 'completed' if student.school_enrollment else 'not-completed' }}">
+                            {{ 'Enrolled' if student.school_enrollment else 'Not Enrolled' }}
+                        </div>
+                    </div>
                 </div>
+
 
 
                 <div class="training-section">
@@ -273,7 +293,7 @@
         // Initialize attendance display on page load
         initAttendance();
 
-                setTimeout(() => {
+        setTimeout(() => {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
                 alert.classList.add('fade-out');
