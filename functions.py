@@ -77,25 +77,42 @@ def get_db_connection():
             dob DATE NOT NULL,
             district VARCHAR(100) NOT NULL,
             center VARCHAR(100) NOT NULL,
-            trade VARCHAR(100) NOT NULL,
             gender VARCHAR(10) NOT NULL,
-            password TEXT NOT NULL,
-            aadhar VARCHAR(12) UNIQUE,
-            account_number VARCHAR(20) UNIQUE,
-            account_holder VARCHAR(100),
-            ifsc VARCHAR(11),
+            password TEXT NOT NULL
+            
+        );
+        """
+        
+        create_student_training="""
+        CREATE TABLE IF NOT EXISTS student_training(
+            id SERIAL PRIMARY KEY,
+            can_id VARCHAR(50) UNIQUE NOT NULL,
             single_counselling VARCHAR(50) DEFAULT 'Not Completed',
             group_counselling VARCHAR(50) DEFAULT 'Not Completed',
             ojt VARCHAR(50) DEFAULT 'Not Completed',
             guest_lecture VARCHAR(50) DEFAULT 'Not Completed',
             industrial_visit VARCHAR(50) DEFAULT 'Not Completed',
             assessment VARCHAR(50) DEFAULT 'Not Completed',
-            assessment_date VARCHAR(20),
+            assessment_date DATE,
             school_enrollment VARCHAR(50) DEFAULT NULL,
+            trade VARCHAR(100) NOT NULL, 
             total_days INT DEFAULT 0,
             attendance INT DEFAULT 0
             
-        );
+            FOREIGN KEY (can_id) REFERENCES students(can_id) ON DELETE CASCADE   
+        )
+        """
+        
+        create_bank_details="""
+        CREATE TABLE IF NOT EXISTS bank_details(
+            id SERIAL PRIMARY KEY,
+            can_id VARCHAR(50) UNIQUE NOT NULL,
+            aadhar VARCHAR(12) UNIQUE,
+            account_number VARCHAR(20) UNIQUE,
+            account_holder VARCHAR(100),
+            ifsc VARCHAR(11),
+            FOREIGN KEY (can_id) REFERENCES students(can_id) ON DELETE CASCADE 
+        )
         """
         
         create_table_admin = """
@@ -110,6 +127,10 @@ def get_db_connection():
         cursor.execute(create_table_query)
         print("Students table created/verified successfully!")
         cursor.execute(create_table_admin)
+        print("Admin table created/verified successfully!")
+        cursor.execute(create_student_training)
+        print("Admin table created/verified successfully!")
+        cursor.execute(create_bank_details)
         print("Admin table created/verified successfully!")
 
         
