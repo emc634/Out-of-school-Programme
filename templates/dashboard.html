@@ -290,56 +290,31 @@
 
         // Mobile Toggle for Navbar
         document.addEventListener('DOMContentLoaded', function() {
-    // Safely get all required elements
-    const mobileToggle = document.querySelector('.mobile-toggle');
-    const navbar = document.querySelector('.navbar');
-    const navbarOverlay = document.querySelector('.navbar-overlay');
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const navbar = document.querySelector('.navbar');
+        const navbarOverlay = document.querySelector('.navbar-overlay');
+        const icon = mobileToggle.querySelector('i');
+        
+        let isNavOpen = false;
+
+        // Update the toggle function to handle body scrolling
+function toggleNavigation() {
+    isNavOpen = !isNavOpen;
+    navbar.classList.toggle('active', isNavOpen);
+    navbarOverlay.classList.toggle('active', isNavOpen);
+    document.body.style.overflow = isNavOpen ? 'hidden' : '';
     
-    // Exit if essential elements are missing
-    if (!mobileToggle || !navbar || !navbarOverlay) {
-        console.log('Essential navigation elements not found');
-        return;
-    }
+    // Update icon
+    icon.classList.toggle('fa-bars', !isNavOpen);
+    icon.classList.toggle('fa-times', isNavOpen);
+}
 
-    // Get the icon safely
-    const icon = mobileToggle.querySelector('i');
-    if (!icon) {
-        console.log('Menu icon not found');
-        return;
-    }
-
-    // Track navigation state
-    let isNavOpen = false;
-    let resizeTimer;
-
-    // Function to toggle navigation
-    function toggleNavigation() {
-        isNavOpen = !isNavOpen;
-        
-        // Update UI based on state
-        navbar.classList.toggle('active', isNavOpen);
-        navbarOverlay.classList.toggle('active', isNavOpen);
-        document.body.style.overflow = isNavOpen ? 'hidden' : '';
-        
-        // Update icon
-        if (isNavOpen) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-        } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+        function closeNavigation() {
+            if (isNavOpen) {
+                toggleNavigation();
+            }
         }
-    }
 
-    // Function to close navigation
-    function closeNavigation() {
-        if (isNavOpen) {
-            toggleNavigation();
-        }
-    }
-
-    // Initialize event listeners
-    function initNavigation() {
         // Toggle button click
         mobileToggle.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -365,18 +340,16 @@
 
         // Handle window resize
         window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function() {
-                if (window.innerWidth > 992 && isNavOpen) {
-                    closeNavigation();
-                }
-            }, 100);
+            if (window.innerWidth > 992 && isNavOpen) {
+                closeNavigation();
+            }
         });
-    }
-
-    // Initialize the navigation
-    initNavigation();
-});
+    });  
+    // Set initial state based on screen size
+if (window.innerWidth <= 992) {
+    navbar.classList.remove('active');
+    navbarOverlay.classList.remove('active');
+}  
 
         // Initialize attendance display on page load
         initAttendance();
