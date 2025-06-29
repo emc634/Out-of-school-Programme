@@ -529,7 +529,7 @@ def update_profile():
             if update_fields_training:
                 update_values_training.append(can_id)  # Add can_id for WHERE clause
                 
-                update_query = f"UPDATE students_training SET {', '.join(update_fields_training)} WHERE can_id = %s"
+                update_query = f"UPDATE student_training SET {', '.join(update_fields_training)} WHERE can_id = %s"
                 cursor.execute(update_query, update_values_training)
                 conn.commit()    
             else:
