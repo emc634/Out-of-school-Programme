@@ -109,7 +109,7 @@ def student_signup():
         except IntegrityError as e:
             # Handle duplicate primary key (can_id) or NOT NULL violations
             if 'duplicate key value violates unique constraint' in str(e):
-                flash("Candidate ID already exists. Please use a different ID.", "error")
+                flash("Candidate ID or Mobile No. already exists. Please use a different ID or Mobile No..", "error")
             else:
                 flash("Data integrity error: " + str(e), "error")
             return redirect(url_for('student_signup'))
