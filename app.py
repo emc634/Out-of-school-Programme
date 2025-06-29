@@ -36,6 +36,7 @@ def student_signup():
         student_name = request.form.get("studentName")   
         father_name = request.form.get("fatherName")
         mother_name=request.form.get("motherName")
+        batch_id=request.form.get("batchId")
         can_id=request.form.get("canId")
         mobile = request.form.get("mobile")
         religion=request.form.get("religion")
@@ -54,6 +55,7 @@ def student_signup():
             'father_name': father_name,
             'mother_name': mother_name,
             'gender':gender,
+            'batch_id':batch_id,
             'mobile': mobile,
             'can_id':can_id,
             'religion':religion,
@@ -64,7 +66,7 @@ def student_signup():
             'center':center
         }
         
-        if not all([student_name, father_name, mother_name, gender, mobile,
+        if not all([student_name, father_name,batch_id, mother_name, gender, mobile,
                     can_id, religion, category, dob, district, trade, center, password, confirmation]):
             flash("Please fill in all required fields", "error")
             return redirect(url_for("student_signup"))
@@ -92,8 +94,8 @@ def student_signup():
                 return redirect(url_for("student_signup"))
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO students (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center,gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (can_id, student_name, father_name, mother_name, mobile, religion, category, dob, district, center, trade,password_hash)
+                "INSERT INTO students (can_id, student_name,batch_id, father_name, mother_name, mobile, religion, category, dob, district, center,gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (can_id, student_name,batch_id, father_name, mother_name, mobile, religion, category, dob, district, center, gender,password_hash)
             )
             cursor.execute(
                 "INSERT INTO student_training (can_id, trade,total_days) VALUES (%s, %s, %s)",
@@ -166,7 +168,7 @@ def student_profile():
                 flash("Candidate ID does not exist", "error")
                 return redirect(url_for('student_profile'))
             
-            cursor.execute("""INSERT INTO bank_details (can_id,aadhar,account_number,account_holder,ifsc) VALUES (%s,%s,%s,%s,%s)"""
+            cursor.execute("INSERT INTO bank_details (can_id,aadhar,account_number,account_holder,ifsc) VALUES (%s,%s,%s,%s,%s)",
                 (can_id, aadhar, account_number, account_holder, ifsc)
                 )
 
@@ -357,11 +359,14 @@ def profile_display():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('SELECT * FROM students WHERE can_id = %s', (can_id,))
     student = cursor.fetchone()
+    
+    cursor.execute('SELECT * FROM student_training WHERE can_id = %s', (can_id,))
+    training=cursor.fetchone()
     cursor.execute('SELECT * FROM bank_details WHERE can_id = %s', (can_id,))
     bank = cursor.fetchone()
     cursor.close()
     conn.close()
-    return render_template("profile_display.html",student=student,bank=bank)
+    return render_template("profile_display.html",student=student,bank=bank,training=training)
 
 
 @app.route("/update_profile", methods=["GET", "POST"])

@@ -71,6 +71,7 @@ def get_db_connection():
             student_name VARCHAR(100) NOT NULL,
             father_name VARCHAR(100) NOT NULL,
             mother_name VARCHAR(100) NOT NULL,
+            batch_id VARCHAR(100) NOT NULL,
             mobile VARCHAR(15) UNIQUE NOT NULL,
             religion VARCHAR(50) NOT NULL,
             category VARCHAR(50) NOT NULL,
@@ -97,7 +98,7 @@ def get_db_connection():
             school_enrollment VARCHAR(50) DEFAULT NULL,
             trade VARCHAR(100) NOT NULL, 
             total_days INT DEFAULT 0,
-            attendance INT DEFAULT 0
+            attendance INT DEFAULT 0,
             
             FOREIGN KEY (can_id) REFERENCES students(can_id) ON DELETE CASCADE   
         )
