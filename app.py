@@ -109,7 +109,7 @@ def student_signup():
         except IntegrityError as e:
             # Handle duplicate primary key (can_id) or NOT NULL violations
             if 'duplicate key value violates unique constraint' in str(e):
-                flash("Candidate ID already exists. Please use a different ID.", "error")
+                flash("Candidate ID or Mobile No. already exists. Please use a different ID or Mobile No..", "error")
             else:
                 flash("Data integrity error: " + str(e), "error")
             return redirect(url_for('student_signup'))
@@ -768,17 +768,32 @@ def admin_dashboard():
     trade_filter = request.args.get('trade')
     gender_filter = request.args.get('gender')
     district_filter = request.args.get('district')
+    center_filter = request.args.get('center')
     ojt_filter = request.args.get('ojt_status')
     school_filter = request.args.get('school')
-    counselling_filter = request.args.get('counselling')
+    group_counselling_filter = request.args.get('group_counselling')
+    single_counselling_filter = request.args.get('single_counselling')
     assessment_filter = request.args.get('assessment')
+    industrial_visit_filter = request.args.get('industrial_visit')
     religion_filter = request.args.get('religion')
     
     try:
         conn = get_db_connection()
         if not conn:
             flash("Database connection failed", "error")
-            return render_template("admin_dashboard.html", students=[], total_records=0)
+            return render_template("admin_dashboard.html", 
+                                 students=[], 
+                                 total_records=0,
+                                 page=1,
+                                 total_pages=1,
+                                 has_prev=False,
+                                 has_next=False,
+                                 trades=[],
+                                 genders=[],
+                                 districts=[],
+                                 religions=[],
+                                 schools=[],
+                                 current_filters={})
             
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         
@@ -808,18 +823,27 @@ def admin_dashboard():
         if district_filter:
             query += " AND s.district = %s"
             params.append(district_filter)
+        if center_filter:
+            query += " AND s.center = %s"
+            params.append(center_filter)
         if ojt_filter:
             query += " AND st.ojt = %s"
             params.append(ojt_filter)
         if school_filter:
             query += " AND st.school_enrollment = %s"
             params.append(school_filter)
-        if counselling_filter:
-            query += " AND (st.single_counselling = %s OR st.group_counselling = %s)"
-            params.extend([counselling_filter, counselling_filter])
+        if single_counselling_filter:
+            query += " AND st.single_counselling = %s"
+            params.append(single_counselling_filter)
+        if group_counselling_filter:
+            query += " AND st.group_counselling = %s"
+            params.append(group_counselling_filter)
         if assessment_filter:
             query += " AND st.assessment = %s"
             params.append(assessment_filter)
+        if industrial_visit_filter:
+            query += " AND st.industrial_visit = %s"
+            params.append(industrial_visit_filter)
         if religion_filter:
             query += " AND s.religion = %s"
             params.append(religion_filter)
@@ -858,6 +882,9 @@ def admin_dashboard():
         cursor.execute("SELECT DISTINCT religion FROM students WHERE religion IS NOT NULL ORDER BY religion")
         religions = [row[0] for row in cursor.fetchall()]
         
+        cursor.execute("SELECT DISTINCT school_enrollment FROM student_training WHERE school_enrollment IS NOT NULL ORDER BY school_enrollment")
+        schools = [row[0] for row in cursor.fetchall()]
+        
         # Calculate pagination info
         total_pages = (total_records + per_page - 1) // per_page
         has_prev = page > 1
@@ -875,15 +902,19 @@ def admin_dashboard():
             genders=genders,
             districts=districts,
             religions=religions,
+            schools=schools,
             # Pass current filter values back to template
             current_filters={
                 'trade': trade_filter,
                 'gender': gender_filter,
                 'district': district_filter,
+                'center': center_filter,
                 'ojt_status': ojt_filter,
                 'school': school_filter,
-                'counselling': counselling_filter,
+                'single_counselling': single_counselling_filter,
+                'group_counselling': group_counselling_filter,
                 'assessment': assessment_filter,
+                'industrial_visit': industrial_visit_filter,
                 'religion': religion_filter
             }
         )
@@ -891,7 +922,19 @@ def admin_dashboard():
     except Exception as e:
         print("Dashboard error:", str(e))
         flash("An error occurred while loading dashboard", "error")
-        return render_template("admin_dashboard.html", students=[], total_records=0)
+        return render_template("admin_dashboard.html", 
+                             students=[], 
+                             total_records=0,
+                             page=1,
+                             total_pages=1,
+                             has_prev=False,
+                             has_next=False,
+                             trades=[],
+                             genders=[],
+                             districts=[],
+                             religions=[],
+                             schools=[],
+                             current_filters={})
     
     finally:
         if conn:
