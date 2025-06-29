@@ -713,6 +713,8 @@ def dashboard():
             conn.close()
     
     return render_template("dashboard.html", student=student)
+
+
 @app.route('/admin_login',methods=['GET','POST'])
 def admin_login():
     if request.method=='POST':
@@ -720,7 +722,7 @@ def admin_login():
         password=request.form.get('password')
         if not email or not password:
             flash("Please fill in both fields", "error")
-            return redirect(url_for("student_signin"))
+            return redirect(url_for("admin_login"))
         
         try:
             conn = get_db_connection()
@@ -739,7 +741,7 @@ def admin_login():
                 return redirect(url_for('admin_login'))
             
             flash("Login Successful","success")
-            return redirect(url_for('admin_login'))
+            return redirect(url_for('admin_dashboard'))
             
         except Exception as e:
             print("Login error:", str(e))
@@ -754,6 +756,148 @@ def admin_login():
             
             
     return render_template('admin_login.html')
+
+# Complete admin_dashboard route:
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    # Get pagination and filter parameters
+    page = request.args.get('page', 1, type=int)
+    per_page = 25  # Records per page
+    
+    # Get filter parameters from request
+    trade_filter = request.args.get('trade')
+    gender_filter = request.args.get('gender')
+    district_filter = request.args.get('district')
+    ojt_filter = request.args.get('ojt_status')
+    school_filter = request.args.get('school')
+    counselling_filter = request.args.get('counselling')
+    assessment_filter = request.args.get('assessment')
+    religion_filter = request.args.get('religion')
+    
+    try:
+        conn = get_db_connection()
+        if not conn:
+            flash("Database connection failed", "error")
+            return render_template("admin_dashboard.html", students=[], total_records=0)
+            
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        
+        # Base query joining all three tables
+        query = """
+            SELECT 
+                s.*, 
+                st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
+                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                st.trade, st.total_days, st.attendance,
+                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+            FROM students s
+            JOIN student_training st ON s.can_id = st.can_id
+            JOIN bank_details bd ON s.can_id = bd.can_id
+            WHERE 1=1
+        """
+        
+        params = []
+        
+        # Apply filters
+        if trade_filter:
+            query += " AND st.trade = %s"
+            params.append(trade_filter)
+        if gender_filter:
+            query += " AND s.gender = %s"
+            params.append(gender_filter)
+        if district_filter:
+            query += " AND s.district = %s"
+            params.append(district_filter)
+        if ojt_filter:
+            query += " AND st.ojt = %s"
+            params.append(ojt_filter)
+        if school_filter:
+            query += " AND st.school_enrollment = %s"
+            params.append(school_filter)
+        if counselling_filter:
+            query += " AND (st.single_counselling = %s OR st.group_counselling = %s)"
+            params.extend([counselling_filter, counselling_filter])
+        if assessment_filter:
+            query += " AND st.assessment = %s"
+            params.append(assessment_filter)
+        if religion_filter:
+            query += " AND s.religion = %s"
+            params.append(religion_filter)
+        
+        # Get total count for pagination
+        count_query = query.replace(
+            """SELECT 
+                s.*, 
+                st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
+                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                st.trade, st.total_days, st.attendance,
+                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc""",
+            "SELECT COUNT(*)"
+        )
+        
+        cursor.execute(count_query, params)
+        total_records = cursor.fetchone()[0]
+        
+        # Add pagination to main query
+        query += " ORDER BY s.can_id LIMIT %s OFFSET %s"
+        params.extend([per_page, (page - 1) * per_page])
+        
+        cursor.execute(query, params)
+        students = cursor.fetchall()
+        
+        # Get unique values for filter dropdowns
+        cursor.execute("SELECT DISTINCT trade FROM student_training WHERE trade IS NOT NULL ORDER BY trade")
+        trades = [row[0] for row in cursor.fetchall()]
+        
+        cursor.execute("SELECT DISTINCT gender FROM students WHERE gender IS NOT NULL ORDER BY gender")
+        genders = [row[0] for row in cursor.fetchall()]
+        
+        cursor.execute("SELECT DISTINCT district FROM students WHERE district IS NOT NULL ORDER BY district")
+        districts = [row[0] for row in cursor.fetchall()]
+        
+        cursor.execute("SELECT DISTINCT religion FROM students WHERE religion IS NOT NULL ORDER BY religion")
+        religions = [row[0] for row in cursor.fetchall()]
+        
+        # Calculate pagination info
+        total_pages = (total_records + per_page - 1) // per_page
+        has_prev = page > 1
+        has_next = page < total_pages
+        
+        return render_template(
+            'admin_dashboard.html',
+            students=students,
+            total_records=total_records,
+            page=page,
+            total_pages=total_pages,
+            has_prev=has_prev,
+            has_next=has_next,
+            trades=trades,
+            genders=genders,
+            districts=districts,
+            religions=religions,
+            # Pass current filter values back to template
+            current_filters={
+                'trade': trade_filter,
+                'gender': gender_filter,
+                'district': district_filter,
+                'ojt_status': ojt_filter,
+                'school': school_filter,
+                'counselling': counselling_filter,
+                'assessment': assessment_filter,
+                'religion': religion_filter
+            }
+        )
+        
+    except Exception as e:
+        print("Dashboard error:", str(e))
+        flash("An error occurred while loading dashboard", "error")
+        return render_template("admin_dashboard.html", students=[], total_records=0)
+    
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host="0.0.0.0")

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Student Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+
+<body>
+    <main class="main-content">
+        <div class="container">
+            <div class="admin-header">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p class="text-secondary">Manage and analyze student data</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download btn-icon"></i> Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        <i class="fas fa-sync btn-icon"></i> Refresh
+                    </button>
+                    <a href="{{ url_for('admin_login') }}" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt btn-icon"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-value">{{ total_students or 0 }}</div>
+                    <div class="stat-label">Total Students</div>
+                    <i class="fas fa-users fa-2x mt-2 text-primary"></i>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ (trade_options|length) or 0 }}</div>
+                    <div class="stat-label">Active Trades</div>
+                    <i class="fas fa-tools fa-2x mt-2 text-primary"></i>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ (district_options|length) or 0 }}</div>
+                    <div class="stat-label">Districts</div>
+                    <i class="fas fa-map-marker-alt fa-2x mt-2 text-primary"></i>
+                </div>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="filters-container">
+                <h3 class="mb-3">
+                    <i class="fas fa-filter text-primary"></i> Filter Students
+                </h3>
+                <form id="filter-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="form-label">Trade</label>
+                            <select class="form-control" name="trade">
+                                <option value="">All Trades</option>
+                                {% for trade in trade_options %}
+                                <option value="{{ trade }}" {% if trade==selected_trade %}selected{% endif %}>{{ trade }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Gender</label>
+                            <select class="form-control" name="gender">
+                                <option value="">All Genders</option>
+                                <option value="Male" {% if selected_gender=='Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if selected_gender=='Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if selected_gender=='Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">District</label>
+                            <select class="form-control" name="district">
+                                <option value="">All Districts</option>
+                                {% for district in district_options %}
+                                <option value="{{ district }}" {% if district==selected_district %}selected{% endif %}>{{ district }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">OJT Status</label>
+                            <select class="form-control" name="ojt_status">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if selected_ojt_status=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if selected_ojt_status=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">School Enrolled</label>
+                            <select class="form-control" name="school">
+                                <option value="">All Schools</option>
+                                {% for school in school_options %}
+                                <option value="{{ school }}" {% if school==selected_school %}selected{% endif %}>{{ school }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Counselling</label>
+                            <select class="form-control" name="counselling">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if selected_counselling=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if selected_counselling=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Assessment</label>
+                            <select class="form-control" name="assessment">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if selected_assessment=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if selected_assessment=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Religion</label>
+                            <select class="form-control" name="religion">
+                                <option value="">All Religions</option>
+                                {% for religion in religion_options %}
+                                <option value="{{ religion }}" {% if religion==selected_religion %}selected{% endif %}>{{ religion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter btn-icon"></i> Apply Filters
+                        </button>
+                        <button type="button" class="btn btn-outline" id="reset-filters">
+                            <i class="fas fa-redo btn-icon"></i> Reset Filters
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3>Student Records</h3>
+                    <div class="text-muted">Showing {{ students|length }} of {{ total_records }} records</div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <!-- Students Table Columns -->
+                                <th>CAN ID</th>
+                                <th>Student Name</th>
+                                <th>Father's Name</th>
+                                <th>Mother's Name</th>
+                                <th>Batch ID</th>
+                                <th>Mobile</th>
+                                <th>Religion</th>
+                                <th>Category</th>
+                                <th>DOB</th>
+                                <th>District</th>
+                                <th>Center</th>
+                                <th>Gender</th>
+                                
+                                <!-- Student Training Table Columns -->
+                                <th>Trade</th>
+                                <th>Single Counselling</th>
+                                <th>Group Counselling</th>
+                                <th>OJT Status</th>
+                                <th>Guest Lecture</th>
+                                <th>Industrial Visit</th>
+                                <th>Assessment</th>
+                                <th>Assessment Date</th>
+                                <th>School Enrollment</th>
+                                <th>Total Days</th>
+                                <th>Attendance</th>
+                                
+                                <!-- Bank Details Columns -->
+                                <th>Aadhar</th>
+                                <th>Account Number</th>
+                                <th>Account Holder</th>
+                                <th>IFSC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if students %}
+                                {% for student in students %}
+                                <tr>
+                                    <!-- Students Data -->
+                                    <td>{{ student.can_id or '' }}</td>
+                                    <td>{{ student.student_name or '' }}</td>
+                                    <td>{{ student.father_name or '' }}</td>
+                                    <td>{{ student.mother_name or '' }}</td>
+                                    <td>{{ student.batch_id or '' }}</td>
+                                    <td>{{ student.mobile or '' }}</td>
+                                    <td>{{ student.religion or '' }}</td>
+                                    <td>{{ student.category or '' }}</td>
+                                    <td>{{ student.dob.strftime('%d-%m-%Y') if student.dob else '' }}</td>
+                                    <td>{{ student.district or '' }}</td>
+                                    <td>{{ student.center or '' }}</td>
+                                    <td>{{ student.gender or '' }}</td>
+                                    
+                                    <!-- Training Data -->
+                                    <td>{{ student.trade or '' }}</td>
+                                    <td>
+                                        <span class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                            {{ student.single_counselling or 'Not Completed' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                            {{ student.group_counselling or 'Not Completed' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                            {{ student.ojt or 'Not Completed' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                            {{ student.guest_lecture or 'Not Completed' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                            {{ student.industrial_visit or 'Not Completed' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                            {{ student.assessment or 'Not Completed' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}</td>
+                                    <td>{{ student.school_enrollment or '' }}</td>
+                                    <td>{{ student.total_days or 0 }}</td>
+                                    <td>{{ student.attendance or 0 }}%</td>
+                                    
+                                    <!-- Bank Data -->
+                                    <td>{{ student.aadhar or '' }}</td>
+                                    <td>{{ student.account_number or '' }}</td>
+                                    <td>{{ student.account_holder or '' }}</td>
+                                    <td>{{ student.ifsc or '' }}</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="26" class="text-center">No records found</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if pagination and pagination.pages > 1 %}
+                <div class="pagination">
+                    {% if pagination.has_prev %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=pagination.prev_num, **request.args) }}" class="page-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% set start_page = [pagination.page - 2, 1]|max %}
+                    {% set end_page = [pagination.page + 2, pagination.pages]|min %}
+                    
+                    {% if start_page > 1 %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=1, **request.args) }}" class="page-link">1</a>
+                    </div>
+                    {% if start_page > 2 %}
+                    <div class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% for page_num in range(start_page, end_page + 1) %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page_num, **request.args) }}" 
+                           class="page-link {% if page_num == pagination.page %}active{% endif %}">
+                            {{ page_num }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                    
+                    {% if end_page < pagination.pages %}
+                    {% if end_page < pagination.pages - 1 %}
+                    <div class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </div>
+                    {% endif %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=pagination.pages, **request.args) }}" class="page-link">{{ pagination.pages }}</a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if pagination.has_next %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=pagination.next_num, **request.args) }}" class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Reset filters
+        document.getElementById('reset-filters')?.addEventListener('click', function () {
+            const form = document.getElementById('filter-form');
+            const selects = form.querySelectorAll('select');
+            
+            selects.forEach(select => {
+                select.selectedIndex = 0;
+            });
+            
+            // Submit form to clear filters
+            form.submit();
+        });
+
+        // Flash messages timeout
+        document.addEventListener('DOMContentLoaded', function () {
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                }, 5000);
+            });
+        });
+
+        // Export data functionality (placeholder)
+        function exportData() {
+            // You can implement CSV export here
+            alert('Export functionality to be implemented');
+        }
+
+        // Auto-submit form on filter change
+        document.querySelectorAll('#filter-form select').forEach(select => {
+            select.addEventListener('change', function() {
+                document.getElementById('filter-form').submit();
+            });
+        });
+    </script>
+</body>
+</html>
