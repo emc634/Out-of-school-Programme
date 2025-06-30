@@ -392,6 +392,7 @@ def update_profile():
         ojt=request.form.get('ojt')
         guest_lecture=request.form.get('guestLecture')
         industrial_visit=request.form.get('industrialVisit')
+        other_trainings=request.form.get('other_trainings')
         assessment=request.form.get('assessment')
         school_name=request.form.get('schoolName').upper()
 
@@ -414,7 +415,8 @@ def update_profile():
             'assessment':assessment,
             'group_counselling':group_counselling,
             'single_counselling':single_counselling,
-            'school_enrollment':school_name
+            'school_enrollment':school_name,
+            'other_trainings':other_trainings
         }
         
         # Validate required field - only current password is mandatory
@@ -498,6 +500,9 @@ def update_profile():
             if group_counselling:
                 update_fields_training.append("group_counselling = %s")
                 update_values_training.append(group_counselling)
+            if other_trainings:
+                update_fields_training.append("other_trainings = %s")
+                update_values_training.append(other_trainings)
             if ojt:
                 update_fields_training.append("ojt = %s")
                 update_values_training.append(ojt)
@@ -672,7 +677,7 @@ def dashboard():
         
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
-            SELECT attendance, single_counselling, group_counselling,total_days, ojt, industrial_visit, assessment, guest_lecture,school_enrollment
+            SELECT attendance, single_counselling, group_counselling,total_days, ojt, industrial_visit, assessment, guest_lecture,school_enrollment,other_trainings
             FROM student_training 
             WHERE can_id = %s
         ''', (can_id,))

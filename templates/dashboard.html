@@ -18,8 +18,8 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo-container">
-                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
-                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
+            <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
+            <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
         </div>
         <div class="navbar-content">
             <ul class="nav-links">
@@ -161,6 +161,15 @@
                             {{ 'Enrolled' if student.school_enrollment else 'Not Enrolled' }}
                         </div>
                     </div>
+                    <div class="status-card">
+                        <div class="status-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3>Other Trainings</h3>
+                        <div class="status-badge {{ 'completed' if student.other_trainings else 'not-completed' }}">
+                            {{ student.other_trainings if student.other_trainings else 'Not Enrolled' }}
+                        </div>
+                    </div>
                 </div>
 
 
@@ -242,14 +251,14 @@
 
             // Send to Flask
             fetch('/dashboard', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    attendedDays: attendedDays
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        attendedDays: attendedDays
+                    })
                 })
-            })
                 .then(response => {
                     if (response.ok) {
                         console.log('Attendance updated successfully');
@@ -289,67 +298,67 @@
         }
 
         // Mobile Toggle for Navbar
-        document.addEventListener('DOMContentLoaded', function() {
-        const mobileToggle = document.querySelector('.mobile-toggle');
-        const navbar = document.querySelector('.navbar');
-        const navbarOverlay = document.querySelector('.navbar-overlay');
-        const icon = mobileToggle.querySelector('i');
-        
-        let isNavOpen = false;
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileToggle = document.querySelector('.mobile-toggle');
+            const navbar = document.querySelector('.navbar');
+            const navbarOverlay = document.querySelector('.navbar-overlay');
+            const icon = mobileToggle.querySelector('i');
 
-        // Update the toggle function to handle body scrolling
-function toggleNavigation() {
-    isNavOpen = !isNavOpen;
-    navbar.classList.toggle('active', isNavOpen);
-    navbarOverlay.classList.toggle('active', isNavOpen);
-    document.body.style.overflow = isNavOpen ? 'hidden' : '';
-    
-    // Update icon
-    icon.classList.toggle('fa-bars', !isNavOpen);
-    icon.classList.toggle('fa-times', isNavOpen);
-}
+            let isNavOpen = false;
 
-        function closeNavigation() {
-            if (isNavOpen) {
+            // Update the toggle function to handle body scrolling
+            function toggleNavigation() {
+                isNavOpen = !isNavOpen;
+                navbar.classList.toggle('active', isNavOpen);
+                navbarOverlay.classList.toggle('active', isNavOpen);
+                document.body.style.overflow = isNavOpen ? 'hidden' : '';
+
+                // Update icon
+                icon.classList.toggle('fa-bars', !isNavOpen);
+                icon.classList.toggle('fa-times', isNavOpen);
+            }
+
+            function closeNavigation() {
+                if (isNavOpen) {
+                    toggleNavigation();
+                }
+            }
+
+            // Toggle button click
+            mobileToggle.addEventListener('click', function (e) {
+                e.stopPropagation();
                 toggleNavigation();
-            }
+            });
+
+            // Overlay click
+            navbarOverlay.addEventListener('click', closeNavigation);
+
+            // Close when clicking outside
+            document.addEventListener('click', function (e) {
+                if (isNavOpen && !navbar.contains(e.target) && e.target !== mobileToggle) {
+                    closeNavigation();
+                }
+            });
+
+            // Close with Escape key
+            document.addEventListener('keydown', function (e) {
+                if (isNavOpen && e.key === 'Escape') {
+                    closeNavigation();
+                }
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 992 && isNavOpen) {
+                    closeNavigation();
+                }
+            });
+        });
+        // Set initial state based on screen size
+        if (window.innerWidth <= 992) {
+            navbar.classList.remove('active');
+            navbarOverlay.classList.remove('active');
         }
-
-        // Toggle button click
-        mobileToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            toggleNavigation();
-        });
-
-        // Overlay click
-        navbarOverlay.addEventListener('click', closeNavigation);
-
-        // Close when clicking outside
-        document.addEventListener('click', function(e) {
-            if (isNavOpen && !navbar.contains(e.target) && e.target !== mobileToggle) {
-                closeNavigation();
-            }
-        });
-
-        // Close with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (isNavOpen && e.key === 'Escape') {
-                closeNavigation();
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 992 && isNavOpen) {
-                closeNavigation();
-            }
-        });
-    });  
-    // Set initial state based on screen size
-if (window.innerWidth <= 992) {
-    navbar.classList.remove('active');
-    navbarOverlay.classList.remove('active');
-}  
 
         // Initialize attendance display on page load
         initAttendance();
