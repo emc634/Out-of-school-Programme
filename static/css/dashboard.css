@@ -1,6 +1,4 @@
 /* Modern Dashboard Styles */
-
-
 .btn {
     display: inline-flex;
     align-items: center;
@@ -31,18 +29,6 @@
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
 }
-
-.mobile-toggle {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 1.4rem;
-    color: var(--text);
-    cursor: pointer;
-    z-index: 101;
-}
-
-
 
 .dashboard-container {
     max-width: 1250px;
@@ -341,38 +327,6 @@
 }
 
 @media (max-width: 768px) {
-    .navbar-content {
-        padding: 1rem;
-    }
-
-    .mobile-toggle {
-        display: block;
-    }
-
-    .nav-links {
-        position: fixed;
-        top: 80px;
-        left: 0;
-        right: 0;
-        background: white;
-        flex-direction: column;
-        padding: 1rem;
-        box-shadow: var(--shadow-lg);
-        transform: translateY(-150%);
-        transition: transform 0.3s ease;
-        z-index: 99;
-    }
-
-    .nav-links.active {
-        transform: translateY(0);
-    }
-
-    .nav-link {
-        display: block;
-        padding: 1rem;
-        border-radius: 0;
-        border-bottom: 1px solid var(--border);
-    }
 
     .dashboard-header h1 {
         font-size: 2.2rem;

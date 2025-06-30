@@ -142,24 +142,25 @@
 
     <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const mobileToggle = document.querySelector('.mobile-toggle');
-            const navLinks = document.querySelector('.nav-links');
+        // Mobile menu toggle functionality
+        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+            document.querySelector('.navbar').classList.toggle('active');
+            document.querySelector('.navbar-overlay').classList.toggle('active');
+        });
 
-            // Toggle mobile menu
-            mobileToggle.addEventListener('click', function () {
-                const icon = this.querySelector('i');
+        // Close navbar when clicking on overlay
+        document.querySelector('.navbar-overlay').addEventListener('click', function() {
+            document.querySelector('.navbar').classList.remove('active');
+            this.classList.remove('active');
+        });
 
-                // Toggle active class
-                navLinks.classList.toggle('active');
-
-                // Change icon
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.replace('fa-bars', 'fa-times');
-                } else {
-                    icon.classList.replace('fa-times', 'fa-bars');
-                }
+        // Close navbar when clicking on a nav link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelector('.navbar').classList.remove('active');
+                document.querySelector('.navbar-overlay').classList.remove('active');
             });
+        })
 
             // Add hover effect to info items
         document.querySelectorAll('.info-item').forEach(item => {
@@ -192,7 +193,7 @@
                     setTimeout(() => message.remove(), 500);
                 }, 1000);
             });
-        });
+        
         // Create floating particles
         function createParticles() {
             const container = document.body;
