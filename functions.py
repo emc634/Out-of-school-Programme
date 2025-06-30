@@ -99,6 +99,7 @@ def get_db_connection():
             trade VARCHAR(100) NOT NULL, 
             total_days INT DEFAULT 0,
             attendance INT DEFAULT 0,
+            other_trainings VARCHAR(50) DEFAULT NULL,
             
             FOREIGN KEY (can_id) REFERENCES students(can_id) ON DELETE CASCADE   
         )

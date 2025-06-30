@@ -13,12 +13,12 @@
 
 <body class="has-navbar">
     <button class="mobile-toggle">
-                <i class="fas fa-bars"></i>
+        <i class="fas fa-bars"></i>
     </button>
     <nav class="navbar">
         <div class="logo-container">
-                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
-                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
+            <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
+            <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
         </div>
         <div class="navbar-content">
             <ul class="nav-links">
@@ -104,12 +104,15 @@
                         <div class="form-group">
                             <label for="category" class="form-label">Category</label>
                             <select id="category" name="category" class="form-control form-select">
-                                <option>Select Category</option>
-                                <option>General</option>
-                                <option>OBC</option>
-                                <option>SC</option>
-                                <option>ST</option>
-                                <option>Other</option>
+                                <option value="">Select Category</option>
+                                <option value="General" {% if form_data.category == 'General' %}selected{% endif %}>
+                                    General
+                                </option>
+                                <option value="OBC" {% if form_data.category == 'OBC' %}selected{% endif %}>OBC</option>
+                                <option value="SC" {% if form_data.category == 'SC' %}selected{% endif %}>SC</option>
+                                <option value="ST" {% if form_data.category == 'ST' %}selected{% endif %}>ST</option>
+                                <option value="Other" {% if form_data.category == 'Other' %}selected{% endif %}>Other
+                                </option>
                             </select>
                         </div>
 
@@ -128,7 +131,7 @@
                         Training Status
                     </h3>
                     <div class="form-grid">
-                            <div class="form-group">
+                        <div class="form-group">
                             <label for="single_counselling" class="form-label">1:1 Career Counselling</label>
                             <select id="single_counselling" name="group_counselling" class="form-control form-select">
                                 <option value="">SELECT</option>
@@ -213,6 +216,23 @@
                             <label for="udsiCode" class="form-label">UDSI Code</label>
                             <input type="text" placeholder="Enter the School's UDSI Code" id="udsicode" name="udsicode"
                                 class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="other_trainings" class="form-label">Other Trainings</label>
+                            <select id="otherTrainings" name="other_trainings" class="form-control form-select">
+                                <option value="">SELECT</option>
+                                <option value=""
+                                    {% if form_data.other_trainings == 'Self Employment' %}selected{% endif %}>
+                                    Self Employment</option>
+                                <option value="Wage Employment"
+                                    {% if form_data.other_trainings  == 'Wage Employment' %}selected{% endif %}>
+                                    Wage Employment</option>
+                                <option value="ITI" {% if form_data.other_trainings  == 'I.T.I' %}selected{% endif %}>
+                                    I.T.I</option>
+                                <option value="Other" {% if form_data.other_trainings  == 'Other' %}selected{% endif %}>
+                                    Other</option>
+                            </select>
                         </div>
                     </div>
                 </div>
