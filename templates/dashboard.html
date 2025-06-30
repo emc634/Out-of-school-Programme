@@ -297,68 +297,25 @@
             updateAttendanceDisplay();
         }
 
-        // Mobile Toggle for Navbar
-        document.addEventListener('DOMContentLoaded', function () {
-            const mobileToggle = document.querySelector('.mobile-toggle');
-            const navbar = document.querySelector('.navbar');
-            const navbarOverlay = document.querySelector('.navbar-overlay');
-            const icon = mobileToggle.querySelector('i');
-
-            let isNavOpen = false;
-
-            // Update the toggle function to handle body scrolling
-            function toggleNavigation() {
-                isNavOpen = !isNavOpen;
-                navbar.classList.toggle('active', isNavOpen);
-                navbarOverlay.classList.toggle('active', isNavOpen);
-                document.body.style.overflow = isNavOpen ? 'hidden' : '';
-
-                // Update icon
-                icon.classList.toggle('fa-bars', !isNavOpen);
-                icon.classList.toggle('fa-times', isNavOpen);
-            }
-
-            function closeNavigation() {
-                if (isNavOpen) {
-                    toggleNavigation();
-                }
-            }
-
-            // Toggle button click
-            mobileToggle.addEventListener('click', function (e) {
-                e.stopPropagation();
-                toggleNavigation();
-            });
-
-            // Overlay click
-            navbarOverlay.addEventListener('click', closeNavigation);
-
-            // Close when clicking outside
-            document.addEventListener('click', function (e) {
-                if (isNavOpen && !navbar.contains(e.target) && e.target !== mobileToggle) {
-                    closeNavigation();
-                }
-            });
-
-            // Close with Escape key
-            document.addEventListener('keydown', function (e) {
-                if (isNavOpen && e.key === 'Escape') {
-                    closeNavigation();
-                }
-            });
-
-            // Handle window resize
-            window.addEventListener('resize', function () {
-                if (window.innerWidth > 992 && isNavOpen) {
-                    closeNavigation();
-                }
-            });
+        // Mobile menu toggle functionality
+        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+            document.querySelector('.navbar').classList.toggle('active');
+            document.querySelector('.navbar-overlay').classList.toggle('active');
         });
-        // Set initial state based on screen size
-        if (window.innerWidth <= 992) {
-            navbar.classList.remove('active');
-            navbarOverlay.classList.remove('active');
-        }
+
+        // Close navbar when clicking on overlay
+        document.querySelector('.navbar-overlay').addEventListener('click', function() {
+            document.querySelector('.navbar').classList.remove('active');
+            this.classList.remove('active');
+        });
+
+        // Close navbar when clicking on a nav link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelector('.navbar').classList.remove('active');
+                document.querySelector('.navbar-overlay').classList.remove('active');
+            });
+        })
 
         // Initialize attendance display on page load
         initAttendance();
