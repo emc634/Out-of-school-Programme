@@ -294,7 +294,6 @@ img:hover {
     flex: 1;
     /* REMOVE the padding-left that was causing issues */
     transition: var(--transition);
-    padding-left: var(--navbar-width);
 }
 
 /* Add a specific class for pages WITH navbar */
