@@ -15,449 +15,392 @@
         <div class="container">
             <div class="admin-header">
                 <div>
-                    <h1>Student Management Dashboard</h1>
+                    <h1>Admin Dashboard</h1>
                     <p class="text-secondary">Manage and analyze student data</p>
                 </div>
                 <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download btn-icon"></i> Export Data
+                    </button>
                     <button class="btn btn-secondary" onclick="location.reload()">
                         <i class="fas fa-sync btn-icon"></i> Refresh
                     </button>
-                    <a href="#" class="btn btn-outline">
+                    <a href="{{ url_for('admin_login') }}" class="btn btn-outline">
                         <i class="fas fa-sign-out-alt btn-icon"></i> Logout
                     </a>
                 </div>
             </div>
 
             <div class="flash-messages">
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i> Data loaded successfully
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
                 </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
             </div>
 
             <!-- Statistics Cards -->
             <div class="stats-grid">
-                <div class="stat-card" onclick="openModal('totalStudents')">
-                    <i class="fas fa-users fa-2x mb-3 text-primary stat-icon"></i>
+                <div class="stat-card" onclick="openExportModal('total_students')">
+                    <i class="fas fa-users fa-2x mb-3 text-primary"></i>
                     <div class="stat-label">Total Students</div>
-                    <div class="stat-value" id="total-students">0</div>
+                    <div class="stat-value">{{ total_records or 0 }}</div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('counselling')">
+                <div class="stat-card" onclick="openExportModal('single_counselling', 'Completed')">
                     <div class="stat-label">1:1 Career Counselling</div>
                     <div class="stat-value-container">
                         <div>
-                            <div class="stat-value stat-value-completed" id="counselling-completed">0</div>
+                            <div class="stat-value stat-value-completed">{{ stats.single_counselling.completed or 0 }}</div>
                             <div class="stat-sub-label">Completed</div>
                         </div>
                         <div>
-                            <div class="stat-value stat-value-not-completed" id="counselling-not-completed">0</div>
+                            <div class="stat-value stat-value-not-completed">{{ stats.single_counselling.not_completed or 0 }}</div>
                             <div class="stat-sub-label">Not Completed</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('groupCounselling')">
+                <div class="stat-card" onclick="openExportModal('group_counselling', 'Completed')">
                     <div class="stat-label">Group Career Counselling</div>
                     <div class="stat-value-container">
                         <div>
-                            <div class="stat-value stat-value-completed" id="group-completed">0</div>
+                            <div class="stat-value stat-value-completed">{{ stats.group_counselling.completed or 0 }}</div>
                             <div class="stat-sub-label">Completed</div>
                         </div>
                         <div>
-                            <div class="stat-value stat-value-not-completed" id="group-not-completed">0</div>
+                            <div class="stat-value stat-value-not-completed">{{ stats.group_counselling.not_completed or 0 }}</div>
                             <div class="stat-sub-label">Not Completed</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('ojt')">
+                <div class="stat-card" onclick="openExportModal('ojt', 'Completed')">
                     <div class="stat-label">OJT Status</div>
                     <div class="stat-value-container">
                         <div>
-                            <div class="stat-value stat-value-completed" id="ojt-completed">0</div>
+                            <div class="stat-value stat-value-completed">{{ stats.ojt.completed or 0 }}</div>
                             <div class="stat-sub-label">Completed</div>
                         </div>
                         <div>
-                            <div class="stat-value stat-value-not-completed" id="ojt-not-completed">0</div>
+                            <div class="stat-value stat-value-not-completed">{{ stats.ojt.not_completed or 0 }}</div>
                             <div class="stat-sub-label">Not Completed</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('guestLecture')">
+                <div class="stat-card" onclick="openExportModal('guest_lecture', 'Completed')">
                     <div class="stat-label">Guest Lecture</div>
                     <div class="stat-value-container">
                         <div>
-                            <div class="stat-value stat-value-completed" id="guest-completed">0</div>
+                            <div class="stat-value stat-value-completed">{{ stats.guest_lecture.completed or 0 }}</div>
                             <div class="stat-sub-label">Completed</div>
                         </div>
                         <div>
-                            <div class="stat-value stat-value-not-completed" id="guest-not-completed">0</div>
+                            <div class="stat-value stat-value-not-completed">{{ stats.guest_lecture.not_completed or 0 }}</div>
                             <div class="stat-sub-label">Not Completed</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('industrialVisit')">
+                <div class="stat-card" onclick="openExportModal('industrial_visit', 'Completed')">
                     <div class="stat-label">Industrial Visit</div>
                     <div class="stat-value-container">
                         <div>
-                            <div class="stat-value stat-value-completed" id="visit-completed">0</div>
+                            <div class="stat-value stat-value-completed">{{ stats.industrial_visit.completed or 0 }}</div>
                             <div class="stat-sub-label">Completed</div>
                         </div>
                         <div>
-                            <div class="stat-value stat-value-not-completed" id="visit-not-completed">0</div>
+                            <div class="stat-value stat-value-not-completed">{{ stats.industrial_visit.not_completed or 0 }}</div>
                             <div class="stat-sub-label">Not Completed</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('assessment')">
+                <div class="stat-card" onclick="openExportModal('assessment', 'Completed')">
                     <div class="stat-label">Assessment</div>
                     <div class="stat-value-container">
                         <div>
-                            <div class="stat-value stat-value-completed" id="assessment-completed">0</div>
+                            <div class="stat-value stat-value-completed">{{ stats.assessment.completed or 0 }}</div>
                             <div class="stat-sub-label">Completed</div>
                         </div>
                         <div>
-                            <div class="stat-value stat-value-not-completed" id="assessment-not-completed">0</div>
+                            <div class="stat-value stat-value-not-completed">{{ stats.assessment.not_completed or 0 }}</div>
                             <div class="stat-sub-label">Not Completed</div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Main Student Table -->
-            <div class="main-table-container">
-                <div class="table-header">
-                    <h2>All Students</h2>
-                    <div class="actions">
-                        <button class="btn btn-outline" onclick="refreshData()">
-                            <i class="fas fa-sync btn-icon"></i> Refresh
-                        </button>
+
+            <!-- Export Modal -->
+            <div id="export-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Export Student Data</h3>
+                        <span class="close-modal" onclick="closeExportModal()">&times;</span>
                     </div>
+                    <form id="export-form" method="POST" action="{{ url_for('export_students') }}">
+                        <input type="hidden" id="export-type" name="export_type">
+                        <input type="hidden" id="export-status" name="export_status">
+                        
+                        <div class="export-filters">
+                            <div class="filter-group">
+                                <label class="form-label">Gender</label>
+                                <select name="export_gender" class="form-control">
+                                    <option value="">All Genders</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="form-label">Category</label>
+                                <select name="export_category" class="form-control">
+                                    <option value="">All Categories</option>
+                                    <option value="General">General</option>
+                                    <option value="OBC">OBC</option>
+                                    <option value="SC">SC</option>
+                                    <option value="ST">ST</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label class="form-label">OJT Status</label>
+                                <select name="export_ojt" class="form-control">
+                                    <option value="">All Statuses</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Not Completed">Not Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button type="button" class="btn btn-outline" onclick="closeExportModal()">Cancel</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-download btn-icon"></i> Export Data
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="table-wrapper">
-                    <table class="main-table">
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3>Student Records</h3>
+                    <div class="text-muted">Showing {{ students|length }} of {{ total_records }} records</div>
+                </div>
+
+                <div class="table-container">
+                    <table>
                         <thead>
                             <tr>
+                                <!-- Students Table Columns -->
                                 <th>CAN ID</th>
                                 <th>Student Name</th>
+                                <th>Father's Name</th>
+                                <th>Mother's Name</th>
                                 <th>Batch ID</th>
                                 <th>Mobile</th>
+                                <th>Religion</th>
                                 <th>Category</th>
+                                <th>DOB</th>
                                 <th>District</th>
                                 <th>Center</th>
                                 <th>Gender</th>
+
+                                <!-- Student Training Table Columns -->
                                 <th>Trade</th>
+                                <th>Single Counselling</th>
+                                <th>Group Counselling</th>
                                 <th>OJT Status</th>
+                                <th>Guest Lecture</th>
+                                <th>Industrial Visit</th>
+                                <th>Assessment</th>
+                                <th>Assessment Date</th>
+                                <th>School Enrollment</th>
+                                <th>Total Days</th>
+                                <th>Attendance</th>
+
+                                <!-- Bank Details Columns -->
+                                <th>Aadhar</th>
+                                <th>Account Number</th>
+                                <th>Account Holder</th>
+                                <th>IFSC</th>
                             </tr>
                         </thead>
-                        <tbody id="main-student-data">
-                            <!-- Data will be populated by JavaScript -->
+                        <tbody>
+                            {% if students %}
+                            {% for student in students %}
+                            <tr>
+                                <!-- Students Data -->
+                                <td>{{ student.can_id or '' }}</td>
+                                <td>{{ student.student_name or '' }}</td>
+                                <td>{{ student.father_name or '' }}</td>
+                                <td>{{ student.mother_name or '' }}</td>
+                                <td>{{ student.batch_id or '' }}</td>
+                                <td>{{ student.mobile or '' }}</td>
+                                <td>{{ student.religion or '' }}</td>
+                                <td>{{ student.category or '' }}</td>
+                                <td>{{ student.dob.strftime('%d-%m-%Y') if student.dob else '' }}</td>
+                                <td>{{ student.district or '' }}</td>
+                                <td>{{ student.center or '' }}</td>
+                                <td>{{ student.gender or '' }}</td>
+
+                                <!-- Training Data -->
+                                <td>{{ student.trade or '' }}</td>
+                                <td>
+                                    <span class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        {{ student.single_counselling or 'Not Completed' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        {{ student.group_counselling or 'Not Completed' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        {{ student.ojt or 'Not Completed' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        {{ student.guest_lecture or 'Not Completed' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        {{ student.industrial_visit or 'Not Completed' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        {{ student.assessment or 'Not Completed' }}
+                                    </span>
+                                </td>
+                                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}</td>
+                                <td>{{ student.school_enrollment or '' }}</td>
+                                <td>{{ student.total_days or 0 }}</td>
+                                <td>{{ student.attendance or 0 }}%</td>
+
+                                <!-- Bank Data -->
+                                <td>{{ student.aadhar or '' }}</td>
+                                <td>{{ student.account_number or '' }}</td>
+                                <td>{{ student.account_holder or '' }}</td>
+                                <td>{{ student.ifsc or '' }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="26" class="text-center">No records found</td>
+                            </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
 
-        <!-- Modal for Student Data -->
-        <div id="data-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="modal-title">Student Data</h3>
-                    <span class="close-modal" onclick="closeModal()">&times;</span>
+                <!-- Pagination -->
+                {% if total_pages > 1 %}
+                <div class="pagination">
+                    {% if has_prev %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page-1, **request.args) }}" class="page-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% set start_page = [page - 2, 1]|max %}
+                    {% set end_page = [page + 2, total_pages]|min %}
+
+                    {% if start_page > 1 %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=1, **request.args) }}" class="page-link">1</a>
+                    </div>
+                    {% if start_page > 2 %}
+                    <div class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    {% for page_num in range(start_page, end_page + 1) %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page_num, **request.args) }}"
+                            class="page-link {% if page_num == page %}active{% endif %}">
+                            {{ page_num }}
+                        </a>
+                    </div>
+                    {% endfor %}
+
+                    {% if end_page < total_pages %}
+                    {% if end_page < total_pages - 1 %}
+                    <div class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </div>
+                    {% endif %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=total_pages, **request.args) }}" class="page-link">{{ total_pages }}</a>
+                    </div>
+                    {% endif %}
+
+                    {% if has_next %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page+1, **request.args) }}" class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
-                
-                <div class="modal-filters">
-                    <div class="filter-group">
-                        <label class="form-label">Gender</label>
-                        <select id="filter-gender" class="form-control">
-                            <option value="">All Genders</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">Category</label>
-                        <select id="filter-category" class="form-control">
-                            <option value="">All Categories</option>
-                            <option value="General">General</option>
-                            <option value="OBC">OBC</option>
-                            <option value="SC">SC</option>
-                            <option value="ST">ST</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">OJT Status</label>
-                        <select id="filter-ojt" class="form-control">
-                            <option value="">All Statuses</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Not Completed">Not Completed</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">District</label>
-                        <select id="filter-district" class="form-control">
-                            <option value="">All Districts</option>
-                            <option value="Bilaspur">Bilaspur</option>
-                            <option value="Chamba">Chamba</option>
-                            <option value="Hamirpur">Hamirpur</option>
-                            <option value="Kangra">Kangra</option>
-                            <option value="Kullu">Kullu</option>
-                            <option value="Mandi">Mandi</option>
-                            <option value="Sirmour">Sirmour</option>
-                            <option value="Solan">Solan</option>
-                            <option value="Una">Una</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">Center/Block</label>
-                        <select id="filter-center" class="form-control" disabled>
-                            <option value="">Select District First</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">Trade</label>
-                        <select id="filter-trade" class="form-control">
-                            <option value="">All Trades</option>
-                            <option value="Agriculture">Agriculture</option>
-                            <option value="Beauty & Wellness">Beauty & Wellness</option>
-                            <option value="Plumbing">Plumbing</option>
-                            <option value="Food Processing">Food Processing</option>
-                            <option value="Automotive">Automotive</option>
-                            <option value="Electronics">Electronics</option>
-                            <option value="Tourism & Hospitality">Tourism & Hospitality</option>
-                            <option value="ITeS">ITeS</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="modal-body">
-                    <div class="table-wrapper">
-                        <table class="modal-table">
-                            <thead>
-                                <tr>
-                                    <th>CAN ID</th>
-                                    <th>Student Name</th>
-                                    <th>Batch ID</th>
-                                    <th>Mobile</th>
-                                    <th>Category</th>
-                                    <th>District</th>
-                                    <th>Center</th>
-                                    <th>Gender</th>
-                                    <th>Trade</th>
-                                    <th>OJT Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="student-data">
-                                <!-- Data will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <button class="btn btn-outline" onclick="closeModal()">Close</button>
-                    <button class="btn btn-primary" onclick="exportData()">
-                        <i class="fas fa-download btn-icon"></i> Export Data
-                    </button>
-                </div>
+                {% endif %}
             </div>
         </div>
     </main>
 
     <script>
-        // District-center mapping
-        const centersByDistrict = {
-            "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
-            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla", "Salooni", "Sihunta", "Sundla", "Tissa"],
-            "Hamirpur": ["Hamirpur"],
-            "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
-            "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
-            "Mandi": ["Sadar-2", "Seraj-2"],
-            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
-            "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
-            "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
-        };
 
-        // Modal titles for each card
-        const modalTitles = {
-            totalStudents: "All Students",
-            counselling: "1:1 Career Counselling",
-            groupCounselling: "Group Career Counselling",
-            ojt: "OJT Status",
-            guestLecture: "Guest Lecture",
-            industrialVisit: "Industrial Visit",
-            assessment: "Assessment"
-        };
-
-        // DOM Elements
-        const districtFilter = document.getElementById('filter-district');
-        const centerFilter = document.getElementById('filter-center');
-        const studentDataBody = document.getElementById('student-data');
-        const mainStudentDataBody = document.getElementById('main-student-data');
-        const modalTitle = document.getElementById('modal-title');
-        const modal = document.getElementById('data-modal');
-        let currentCardType = '';
-        let studentData = [];
-
-        // Initialize filters and table
-        function initFilters() {
-            renderTables();
-            
-            // Set up event listeners
-            document.getElementById('filter-gender').addEventListener('change', filterStudents);
-            document.getElementById('filter-category').addEventListener('change', filterStudents);
-            document.getElementById('filter-ojt').addEventListener('change', filterStudents);
-            document.getElementById('filter-district').addEventListener('change', function() {
-                updateCenterDropdown(this, centerFilter);
-                filterStudents();
-            });
-            document.getElementById('filter-center').addEventListener('change', filterStudents);
-            document.getElementById('filter-trade').addEventListener('change', filterStudents);
+        // Export modal functions
+        function openExportModal(type, status = '') {
+            document.getElementById('export-type').value = type;
+            document.getElementById('export-status').value = status;
+            document.getElementById('export-modal').style.display = 'flex';
         }
 
-        // Render tables with data
-        function renderTables() {
-            renderTable(studentDataBody, studentData);
-            renderTable(mainStudentDataBody, studentData);
+        function closeExportModal() {
+            document.getElementById('export-modal').style.display = 'none';
         }
-        
-        function renderTable(container, data) {
-            container.innerHTML = '';
-            
-            if (data.length === 0) {
-                container.innerHTML = `
-                    <tr>
-                        <td colspan="10" class="text-center" style="padding: 1.5rem; text-align: center; color: var(--gray-500);">No student data available</td>
-                    </tr>
-                `;
-                return;
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('export-modal');
+            if (event.target === modal) {
+                closeExportModal();
             }
-            
-            data.forEach(student => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${student.can_id}</td>
-                    <td>${student.name}</td>
-                    <td>${student.batch}</td>
-                    <td>${student.mobile}</td>
-                    <td>${student.category}</td>
-                    <td>${student.district}</td>
-                    <td>${student.center}</td>
-                    <td>${student.gender}</td>
-                    <td>${student.trade}</td>
-                    <td><span class="status-badge ${student.ojt === 'Completed' ? 'status-completed' : 'status-not-completed'}">${student.ojt}</span></td>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        // Filter students based on selected filters
-        function filterStudents() {
-            const gender = document.getElementById('filter-gender').value;
-            const category = document.getElementById('filter-category').value;
-            const ojt = document.getElementById('filter-ojt').value;
-            const district = document.getElementById('filter-district').value;
-            const center = document.getElementById('filter-center').value;
-            const trade = document.getElementById('filter-trade').value;
-            
-            const filtered = studentData.filter(student => {
-                return (!gender || student.gender === gender) &&
-                       (!category || student.category === category) &&
-                       (!ojt || student.ojt === ojt) &&
-                       (!district || student.district === district) &&
-                       (!center || student.center === center) &&
-                       (!trade || student.trade === trade);
-            });
-            
-            renderTable(studentDataBody, filtered);
-        }
-
-        // Update center dropdown based on selected district
-        function updateCenterDropdown(districtSelect, centerSelect) {
-            const district = districtSelect.value;
-            centerSelect.innerHTML = '<option value="">All Centers</option>';
-            
-            if (district && centersByDistrict[district]) {
-                centerSelect.disabled = false;
-                centersByDistrict[district].forEach(center => {
-                    const option = document.createElement('option');
-                    option.value = center;
-                    option.textContent = center;
-                    centerSelect.appendChild(option);
-                });
-            } else {
-                centerSelect.disabled = true;
-                centerSelect.innerHTML = '<option value="">Select District First</option>';
-            }
-        }
-
-        // Open modal with appropriate title
-        function openModal(cardType) {
-            currentCardType = cardType;
-            modalTitle.textContent = modalTitles[cardType];
-            modal.style.display = 'flex';
-            
-            // Reset filters
-            document.getElementById('filter-gender').value = '';
-            document.getElementById('filter-category').value = '';
-            document.getElementById('filter-ojt').value = '';
-            document.getElementById('filter-district').value = '';
-            document.getElementById('filter-center').value = '';
-            document.getElementById('filter-center').disabled = true;
-            document.getElementById('filter-trade').value = '';
-            
-            // Show all data initially
-            renderTable(studentDataBody, studentData);
-        }
-
-        // Close modal
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
-        // Export data
-        function exportData() {
-            alert(`Exporting data for ${modalTitles[currentCardType]}`);
-            // In a real application, this would trigger a download
-        }
+        };
         
-        // Refresh data
-        function refreshData() {
-            alert("Refreshing student data...");
-            // In a real application, this would fetch updated data
-        }
-
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Flash messages timeout
+        // Flash messages timeout
+        document.addEventListener('DOMContentLoaded', function () {
             const flashMessages = document.querySelectorAll('.alert');
             flashMessages.forEach(message => {
                 setTimeout(() => {
                     message.style.opacity = '0';
                     setTimeout(() => message.remove(), 500);
-                }, 5000);
-            });
-            
-            // Initialize filters
-            initFilters();
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    closeModal();
-                }
+                }, 3000);
             });
         });
+
+        // Export data functionality (placeholder)
+        function exportData() {
+            alert('Export functionality to be implemented');
+        }
     </script>
 </body>
+
 </html>

@@ -4,109 +4,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>From Streets to School - Building Brighter Futures</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/front.css') }}">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <title>Admin Dashboard - Student Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <!-- Decorative background elements -->
-    <div class="circle circle-1 decoration"></div>
-    <div class="circle circle-2 decoration"></div>
-    <div class="triangle decoration"></div>
 
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <!-- Left Column: Program Info and Login Options -->
-                <div class="program-info">
-                    <h1 class="welcome-heading">FROM STREETS TO SCHOOL</h1>
-                    <p class="tagline">Building <span>Brighter Futures</span> Through Education</p>
-                    <p class="hero-subtitle">Empowering out-of-school children with quality education and opportunities to transform their lives and communities. Join us in bridging the educational gap and creating a brighter tomorrow for every child.</p>
-                    
-                    <div class="button-group">
-                        <a href="{{ url_for('student_signup') }}" class="btn-hero btn-primary">
-                            <i class="fas fa-user-graduate"></i>
-                            Student Sign-up/Login
-                        </a>
-                        
-                        <a href="{{ url_for('admin_login') }}" class="btn-hero btn-secondary">
-                            <i class="fas fa-lock"></i>
-                            Admin Login
-                        </a>
+<body>
+    <main class="main-content">
+        <div class="container">
+            <div class="admin-header">
+                <div>
+                    <h1>Student Management Dashboard</h1>
+                    <p class="text-secondary">Manage and analyze student data</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        <i class="fas fa-sync btn-icon"></i> Refresh
+                    </button>
+                    <a href="#" class="btn btn-outline">
+                        <i class="fas fa-sign-out-alt btn-icon"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <div class="flash-messages">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i> Data loaded successfully
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card" onclick="openModal('totalStudents')">
+                    <i class="fas fa-users fa-2x mb-3 text-primary stat-icon"></i>
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value" id="total-students">0</div>
+                </div>
+                
+                <div class="stat-card" onclick="openModal('counselling')">
+                    <div class="stat-label">1:1 Career Counselling</div>
+                    <div class="stat-value-container">
+                        <div>
+                            <div class="stat-value stat-value-completed" id="counselling-completed">0</div>
+                            <div class="stat-sub-label">Completed</div>
+                        </div>
+                        <div>
+                            <div class="stat-value stat-value-not-completed" id="counselling-not-completed">0</div>
+                            <div class="stat-sub-label">Not Completed</div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Right Column: Visionaries Section -->
-                <div class="visionaries-section">
-                    <h2 class="section-title">Our Visionaries</h2>
-                    <p class="section-subtitle">The leaders behind our mission to bring education to every child</p>
-                    
-                    <div class="visionaries-container">
-                        <!-- Visionary 1: Chief Minister -->
-                        <div class="visionary-card">
-                            <div class="visionary-img-container">
-                                <img src=" " alt="Honorable Chief Minister" class="visionary-img">
-                            </div>
-                            <div class="visionary-info">
-                                <h3 class="visionary-name">Hon. Rajesh Sharma</h3>
-                                <p class="visionary-title">Chief Minister</p>
-                            </div>
+                <div class="stat-card" onclick="openModal('groupCounselling')">
+                    <div class="stat-label">Group Career Counselling</div>
+                    <div class="stat-value-container">
+                        <div>
+                            <div class="stat-value stat-value-completed" id="group-completed">0</div>
+                            <div class="stat-sub-label">Completed</div>
                         </div>
-                        
-                        <!-- Visionary 2: Education Minister -->
-                        <div class="visionary-card">
-                            <div class="visionary-img-container">
-                                <img src=" " alt="Honorable Education Minister" class="visionary-img">
-                            </div>
-                            <div class="visionary-info">
-                                <h3 class="visionary-name">Dr. Priya Patel</h3>
-                                <p class="visionary-title">Education Minister</p>
-                            </div>
+                        <div>
+                            <div class="stat-value stat-value-not-completed" id="group-not-completed">0</div>
+                            <div class="stat-sub-label">Not Completed</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="openModal('ojt')">
+                    <div class="stat-label">OJT Status</div>
+                    <div class="stat-value-container">
+                        <div>
+                            <div class="stat-value stat-value-completed" id="ojt-completed">0</div>
+                            <div class="stat-sub-label">Completed</div>
+                        </div>
+                        <div>
+                            <div class="stat-value stat-value-not-completed" id="ojt-not-completed">0</div>
+                            <div class="stat-sub-label">Not Completed</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="openModal('guestLecture')">
+                    <div class="stat-label">Guest Lecture</div>
+                    <div class="stat-value-container">
+                        <div>
+                            <div class="stat-value stat-value-completed" id="guest-completed">0</div>
+                            <div class="stat-sub-label">Completed</div>
+                        </div>
+                        <div>
+                            <div class="stat-value stat-value-not-completed" id="guest-not-completed">0</div>
+                            <div class="stat-sub-label">Not Completed</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="openModal('industrialVisit')">
+                    <div class="stat-label">Industrial Visit</div>
+                    <div class="stat-value-container">
+                        <div>
+                            <div class="stat-value stat-value-completed" id="visit-completed">0</div>
+                            <div class="stat-sub-label">Completed</div>
+                        </div>
+                        <div>
+                            <div class="stat-value stat-value-not-completed" id="visit-not-completed">0</div>
+                            <div class="stat-sub-label">Not Completed</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="openModal('assessment')">
+                    <div class="stat-label">Assessment</div>
+                    <div class="stat-value-container">
+                        <div>
+                            <div class="stat-value stat-value-completed" id="assessment-completed">0</div>
+                            <div class="stat-sub-label">Completed</div>
+                        </div>
+                        <div>
+                            <div class="stat-value stat-value-not-completed" id="assessment-not-completed">0</div>
+                            <div class="stat-sub-label">Not Completed</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+            
+            <!-- Main Student Table -->
+            <div class="main-table-container">
+                <div class="table-header">
+                    <h2>All Students</h2>
+                    <div class="actions">
+                        <button class="btn btn-outline" onclick="refreshData()">
+                            <i class="fas fa-sync btn-icon"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="main-table">
+                        <thead>
+                            <tr>
+                                <th>CAN ID</th>
+                                <th>Student Name</th>
+                                <th>Batch ID</th>
+                                <th>Mobile</th>
+                                <th>Category</th>
+                                <th>District</th>
+                                <th>Center</th>
+                                <th>Gender</th>
+                                <th>Trade</th>
+                                <th>OJT Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="main-student-data">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
-        <footer>  </footer>
+        <!-- Modal for Student Data -->
+        <div id="data-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-title">Student Data</h3>
+                    <span class="close-modal" onclick="closeModal()">&times;</span>
+                </div>
+                
+                <div class="modal-filters">
+                    <div class="filter-group">
+                        <label class="form-label">Gender</label>
+                        <select id="filter-gender" class="form-control">
+                            <option value="">All Genders</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Category</label>
+                        <select id="filter-category" class="form-control">
+                            <option value="">All Categories</option>
+                            <option value="General">General</option>
+                            <option value="OBC">OBC</option>
+                            <option value="SC">SC</option>
+                            <option value="ST">ST</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">OJT Status</label>
+                        <select id="filter-ojt" class="form-control">
+                            <option value="">All Statuses</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Not Completed">Not Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">District</label>
+                        <select id="filter-district" class="form-control">
+                            <option value="">All Districts</option>
+                            <option value="Bilaspur">Bilaspur</option>
+                            <option value="Chamba">Chamba</option>
+                            <option value="Hamirpur">Hamirpur</option>
+                            <option value="Kangra">Kangra</option>
+                            <option value="Kullu">Kullu</option>
+                            <option value="Mandi">Mandi</option>
+                            <option value="Sirmour">Sirmour</option>
+                            <option value="Solan">Solan</option>
+                            <option value="Una">Una</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Center/Block</label>
+                        <select id="filter-center" class="form-control" disabled>
+                            <option value="">Select District First</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="form-label">Trade</label>
+                        <select id="filter-trade" class="form-control">
+                            <option value="">All Trades</option>
+                            <option value="Agriculture">Agriculture</option>
+                            <option value="Beauty & Wellness">Beauty & Wellness</option>
+                            <option value="Plumbing">Plumbing</option>
+                            <option value="Food Processing">Food Processing</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Tourism & Hospitality">Tourism & Hospitality</option>
+                            <option value="ITeS">ITeS</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="table-wrapper">
+                        <table class="modal-table">
+                            <thead>
+                                <tr>
+                                    <th>CAN ID</th>
+                                    <th>Student Name</th>
+                                    <th>Batch ID</th>
+                                    <th>Mobile</th>
+                                    <th>Category</th>
+                                    <th>District</th>
+                                    <th>Center</th>
+                                    <th>Gender</th>
+                                    <th>Trade</th>
+                                    <th>OJT Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-data">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Close</button>
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-download btn-icon"></i> Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <script>
-        // Add animations on scroll
+        // District-center mapping
+        const centersByDistrict = {
+            "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
+            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla", "Salooni", "Sihunta", "Sundla", "Tissa"],
+            "Hamirpur": ["Hamirpur"],
+            "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
+            "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
+            "Mandi": ["Sadar-2", "Seraj-2"],
+            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
+            "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
+            "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
+        };
+
+        // Modal titles for each card
+        const modalTitles = {
+            totalStudents: "All Students",
+            counselling: "1:1 Career Counselling",
+            groupCounselling: "Group Career Counselling",
+            ojt: "OJT Status",
+            guestLecture: "Guest Lecture",
+            industrialVisit: "Industrial Visit",
+            assessment: "Assessment"
+        };
+
+        // DOM Elements
+        const districtFilter = document.getElementById('filter-district');
+        const centerFilter = document.getElementById('filter-center');
+        const studentDataBody = document.getElementById('student-data');
+        const mainStudentDataBody = document.getElementById('main-student-data');
+        const modalTitle = document.getElementById('modal-title');
+        const modal = document.getElementById('data-modal');
+        let currentCardType = '';
+        let studentData = [];
+
+        // Initialize filters and table
+        function initFilters() {
+            renderTables();
+            
+            // Set up event listeners
+            document.getElementById('filter-gender').addEventListener('change', filterStudents);
+            document.getElementById('filter-category').addEventListener('change', filterStudents);
+            document.getElementById('filter-ojt').addEventListener('change', filterStudents);
+            document.getElementById('filter-district').addEventListener('change', function() {
+                updateCenterDropdown(this, centerFilter);
+                filterStudents();
+            });
+            document.getElementById('filter-center').addEventListener('change', filterStudents);
+            document.getElementById('filter-trade').addEventListener('change', filterStudents);
+        }
+
+        // Render tables with data
+        function renderTables() {
+            renderTable(studentDataBody, studentData);
+            renderTable(mainStudentDataBody, studentData);
+        }
+        
+        function renderTable(container, data) {
+            container.innerHTML = '';
+            
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="text-center" style="padding: 1.5rem; text-align: center; color: var(--gray-500);">No student data available</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.can_id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.batch}</td>
+                    <td>${student.mobile}</td>
+                    <td>${student.category}</td>
+                    <td>${student.district}</td>
+                    <td>${student.center}</td>
+                    <td>${student.gender}</td>
+                    <td>${student.trade}</td>
+                    <td><span class="status-badge ${student.ojt === 'Completed' ? 'status-completed' : 'status-not-completed'}">${student.ojt}</span></td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // Filter students based on selected filters
+        function filterStudents() {
+            const gender = document.getElementById('filter-gender').value;
+            const category = document.getElementById('filter-category').value;
+            const ojt = document.getElementById('filter-ojt').value;
+            const district = document.getElementById('filter-district').value;
+            const center = document.getElementById('filter-center').value;
+            const trade = document.getElementById('filter-trade').value;
+            
+            const filtered = studentData.filter(student => {
+                return (!gender || student.gender === gender) &&
+                       (!category || student.category === category) &&
+                       (!ojt || student.ojt === ojt) &&
+                       (!district || student.district === district) &&
+                       (!center || student.center === center) &&
+                       (!trade || student.trade === trade);
+            });
+            
+            renderTable(studentDataBody, filtered);
+        }
+
+        // Update center dropdown based on selected district
+        function updateCenterDropdown(districtSelect, centerSelect) {
+            const district = districtSelect.value;
+            centerSelect.innerHTML = '<option value="">All Centers</option>';
+            
+            if (district && centersByDistrict[district]) {
+                centerSelect.disabled = false;
+                centersByDistrict[district].forEach(center => {
+                    const option = document.createElement('option');
+                    option.value = center;
+                    option.textContent = center;
+                    centerSelect.appendChild(option);
+                });
+            } else {
+                centerSelect.disabled = true;
+                centerSelect.innerHTML = '<option value="">Select District First</option>';
+            }
+        }
+
+        // Open modal with appropriate title
+        function openModal(cardType) {
+            currentCardType = cardType;
+            modalTitle.textContent = modalTitles[cardType];
+            modal.style.display = 'flex';
+            
+            // Reset filters
+            document.getElementById('filter-gender').value = '';
+            document.getElementById('filter-category').value = '';
+            document.getElementById('filter-ojt').value = '';
+            document.getElementById('filter-district').value = '';
+            document.getElementById('filter-center').value = '';
+            document.getElementById('filter-center').disabled = true;
+            document.getElementById('filter-trade').value = '';
+            
+            // Show all data initially
+            renderTable(studentDataBody, studentData);
+        }
+
+        // Close modal
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Export data
+        function exportData() {
+            alert(`Exporting data for ${modalTitles[currentCardType]}`);
+            // In a real application, this would trigger a download
+        }
+        
+        // Refresh data
+        function refreshData() {
+            alert("Refreshing student data...");
+            // In a real application, this would fetch updated data
+        }
+
+        // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.program-info, .visionary-card, .stat-card');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, {
-                threshold: 0.1
+            // Flash messages timeout
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                }, 5000);
             });
             
-            elements.forEach(el => {
-                el.style.opacity = 0;
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                observer.observe(el);
-            });
+            // Initialize filters
+            initFilters();
             
-            // Button hover effect enhancement
-            const buttons = document.querySelectorAll('.btn-hero');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', function() {
-                    this.style.transform = 'scale(1.05)';
-                });
-                
-                button.addEventListener('mouseleave', function() {
-                    this.style.transform = 'scale(1)';
-                });
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
             });
         });
     </script>
