@@ -96,6 +96,7 @@ def get_db_connection():
             assessment VARCHAR(50) DEFAULT 'Not Completed',
             assessment_date DATE,
             school_enrollment VARCHAR(50) DEFAULT NULL,
+            udsi INT,
             trade VARCHAR(100) NOT NULL, 
             total_days INT DEFAULT 0,
             attendance INT DEFAULT 0,
