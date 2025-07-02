@@ -44,150 +44,132 @@
             </div>
 
             <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card" onclick="openExportModal('total_students')">
-                    <i class="fas fa-users fa-2x mb-3 text-primary"></i>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <i class="fas fa-users fa-2x mt-2 text-primary"></i>                    
                     <div class="stat-label">Total Students</div>
                     <div class="stat-value">{{ total_records or 0 }}</div>
                 </div>
-                
-                <div class="stat-card" onclick="openExportModal('single_counselling', 'Completed')">
-                    <div class="stat-label">1:1 Career Counselling</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed">{{ stats.single_counselling.completed or 0 }}</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed">{{ stats.single_counselling.not_completed or 0 }}</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stat-card" onclick="openExportModal('group_counselling', 'Completed')">
-                    <div class="stat-label">Group Career Counselling</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed">{{ stats.group_counselling.completed or 0 }}</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed">{{ stats.group_counselling.not_completed or 0 }}</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stat-card" onclick="openExportModal('ojt', 'Completed')">
-                    <div class="stat-label">OJT Status</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed">{{ stats.ojt.completed or 0 }}</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed">{{ stats.ojt.not_completed or 0 }}</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stat-card" onclick="openExportModal('guest_lecture', 'Completed')">
-                    <div class="stat-label">Guest Lecture</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed">{{ stats.guest_lecture.completed or 0 }}</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed">{{ stats.guest_lecture.not_completed or 0 }}</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stat-card" onclick="openExportModal('industrial_visit', 'Completed')">
-                    <div class="stat-label">Industrial Visit</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed">{{ stats.industrial_visit.completed or 0 }}</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed">{{ stats.industrial_visit.not_completed or 0 }}</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stat-card" onclick="openExportModal('assessment', 'Completed')">
-                    <div class="stat-label">Assessment</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed">{{ stats.assessment.completed or 0 }}</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed">{{ stats.assessment.not_completed or 0 }}</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Export Modal -->
-            <div id="export-modal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Export Student Data</h3>
-                        <span class="close-modal" onclick="closeExportModal()">&times;</span>
+            <!-- Filters Section -->
+            <div class="filters-container">
+                <h3 class="mb-3">
+                    <i class="fas fa-filter text-primary"></i> Filter Students
+                </h3>
+                <form id="filter-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="form-label">Trade</label>
+                            <select id="trade" name="trade" class="form-control form-select">
+                                <option value="">All Trades</option>
+                                {% for trade_option in trades %}
+                                <option value="{{ trade_option }}" {% if current_filters.trade == trade_option %}selected{% endif %}>
+                                    {{ trade_option }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">District</label>
+                            <select id="district" name="district" class="form-control form-select">
+                                <option value="">All Districts</option>
+                                {% for district_option in districts %}
+                                <option value="{{ district_option }}" {% if current_filters.district == district_option %}selected{% endif %}>
+                                    {{ district_option }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="center" class="form-label">Center</label>
+                            <select id="center" name="center" class="form-control form-select">
+                                <option value="">All Centers</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Gender</label>
+                            <select class="form-control" name="gender">
+                                <option value="">All Genders</option>
+                                {% for gender_option in genders %}
+                                <option value="{{ gender_option }}" {% if current_filters.gender == gender_option %}selected{% endif %}>
+                                    {{ gender_option }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">OJT Status</label>
+                            <select class="form-control" name="ojt_status">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.ojt_status == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.ojt_status == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Single Career Counselling</label>
+                            <select class="form-control" name="single_counselling">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.single_counselling == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.single_counselling == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Group Career Counselling</label>
+                            <select class="form-control" name="group_counselling">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.group_counselling == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.group_counselling == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Industrial Visit</label>
+                            <select class="form-control" name="industrial_visit">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.industrial_visit == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.industrial_visit == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">Assessment</label>
+                            <select class="form-control" name="assessment">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.assessment == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.assessment == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="form-label">School Enrolled</label>
+                            <select class="form-control" name="school">
+                                <option value="">All Schools</option>
+                                {% for school in schools %}
+                                <option value="{{ school }}" {% if current_filters.school == school %}selected{% endif %}>
+                                    {{ school }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                    <form id="export-form" method="POST" action="{{ url_for('export_students') }}">
-                        <input type="hidden" id="export-type" name="export_type">
-                        <input type="hidden" id="export-status" name="export_status">
-                        
-                        <div class="export-filters">
-                            <div class="filter-group">
-                                <label class="form-label">Gender</label>
-                                <select name="export_gender" class="form-control">
-                                    <option value="">All Genders</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            
-                            <div class="filter-group">
-                                <label class="form-label">Category</label>
-                                <select name="export_category" class="form-control">
-                                    <option value="">All Categories</option>
-                                    <option value="General">General</option>
-                                    <option value="OBC">OBC</option>
-                                    <option value="SC">SC</option>
-                                    <option value="ST">ST</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            
-                            <div class="filter-group">
-                                <label class="form-label">OJT Status</label>
-                                <select name="export_ojt" class="form-control">
-                                    <option value="">All Statuses</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Not Completed">Not Completed</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="filter-actions">
-                            <button type="button" class="btn btn-outline" onclick="closeExportModal()">Cancel</button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-download btn-icon"></i> Export Data
-                            </button>
-                        </div>
-                    </form>
-                </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter btn-icon"></i> Apply Filters
+                        </button>
+                        <button type="button" class="btn btn-outline" id="reset-filters">
+                            <i class="fas fa-redo btn-icon"></i> Reset Filters
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Data Table -->
@@ -365,26 +347,65 @@
     </main>
 
     <script>
-
-        // Export modal functions
-        function openExportModal(type, status = '') {
-            document.getElementById('export-type').value = type;
-            document.getElementById('export-status').value = status;
-            document.getElementById('export-modal').style.display = 'flex';
-        }
-
-        function closeExportModal() {
-            document.getElementById('export-modal').style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('export-modal');
-            if (event.target === modal) {
-                closeExportModal();
-            }
+        const centerData = {
+            "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
+            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla",
+                "Salooni", "Sihunta", "Sundla", "Tissa"
+            ],
+            "Hamirpur": ["Hamirpur"],
+            "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
+            "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
+            "Mandi": ["Sadar-2", "Seraj-2"],
+            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
+            "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
+            "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
-        
+
+        // Function to update centers based on selected district
+        function updateCenters() {
+            const districtSelect = document.getElementById('district');
+            const centerSelect = document.getElementById('center');
+            const selectedDistrict = districtSelect.value;
+            const currentCenter = "{{ current_filters.center if current_filters.center else '' }}";
+
+            // Clear existing options
+            centerSelect.innerHTML = '<option value="">All Centers</option>';
+
+            if (selectedDistrict && centerData[selectedDistrict]) {
+                centerSelect.disabled = false;
+
+                // Add new options
+                centerData[selectedDistrict].forEach(center => {
+                    const option = document.createElement('option');
+                    option.value = center;
+                    option.textContent = center;
+
+                    // Preserve selected center if it matches
+                    if (center === currentCenter) {
+                        option.selected = true;
+                    }
+
+                    centerSelect.appendChild(option);
+                });
+            } else {
+                centerSelect.disabled = false; // Keep enabled to show "All Centers"
+            }
+        }
+
+        // Initialize the form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add event listener for district change
+            document.getElementById('district').addEventListener('change', updateCenters);
+
+            // Initialize centers based on current district selection
+            updateCenters();
+        });
+
+        // Reset filters
+        document.getElementById('reset-filters')?.addEventListener('click', function () {
+            window.location.href = "{{ url_for('admin_dashboard') }}";
+        });
+
         // Flash messages timeout
         document.addEventListener('DOMContentLoaded', function () {
             const flashMessages = document.querySelectorAll('.alert');
