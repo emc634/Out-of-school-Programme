@@ -124,6 +124,28 @@
                     </div>
                 </div>
 
+                <!-- Bank Details Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-university"></i>
+                        Bank Details
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="accountNumber" class="form-label">Bank Account Number</label>
+                            <input type="text" id="accountNumber" name="accountNumber" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="accountHolder" class="form-label">Account Holder Name</label>
+                            <input type="text" id="accountHolder" name="accountHolder" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="ifsc" class="form-label">Bank IFSC Code</label>
+                            <input type="text" id="ifsc" name="ifsc" class="form-control" required>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Training Status Section -->
                 <div class="form-section">
                     <h3 class="section-title">
@@ -261,20 +283,20 @@
 
     <script>
         // Mobile menu toggle functionality
-        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
             document.querySelector('.navbar').classList.toggle('active');
             document.querySelector('.navbar-overlay').classList.toggle('active');
         });
 
         // Close navbar when clicking on overlay
-        document.querySelector('.navbar-overlay').addEventListener('click', function() {
+        document.querySelector('.navbar-overlay').addEventListener('click', function () {
             document.querySelector('.navbar').classList.remove('active');
             this.classList.remove('active');
         });
 
         // Close navbar when clicking on a nav link
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', function () {
                 document.querySelector('.navbar').classList.remove('active');
                 document.querySelector('.navbar-overlay').classList.remove('active');
             });

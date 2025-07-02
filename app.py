@@ -395,6 +395,9 @@ def update_profile():
         other_trainings=request.form.get('other_trainings')
         assessment=request.form.get('assessment')
         school_name=request.form.get('schoolName').upper()
+        account_number=request.form.get('accountNumber')
+        account_holder=request.form.get('accountHolder')
+        ifsc=request.form.get('ifsc')
 
 
         current_password = request.form.get("current_password")
@@ -416,7 +419,10 @@ def update_profile():
             'group_counselling':group_counselling,
             'single_counselling':single_counselling,
             'school_enrollment':school_name,
-            'other_trainings':other_trainings
+            'other_trainings':other_trainings,
+            'ifsc':ifsc,
+            'account_number':account_number,
+            'account_holder':account_holder
         }
         
         # Validate required field - only current password is mandatory
@@ -470,6 +476,9 @@ def update_profile():
             update_fields_training = []
             update_values_training = []
             
+            update_fields_bank = []
+            update_values_bank = []
+            
             if student_name:
                 update_fields_student.append("student_name = %s")
                 update_values_student.append(student_name)
@@ -520,6 +529,18 @@ def update_profile():
             if school_name:
                 update_fields_training.append("school_enrollment = %s")
                 update_values_training.append(school_name)
+            
+            if account_number:
+                update_fields_bank.append("account_number = %s")
+                update_values_bank.append(account_number)
+
+            if account_number:
+                update_fields_bank.append("account_number = %s")
+                update_values_bank.append(account_number) 
+
+            if ifsc:
+                update_fields_bank.append("ifsc = %s")
+                update_values_bank.append(ifsc)                 
                 
                 
             
@@ -536,7 +557,14 @@ def update_profile():
                 
                 update_query = f"UPDATE student_training SET {', '.join(update_fields_training)} WHERE can_id = %s"
                 cursor.execute(update_query, update_values_training)
-                conn.commit()    
+                conn.commit() 
+
+            if update_fields_bank:
+                update_values_bank.append(can_id)  # Add can_id for WHERE clause
+                
+                update_query = f"UPDATE bank_details SET {', '.join(update_fields_bank)} WHERE can_id = %s"
+                cursor.execute(update_query, update_values_bank)
+                conn.commit()   
             else:
                 flash("No changes detected. Please modify at least one field to update.", "info")
                 return redirect(url_for('update_profile'))

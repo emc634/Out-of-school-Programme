@@ -135,27 +135,24 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Bank Details Section -->
-                    <div class="form-section">
+
+                    <div class="info-section">
                         <h3 class="section-title">
-                            <i class="fas fa-university"></i>
-                            Bank Details
+                            <i class="fas fa-graduation-cap"></i>
+                            Bank Information
                         </h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="accountNumber" class="form-label">Bank Account Number</label>
-                                <input type="text" id="accountNumber" name="accountNumber"
-                                    value="{{ form_data.account_number or '' }}" class="form-control" required>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Account Number</div>
+                                <div class="info-value">{{ bank.account_number }}</div>
                             </div>
-                            <div class="form-group">
-                                <label for="accountHolder" class="form-label">Account Holder Name</label>
-                                <input type="text" id="accountHolder" name="accountHolder"
-                                    value="{{ form_data.account_holder or '' }}" class="form-control" required>
+                            <div class="info-item">
+                                <div class="info-label">Account Holder</div>
+                                <div class="info-value">{{ bank.account_holder }}</div>
                             </div>
-                            <div class="form-group">
-                                <label for="ifsc" class="form-label">Bank IFSC Code</label>
-                                <input type="text" id="ifsc" name="ifsc" value="{{ form_data.ifsc or '' }}"
-                                    class="form-control" required>
+                            <div class="info-item">
+                                <div class="info-label">IFSC</div>
+                                <div class="info-value">{{ bank.ifsc }}</div>
                             </div>
                         </div>
                     </div>
@@ -254,7 +251,7 @@
         }
 
         // Initialize particles
-        window.addEventListener('load', createParticles);        
+        window.addEventListener('load', createParticles);
     </script>
 </body>
 
