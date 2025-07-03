@@ -395,12 +395,10 @@ def update_profile():
         other_trainings=request.form.get('other_trainings')
         assessment=request.form.get('assessment')
         school_name=request.form.get('schoolName').upper()
+        udsi=request.form.get('udsicode')
         account_number=request.form.get('accountNumber')
         account_holder=request.form.get('accountHolder')
         ifsc=request.form.get('ifsc')
-
-
-        current_password = request.form.get("current_password")
         
         # Store form data in session (excluding password)
         session['update_form_data'] = {
@@ -419,16 +417,13 @@ def update_profile():
             'group_counselling':group_counselling,
             'single_counselling':single_counselling,
             'school_enrollment':school_name,
+            'udsi':udsi,
             'other_trainings':other_trainings,
             'ifsc':ifsc,
             'account_number':account_number,
             'account_holder':account_holder
         }
         
-        # Validate required field - only current password is mandatory
-        if not current_password:
-            flash("Current password is required to update profile", "error")
-            return redirect(url_for("update_profile"))
         
         # Validate mobile number format (if provided)
         if mobile and (not mobile.isdigit() or len(mobile) != 10):
@@ -452,10 +447,6 @@ def update_profile():
                 session.pop('can_id', None)
                 return redirect(url_for("student_signin"))
             
-            # Verify current password
-            if not check_password_hash(user['password'], current_password):
-                flash("Current password is incorrect", "error")
-                return redirect(url_for("update_profile"))
             
             # Check if mobile number already exists for other users (if mobile is being updated)
             if mobile:
@@ -529,6 +520,8 @@ def update_profile():
             if school_name:
                 update_fields_training.append("school_enrollment = %s")
                 update_values_training.append(school_name)
+                update_fields_training.append("udsi = %s")
+                update_values_training.append(udsi)               
             
             if account_number:
                 update_fields_bank.append("account_number = %s")
@@ -545,6 +538,15 @@ def update_profile():
                 
             
             # Only proceed if there are fields to update
+            if not school_name in update_fields_training and udsi in update_fields_training:
+                flash('UDSI code cannot be filled without filling Enrolled School section','error')
+                return redirect(url_for('update_profile'))
+
+            if school_name in update_fields_training and not udsi in update_fields_training:
+                flash('Please make sure you fill the UDSI code of your Enrolled School too','error')
+                return redirect(url_for('update_profile'))
+            
+                
             if update_fields_student:
                 update_values_student.append(can_id)  # Add can_id for WHERE clause
                 
