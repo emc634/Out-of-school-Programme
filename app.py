@@ -378,29 +378,29 @@ def update_profile():
         return redirect(url_for('student_signin'))
 
     if request.method == "POST":
-        # Get form data
-        student_name = request.form.get("studentName")   
-        father_name = request.form.get("fatherName")
-        mother_name = request.form.get("motherName")
-        dob = request.form.get("dob")
-        gender = request.form.get("gender")
-        religion = request.form.get("religion")
-        category = request.form.get("category")
-        mobile = request.form.get("mobile")
-        single_counselling=request.form.get("single_counselling")
-        group_counselling=request.form.get("group_counselling")
-        ojt=request.form.get('ojt')
-        guest_lecture=request.form.get('guestLecture')
-        industrial_visit=request.form.get('industrialVisit')
-        other_trainings=request.form.get('other_trainings')
-        assessment=request.form.get('assessment')
-        school_name=request.form.get('schoolName').upper()
-        udsi=request.form.get('udsicode')
-        account_number=request.form.get('accountNumber')
-        account_holder=request.form.get('accountHolder')
-        ifsc=request.form.get('ifsc')
-        
-        # Store form data in session (excluding password)
+        # Get form data & strip/clean where needed
+        student_name = request.form.get("studentName", "").strip()   
+        father_name = request.form.get("fatherName", "").strip()
+        mother_name = request.form.get("motherName", "").strip()
+        dob = request.form.get("dob", "").strip()
+        gender = request.form.get("gender", "").strip()
+        religion = request.form.get("religion", "").strip()
+        category = request.form.get("category", "").strip()
+        mobile = request.form.get("mobile", "").strip()
+        single_counselling = request.form.get("single_counselling", "").strip()
+        group_counselling = request.form.get("group_counselling", "").strip()
+        ojt = request.form.get('ojt', "").strip()
+        guest_lecture = request.form.get('guestLecture', "").strip()
+        industrial_visit = request.form.get('industrialVisit', "").strip()
+        other_trainings = request.form.get('other_trainings', "").strip()
+        assessment = request.form.get('assessment', "").strip()
+        school_name = request.form.get('schoolName', "").strip().upper()
+        udsi = request.form.get('udsicode', "").strip()
+        account_number = request.form.get('accountNumber', "").strip()
+        account_holder = request.form.get('accountHolder', "").strip()
+        ifsc = request.form.get('ifsc', "").strip()
+
+        # Store form data in session
         session['update_form_data'] = {
             'studentName': student_name,
             'fatherName': father_name,
@@ -410,202 +410,161 @@ def update_profile():
             'religion': religion,
             'category': category,
             'mobile': mobile,
-            'ojt':ojt,
-            'guest_lecture':guest_lecture,
-            'industrial_visit':industrial_visit,
-            'assessment':assessment,
-            'group_counselling':group_counselling,
-            'single_counselling':single_counselling,
-            'school_enrollment':school_name,
-            'udsi':udsi,
-            'other_trainings':other_trainings,
-            'ifsc':ifsc,
-            'account_number':account_number,
-            'account_holder':account_holder
+            'ojt': ojt,
+            'guest_lecture': guest_lecture,
+            'industrial_visit': industrial_visit,
+            'assessment': assessment,
+            'group_counselling': group_counselling,
+            'single_counselling': single_counselling,
+            'school_enrollment': school_name,
+            'udsi': udsi,
+            'other_trainings': other_trainings,
+            'ifsc': ifsc,
+            'account_number': account_number,
+            'account_holder': account_holder
         }
-        
-        
-        # Validate mobile number format (if provided)
+
+        # Validate mobile number format
         if mobile and (not mobile.isdigit() or len(mobile) != 10):
             flash("Please enter a valid 10-digit mobile number", "error")
             return redirect(url_for("update_profile"))
-        
+
         conn = None
         cursor = None
         try:
-            # Connect to database and verify current password
             conn = get_db_connection()
             cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cursor.execute(
-                'SELECT password FROM students WHERE can_id = %s', 
-                (can_id,)
-            )
+
+            # Check if user exists
+            cursor.execute('SELECT password FROM students WHERE can_id = %s', (can_id,))
             user = cursor.fetchone()
-            
-            if user is None:
+            if not user:
                 flash("User not found. Please login again.", "error")
                 session.pop('can_id', None)
                 return redirect(url_for("student_signin"))
-            
-            
-            # Check if mobile number already exists for other users (if mobile is being updated)
+
+            # Check if mobile is already used by another user
             if mobile:
                 cursor.execute(
-                    'SELECT can_id FROM students WHERE mobile = %s AND can_id != %s', 
+                    'SELECT can_id FROM students WHERE mobile = %s AND can_id != %s',
                     (mobile, can_id)
                 )
-                existing_mobile = cursor.fetchone()
-                
-                if existing_mobile:
+                if cursor.fetchone():
                     flash("Mobile number already registered with another account", "error")
                     return redirect(url_for("update_profile"))
-            
-            # Build dynamic UPDATE query based on provided fields
-            update_fields_student = []
-            update_values_student = []
-            
-            update_fields_training = []
-            update_values_training = []
-            
-            update_fields_bank = []
-            update_values_bank = []
-            
-            if student_name:
-                update_fields_student.append("student_name = %s")
-                update_values_student.append(student_name)
-            if father_name:
-                update_fields_student.append("father_name = %s")
-                update_values_student.append(father_name)
-            if mother_name:
-                update_fields_student.append("mother_name = %s")
-                update_values_student.append(mother_name)
-            if dob:
-                update_fields_student.append("dob = %s")
-                update_values_student.append(dob)
-            if gender:
-                update_fields_student.append("gender = %s")
-                update_values_student.append(gender)
-            if religion:
-                update_fields_student.append("religion = %s")
-                update_values_student.append(religion)
-            if category:
-                update_fields_student.append("category = %s")
-                update_values_student.append(category)
-            if mobile:
-                update_fields_student.append("mobile = %s")
-                update_values_student.append(mobile)
-            if single_counselling:
-                update_fields_training.append("single_counselling = %s")
-                update_values_training.append(single_counselling)
-            if group_counselling:
-                update_fields_training.append("group_counselling = %s")
-                update_values_training.append(group_counselling)
-            if other_trainings:
-                update_fields_training.append("other_trainings = %s")
-                update_values_training.append(other_trainings)
-            if ojt:
-                update_fields_training.append("ojt = %s")
-                update_values_training.append(ojt)
+
+            # Build dynamic updates
+            update_fields_student, update_values_student = [], []
+            update_fields_training, update_values_training = [], []
+            update_fields_bank, update_values_bank = [], []
+
+            # Students table
+            for field, value, col in [
+                (student_name, student_name, "student_name"),
+                (father_name, father_name, "father_name"),
+                (mother_name, mother_name, "mother_name"),
+                (dob, dob, "dob"),
+                (gender, gender, "gender"),
+                (religion, religion, "religion"),
+                (category, category, "category"),
+                (mobile, mobile, "mobile")
+            ]:
+                if value:
+                    update_fields_student.append(f"{col} = %s")
+                    update_values_student.append(value)
+
+            # Training table
+            for field, col in [
+                (single_counselling, "single_counselling"),
+                (group_counselling, "group_counselling"),
+                (other_trainings, "other_trainings"),
+                (ojt, "ojt"),
+                (guest_lecture, "guest_lecture"),
+                (industrial_visit, "industrial_visit")
+            ]:
+                if field:
+                    update_fields_training.append(f"{col} = %s")
+                    update_values_training.append(field)
+
             if assessment:
                 update_fields_training.append("assessment = %s")
-                update_fields_training.append("assessment_date=%s")
                 update_values_training.append(assessment)
+                update_fields_training.append("assessment_date = %s")
                 update_values_training.append(datetime.today().date())
-            if guest_lecture:
-                update_fields_training.append("guest_lecture = %s")
-                update_values_training.append(guest_lecture)
-            if industrial_visit:
-                update_fields_training.append("industrial_visit = %s")
-                update_values_training.append(industrial_visit)
+
             if school_name:
                 update_fields_training.append("school_enrollment = %s")
                 update_values_training.append(school_name)
+            if udsi:
                 update_fields_training.append("udsi = %s")
-                update_values_training.append(udsi)               
-            
+                update_values_training.append(udsi)
+
+            # Bank table
             if account_number:
                 update_fields_bank.append("account_number = %s")
                 update_values_bank.append(account_number)
-
-            if account_number:
-                update_fields_bank.append("account_number = %s")
-                update_values_bank.append(account_number) 
-
             if ifsc:
                 update_fields_bank.append("ifsc = %s")
-                update_values_bank.append(ifsc)                 
-                
-                
-            
-            # Only proceed if there are fields to update
-            if not school_name in update_fields_training and udsi in update_fields_training:
-                flash('UDSI code cannot be filled without filling Enrolled School section','error')
+                update_values_bank.append(ifsc)
+            if account_holder:
+                update_fields_bank.append("account_holder = %s")
+                update_values_bank.append(account_holder)
+
+            # Validate school_name & udsi dependency
+            if "udsi = %s" in update_fields_training and "school_enrollment = %s" not in update_fields_training:
+                flash('UDSI code cannot be filled without filling Enrolled School section', 'error')
+                return redirect(url_for('update_profile'))
+            if "school_enrollment = %s" in update_fields_training and "udsi = %s" not in update_fields_training:
+                flash('Please make sure you fill the UDSI code of your Enrolled School too', 'error')
                 return redirect(url_for('update_profile'))
 
-            if school_name in update_fields_training and not udsi in update_fields_training:
-                flash('Please make sure you fill the UDSI code of your Enrolled School too','error')
+            # If nothing to update
+            if not (update_fields_student or update_fields_training or update_fields_bank):
+                flash('No changes detected. Please modify at least one field.', 'info')
                 return redirect(url_for('update_profile'))
-            
-                
+
+            # Apply updates
             if update_fields_student:
-                update_values_student.append(can_id)  # Add can_id for WHERE clause
-                
-                update_query = f"UPDATE students SET {', '.join(update_fields_student)} WHERE can_id = %s"
-                cursor.execute(update_query, update_values_student)
-                conn.commit()
-                
+                update_values_student.append(can_id)
+                query = f"UPDATE students SET {', '.join(update_fields_student)} WHERE can_id = %s"
+                cursor.execute(query, update_values_student)
+
             if update_fields_training:
-                update_values_training.append(can_id)  # Add can_id for WHERE clause
-                
-                update_query = f"UPDATE student_training SET {', '.join(update_fields_training)} WHERE can_id = %s"
-                cursor.execute(update_query, update_values_training)
-                conn.commit() 
+                update_values_training.append(can_id)
+                query = f"UPDATE student_training SET {', '.join(update_fields_training)} WHERE can_id = %s"
+                cursor.execute(query, update_values_training)
 
             if update_fields_bank:
-                update_values_bank.append(can_id)  # Add can_id for WHERE clause
-                
-                update_query = f"UPDATE bank_details SET {', '.join(update_fields_bank)} WHERE can_id = %s"
-                cursor.execute(update_query, update_values_bank)
-                conn.commit()   
-            else:
-                flash("No changes detected. Please modify at least one field to update.", "info")
-                return redirect(url_for('update_profile'))
-            
-                            # Success - clear form data from session and redirect
+                update_values_bank.append(can_id)
+                query = f"UPDATE bank_details SET {', '.join(update_fields_bank)} WHERE can_id = %s"
+                cursor.execute(query, update_values_bank)
+
+            # Single commit
+            conn.commit()
+
             session.pop('update_form_data', None)
             flash("Profile updated successfully!", "success")
             return redirect(url_for('profile_display'))
-            
-            
+
         except IntegrityError as e:
-            error_msg = str(e).lower()
-            if "mobile" in error_msg:
+            if "mobile" in str(e).lower():
                 flash("Mobile number already registered", "error")
             else:
                 flash(f"Database integrity error: {str(e)}", "error")
-            return redirect(url_for('update_profile'))
-            
         except OperationalError as e:
             flash(f"Database operational error: {str(e)}", "error")
-            return redirect(url_for('update_profile'))
-            
-        except ValueError as e:
-            flash(f"Invalid input data: {str(e)}", "error")
-            return redirect(url_for('update_profile'))
-            
         except Exception as e:
             flash(f"An unexpected error occurred: {str(e)}", "error")
-            return redirect(url_for('update_profile'))
-            
         finally:
-            if cursor:
-                cursor.close()
-            if conn:
-                conn.close()
-    
-    # GET request - get form data from session and render template
+            if cursor: cursor.close()
+            if conn: conn.close()
+
+        return redirect(url_for('update_profile'))
+
+    # GET request
     form_data = session.get('update_form_data', {})
     return render_template('update_profile.html', form_data=form_data)
+
 
 @app.route("/dashboard", methods=['GET', 'POST'])
 def dashboard():
