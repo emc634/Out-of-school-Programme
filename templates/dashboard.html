@@ -28,7 +28,7 @@
                 <li><a href="{{ url_for('update_profile') }}" class="nav-link">Update</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="btn btn-outline-primary btn-sm">Logout</button>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-primary btn-sm">Logout</a>
             </div>
         </div>
     </nav>
@@ -298,20 +298,20 @@
         }
 
         // Mobile menu toggle functionality
-        document.querySelector('.mobile-toggle').addEventListener('click', function() {
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
             document.querySelector('.navbar').classList.toggle('active');
             document.querySelector('.navbar-overlay').classList.toggle('active');
         });
 
         // Close navbar when clicking on overlay
-        document.querySelector('.navbar-overlay').addEventListener('click', function() {
+        document.querySelector('.navbar-overlay').addEventListener('click', function () {
             document.querySelector('.navbar').classList.remove('active');
             this.classList.remove('active');
         });
 
         // Close navbar when clicking on a nav link
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
+            link.addEventListener('click', function () {
                 document.querySelector('.navbar').classList.remove('active');
                 document.querySelector('.navbar-overlay').classList.remove('active');
             });
