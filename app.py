@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
-from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 import psycopg2.extras
 from datetime import datetime
@@ -84,7 +83,7 @@ def student_signup():
             flash("Candidate must be below 18 to sign up", "error")
             return redirect(url_for("student_signup"))
              
-        password_hash = generate_password_hash(password)
+        password_hash = password
         
         conn = None
         try:
@@ -263,17 +262,15 @@ def reset_password():
                 return redirect(url_for("student_signin"))
             
             # Verify current password
-            if not check_password_hash(user['password'], current_password):
+            if user["password"]!=new_password:
                 flash("Current password is incorrect", "error")
                 return redirect(url_for("reset_password"))
             
-            # Hash the new password
-            new_password_hash = generate_password_hash(new_password)
             
             # Update password in database
             cursor.execute(
                 'UPDATE students SET password = %s WHERE can_id = %s',
-                (new_password_hash, can_id)
+                (new_password, can_id)
             )
             conn.commit()
             
@@ -324,7 +321,7 @@ def student_signin():
             user = cursor.fetchone()
             
             # Verify credentials
-            if user is None or not check_password_hash(user['password'], password):
+            if user is None or not user['password']!= password:
                 flash("Invalid CAN ID or password", "error")  # Updated message
                 return redirect(url_for("student_signin"))
             
@@ -771,6 +768,27 @@ def admin_dashboard():
     industrial_visit_filter = request.args.get('industrial_visit')
     religion_filter = request.args.get('religion')
     
+    # Define predefined options (matching your HTML form)
+    all_trades = [
+        "Agriculture", "Beauty & Wellness", "Plumbing", "Food Processing", 
+        "Automotive", "Electronics", "Tourism & Hospitality", "ITeS"
+    ]
+    
+    all_genders = ["Male", "Female", "Other"]
+    
+    all_districts = [
+        "Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kullu", 
+        "Mandi", "Sirmour", "Solan", "Una",""
+    ]
+    
+    all_religions = ["Hindu", "Muslim", "Christian", "Sikh", "Jain", "Buddhist", "Other"]
+    
+    # Training status options
+    training_status_options = ["Completed", "Not Completed"]
+    
+    # School enrollment options
+    school_enrollment_options = ["Enrolled", "Not Enrolled"]
+    
     try:
         conn = get_db_connection()
         if not conn:
@@ -782,11 +800,12 @@ def admin_dashboard():
                                  total_pages=1,
                                  has_prev=False,
                                  has_next=False,
-                                 trades=[],
-                                 genders=[],
-                                 districts=[],
-                                 religions=[],
-                                 schools=[],
+                                 trades=all_trades,
+                                 genders=all_genders,
+                                 districts=all_districts,
+                                 religions=all_religions,
+                                 schools=school_enrollment_options,
+                                 training_status_options=training_status_options,
                                  current_filters={})
             
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -807,40 +826,53 @@ def admin_dashboard():
         
         params = []
         
-        # Apply filters
+        # Apply filters with case-insensitive matching using ILIKE
         if trade_filter:
-            query += " AND st.trade = %s"
-            params.append(trade_filter)
+            query += " AND LOWER(TRIM(st.trade)) = LOWER(%s)"
+            params.append(trade_filter.strip())
+            
         if gender_filter:
-            query += " AND s.gender = %s"
-            params.append(gender_filter)
+            query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
+            params.append(gender_filter.strip())
+            
         if district_filter:
-            query += " AND s.district = %s"
-            params.append(district_filter)
+            query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
+            params.append(district_filter.strip())
+            
         if center_filter:
-            query += " AND s.center = %s"
-            params.append(center_filter)
+            query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
+            params.append(center_filter.strip())
+            
         if ojt_filter:
-            query += " AND st.ojt = %s"
-            params.append(ojt_filter)
+            query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
+            params.append(ojt_filter.strip())
+        
+        # Handle school enrollment filter (Enrolled/Not Enrolled)
         if school_filter:
-            query += " AND st.school_enrollment = %s"
-            params.append(school_filter)
+            if school_filter == "Enrolled":
+                query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
+            elif school_filter == "Not Enrolled":
+                query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
+        
         if single_counselling_filter:
-            query += " AND st.single_counselling = %s"
-            params.append(single_counselling_filter)
+            query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
+            params.append(single_counselling_filter.strip())
+            
         if group_counselling_filter:
-            query += " AND st.group_counselling = %s"
-            params.append(group_counselling_filter)
+            query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
+            params.append(group_counselling_filter.strip())
+            
         if assessment_filter:
-            query += " AND st.assessment = %s"
-            params.append(assessment_filter)
+            query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
+            params.append(assessment_filter.strip())
+            
         if industrial_visit_filter:
-            query += " AND st.industrial_visit = %s"
-            params.append(industrial_visit_filter)
+            query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
+            params.append(industrial_visit_filter.strip())
+            
         if religion_filter:
-            query += " AND s.religion = %s"
-            params.append(religion_filter)
+            query += " AND LOWER(TRIM(s.religion)) = LOWER(%s)"
+            params.append(religion_filter.strip())
         
         # Get total count for pagination
         count_query = query.replace(
@@ -863,22 +895,6 @@ def admin_dashboard():
         cursor.execute(query, params)
         students = cursor.fetchall()
         
-        # Get unique values for filter dropdowns
-        cursor.execute("SELECT DISTINCT trade FROM student_training WHERE trade IS NOT NULL ORDER BY trade")
-        trades = [row[0] for row in cursor.fetchall()]
-        
-        cursor.execute("SELECT DISTINCT gender FROM students WHERE gender IS NOT NULL ORDER BY gender")
-        genders = [row[0] for row in cursor.fetchall()]
-        
-        cursor.execute("SELECT DISTINCT district FROM students WHERE district IS NOT NULL ORDER BY district")
-        districts = [row[0] for row in cursor.fetchall()]
-        
-        cursor.execute("SELECT DISTINCT religion FROM students WHERE religion IS NOT NULL ORDER BY religion")
-        religions = [row[0] for row in cursor.fetchall()]
-        
-        cursor.execute("SELECT DISTINCT school_enrollment FROM student_training WHERE school_enrollment IS NOT NULL ORDER BY school_enrollment")
-        schools = [row[0] for row in cursor.fetchall()]
-        
         # Calculate pagination info
         total_pages = (total_records + per_page - 1) // per_page
         has_prev = page > 1
@@ -892,11 +908,12 @@ def admin_dashboard():
             total_pages=total_pages,
             has_prev=has_prev,
             has_next=has_next,
-            trades=trades,
-            genders=genders,
-            districts=districts,
-            religions=religions,
-            schools=schools,
+            trades=all_trades,
+            genders=all_genders,
+            districts=all_districts,
+            religions=all_religions,
+            schools=school_enrollment_options,
+            training_status_options=training_status_options,
             # Pass current filter values back to template
             current_filters={
                 'trade': trade_filter,
@@ -923,11 +940,12 @@ def admin_dashboard():
                              total_pages=1,
                              has_prev=False,
                              has_next=False,
-                             trades=[],
-                             genders=[],
-                             districts=[],
-                             religions=[],
-                             schools=[],
+                             trades=all_trades,
+                             genders=all_genders,
+                             districts=all_districts,
+                             religions=all_religions,
+                             schools=school_enrollment_options,
+                             training_status_options=training_status_options,
                              current_filters={})
     
     finally:

@@ -72,7 +72,7 @@ def get_db_connection():
             father_name VARCHAR(100) NOT NULL,
             mother_name VARCHAR(100) NOT NULL,
             batch_id VARCHAR(100) NOT NULL,
-            mobile VARCHAR(15) UNIQUE NOT NULL,
+            mobile VARCHAR(15)  NOT NULL,
             religion VARCHAR(50) NOT NULL,
             category VARCHAR(50) NOT NULL,
             dob DATE NOT NULL,
