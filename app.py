@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 import psycopg2
-import psycopg2.extras
+from psycopg2 import extras
 from datetime import datetime
 import json
 from psycopg2 import IntegrityError, OperationalError
@@ -748,46 +748,42 @@ def admin_login():
             
     return render_template('admin_login.html')
 
-# Complete admin_dashboard route:
+
+
+
+
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    # Get pagination and filter parameters
+    # Initialize session filters if not present
+    if 'filters' not in session:
+        session['filters'] = {
+            'trade': None,
+            'gender': None,
+            'district': None,
+            'center': None,
+            'ojt_status': None,
+            'school': None,
+            'single_counselling': None,
+            'group_counselling': None,
+            'assessment': None,
+            'industrial_visit': None
+        }
+    
+    # Get current filters from session
+    current_filters = session['filters']
+    
+    # Update filters from request parameters if provided
+    for filter_name in current_filters.keys():
+        if filter_name in request.args:
+            value = request.args.get(filter_name)
+            current_filters[filter_name] = value if value != '' else None
+    
+    # Save updated filters to session
+    session['filters'] = current_filters
+    
+    # Get pagination parameters
     page = request.args.get('page', 1, type=int)
     per_page = 25  # Records per page
-    
-    # Get filter parameters from request
-    trade_filter = request.args.get('trade')
-    gender_filter = request.args.get('gender')
-    district_filter = request.args.get('district')
-    center_filter = request.args.get('center')
-    ojt_filter = request.args.get('ojt_status')
-    school_filter = request.args.get('school')
-    group_counselling_filter = request.args.get('group_counselling')
-    single_counselling_filter = request.args.get('single_counselling')
-    assessment_filter = request.args.get('assessment')
-    industrial_visit_filter = request.args.get('industrial_visit')
-    religion_filter = request.args.get('religion')
-    
-    # Define predefined options (matching your HTML form)
-    all_trades = [
-        "Agriculture", "Beauty & Wellness", "Plumbing", "Food Processing", 
-        "Automotive", "Electronics", "Tourism & Hospitality", "ITeS"
-    ]
-    
-    all_genders = ["Male", "Female", "Other"]
-    
-    all_districts = [
-        "Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kullu", 
-        "Mandi", "Sirmour", "Solan", "Una",""
-    ]
-    
-    all_religions = ["Hindu", "Muslim", "Christian", "Sikh", "Jain", "Buddhist", "Other"]
-    
-    # Training status options
-    training_status_options = ["Completed", "Not Completed"]
-    
-    # School enrollment options
-    school_enrollment_options = ["Enrolled", "Not Enrolled"]
     
     try:
         conn = get_db_connection()
@@ -800,15 +796,9 @@ def admin_dashboard():
                                  total_pages=1,
                                  has_prev=False,
                                  has_next=False,
-                                 trades=all_trades,
-                                 genders=all_genders,
-                                 districts=all_districts,
-                                 religions=all_religions,
-                                 schools=school_enrollment_options,
-                                 training_status_options=training_status_options,
-                                 current_filters={})
+                                 current_filters=current_filters)
             
-        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor = conn.cursor(cursor_factory=extras.DictCursor)
         
         # Base query joining all three tables
         query = """
@@ -826,53 +816,49 @@ def admin_dashboard():
         
         params = []
         
-        # Apply filters with case-insensitive matching using ILIKE
-        if trade_filter:
+        # Apply filters with case-insensitive matching
+        if current_filters['trade']:
             query += " AND LOWER(TRIM(st.trade)) = LOWER(%s)"
-            params.append(trade_filter.strip())
+            params.append(current_filters['trade'].strip())
             
-        if gender_filter:
+        if current_filters['gender']:
             query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
-            params.append(gender_filter.strip())
+            params.append(current_filters['gender'].strip())
             
-        if district_filter:
+        if current_filters['district']:
             query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
-            params.append(district_filter.strip())
+            params.append(current_filters['district'].strip())
             
-        if center_filter:
+        if current_filters['center']:
             query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
-            params.append(center_filter.strip())
+            params.append(current_filters['center'].strip())
             
-        if ojt_filter:
+        if current_filters['ojt_status']:
             query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
-            params.append(ojt_filter.strip())
+            params.append(current_filters['ojt_status'].strip())
         
-        # Handle school enrollment filter (Enrolled/Not Enrolled)
-        if school_filter:
-            if school_filter == "Enrolled":
+        # Handle school enrollment filter
+        if current_filters['school']:
+            if current_filters['school'] == "Enrolled":
                 query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
-            elif school_filter == "Not Enrolled":
+            elif current_filters['school'] == "Not Enrolled":
                 query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
         
-        if single_counselling_filter:
+        if current_filters['single_counselling']:
             query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
-            params.append(single_counselling_filter.strip())
+            params.append(current_filters['single_counselling'].strip())
             
-        if group_counselling_filter:
+        if current_filters['group_counselling']:
             query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
-            params.append(group_counselling_filter.strip())
+            params.append(current_filters['group_counselling'].strip())
             
-        if assessment_filter:
+        if current_filters['assessment']:
             query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
-            params.append(assessment_filter.strip())
+            params.append(current_filters['assessment'].strip())
             
-        if industrial_visit_filter:
+        if current_filters['industrial_visit']:
             query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
-            params.append(industrial_visit_filter.strip())
-            
-        if religion_filter:
-            query += " AND LOWER(TRIM(s.religion)) = LOWER(%s)"
-            params.append(religion_filter.strip())
+            params.append(current_filters['industrial_visit'].strip())
         
         # Get total count for pagination
         count_query = query.replace(
@@ -896,7 +882,7 @@ def admin_dashboard():
         students = cursor.fetchall()
         
         # Calculate pagination info
-        total_pages = (total_records + per_page - 1) // per_page
+        total_pages = max(1, (total_records + per_page - 1) // per_page)
         has_prev = page > 1
         has_next = page < total_pages
         
@@ -908,26 +894,7 @@ def admin_dashboard():
             total_pages=total_pages,
             has_prev=has_prev,
             has_next=has_next,
-            trades=all_trades,
-            genders=all_genders,
-            districts=all_districts,
-            religions=all_religions,
-            schools=school_enrollment_options,
-            training_status_options=training_status_options,
-            # Pass current filter values back to template
-            current_filters={
-                'trade': trade_filter,
-                'gender': gender_filter,
-                'district': district_filter,
-                'center': center_filter,
-                'ojt_status': ojt_filter,
-                'school': school_filter,
-                'single_counselling': single_counselling_filter,
-                'group_counselling': group_counselling_filter,
-                'assessment': assessment_filter,
-                'industrial_visit': industrial_visit_filter,
-                'religion': religion_filter
-            }
+            current_filters=current_filters
         )
         
     except Exception as e:
@@ -940,18 +907,21 @@ def admin_dashboard():
                              total_pages=1,
                              has_prev=False,
                              has_next=False,
-                             trades=all_trades,
-                             genders=all_genders,
-                             districts=all_districts,
-                             religions=all_religions,
-                             schools=school_enrollment_options,
-                             training_status_options=training_status_options,
-                             current_filters={})
+                             current_filters=current_filters)
     
     finally:
-        if conn:
+        if 'cursor' in locals():
             cursor.close()
+        if 'conn' in locals():
             conn.close()
+
+@app.route('/reset_filters')
+def reset_filters():
+    # Clear all filters from session
+    if 'filters' in session:
+        for key in session['filters'].keys():
+            session['filters'][key] = None
+    return redirect(url_for('admin_dashboard'))
 
 @app.route('/logout')
 def logout():
