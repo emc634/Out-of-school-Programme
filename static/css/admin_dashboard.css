@@ -21,7 +21,8 @@
     box-shadow: var(--shadow-md);
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
-.admin-logo-title-container{
+
+.admin-logo-title-container {
     display: flex;
     flex-direction: column;
 }
@@ -56,17 +57,7 @@
     gap: var(--space-md);
 }
 
-.stat-card {
-    cursor: pointer;
-}
 
-/* Stats Grid */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--space-md);
-    margin-bottom: var(--space-md);
-}
 
 /* Modal styles */
 .modal {
@@ -168,25 +159,39 @@
 /* Stats Card */
 .stats-container {
     display: flex;
-    justify-content: left;
     margin-bottom: var(--space-md);
 }
 
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+}
+.stats {
+    display: flex;
+    flex-direction: column;
+    justify-content: center
+}
+
 .stat-card {
+    display: flex;
+    flex-direction: row; /* or column, depending on layout */
+    align-items: center; /* vertically center all items */
+    justify-content: center; /* center items horizontally */
+    gap: var(--space-xl);
+    padding: var(--space-sm);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 247, 255, 0.95) 100%);
     border-radius: var(--border-radius-lg);
-    padding: var(--space-lg);
-    text-align: center;
     box-shadow: var(--shadow-lg);
-    transition: var(--transition);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.7);
     width: 100%;
-    max-width: 200px;
     position: relative;
     overflow: hidden;
-    height: 140px;
 }
+
 
 .stat-card::before {
     content: '';
@@ -208,9 +213,9 @@
 }
 
 .stat-value {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 800;
-    margin: var(--space-xxs) 0;
+    margin: var(--space-xxs) ;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -219,19 +224,19 @@
 }
 
 .stat-label {
-    font-size: 0.81rem;
+    font-size: 1rem;
     color: var(--gray-600);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
     line-height: 1.3;
 }
 
 .stat-icon {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin-bottom: var(--space-xxs);
+    margin-bottom: var(--space-xs);
 }
 
 /* Main Content Layout */

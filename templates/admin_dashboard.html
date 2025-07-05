@@ -49,61 +49,80 @@
             </div>
 
             <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <!-- Total Students -->
-                <div class="stat-card" data-type="total" onclick="openModal('total')">
-                    <i class="fas fa-users fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">Total Students</div>
-                    <div class="stat-value">{{ total_records or 0 }}</div>
-                </div>
+            <div class="stat-container">
+                <div class="stats-grid">
+                    <!-- Total Students -->
+                    <div class="stat-card" data-type="total" onclick="openModal('total')">
+                        <i class="fas fa-users fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">Total Students</div>
+                            <div class="stat-value">{{ total_records or 0 }}</div>
+                        </div>
 
-                <!-- Single Career Counselling -->
-                <div class="stat-card" data-type="single_counselling" onclick="openModal('single_counselling')">
-                    <i class="fas fa-user fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">Single Career Counselling</div>
-                    <div class="stat-value">{{ training_counts.single_completed or 0 }}</div>
-                </div>
+                    </div>
 
-                <!-- Group Career Counselling -->
-                <div class="stat-card" data-type="group_counselling" onclick="openModal('group_counselling')">
-                    <i class="fas fa-users fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">Group Career Counselling</div>
-                    <div class="stat-value">{{ training_counts.group_completed or 0 }}</div>
-                </div>
+                    <!-- Single Career Counselling -->
+                    <div class="stat-card" data-type="single_counselling" onclick="openModal('single_counselling')">
+                        <i class="fas fa-user fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">One to One <br>Career Counselling</div>
+                            <div class="stat-value">{{ training_counts.single_completed or 0 }}</div>
+                        </div>
+                    </div>
 
-                <!-- OJT Status -->
-                <div class="stat-card" data-type="ojt" onclick="openModal('ojt')">
-                    <i class="fas fa-briefcase fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">OJT Status</div>
-                    <div class="stat-value">{{ training_counts.ojt_completed or 0 }}</div>
-                </div>
+                    <!-- Group Career Counselling -->
+                    <div class="stat-card" data-type="group_counselling" onclick="openModal('group_counselling')">
+                        <i class="fas fa-users fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">Group <br>Career Counselling</div>
+                            <div class="stat-value">{{ training_counts.group_completed or 0 }}</div>
+                        </div>
+                    </div>
 
-                <!-- Guest Lecture -->
-                <div class="stat-card" data-type="guest_lecture" onclick="openModal('guest_lecture')">
-                    <i class="fas fa-chalkboard-teacher fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">Guest Lecture</div>
-                    <div class="stat-value">{{ training_counts.guest_lecture_completed or 0 }}</div>
-                </div>
+                    <!-- OJT Status -->
+                    <div class="stat-card" data-type="ojt" onclick="openModal('ojt')">
+                        <i class="fas fa-briefcase fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">OJT Status</div>
+                            <div class="stat-value">{{ training_counts.ojt_completed or 0 }}</div>
+                        </div>
+                    </div>
 
-                <!-- Industrial Visit -->
-                <div class="stat-card" data-type="industrial_visit" onclick="openModal('industrial_visit')">
-                    <i class="fas fa-industry fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">Industrial Visit</div>
-                    <div class="stat-value">{{ training_counts.industrial_visit_completed or 0 }}</div>
-                </div>
+                    <!-- Guest Lecture -->
+                    <div class="stat-card" data-type="guest_lecture" onclick="openModal('guest_lecture')">
+                        <i class="fas fa-chalkboard-teacher fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">Guest Lecture</div>
+                            <div class="stat-value">{{ training_counts.guest_lecture_completed or 0 }}</div>
+                        </div>
+                    </div>
 
-                <!-- Assessment -->
-                <div class="stat-card" data-type="assessment" onclick="openModal('assessment')">
-                    <i class="fas fa-clipboard-check fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">Assessment</div>
-                    <div class="stat-value">{{ training_counts.assessment_completed or 0 }}</div>
-                </div>
+                    <!-- Industrial Visit -->
+                    <div class="stat-card" data-type="industrial_visit" onclick="openModal('industrial_visit')">
+                        <i class="fas fa-industry fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">Industrial Visit</div>
+                            <div class="stat-value">{{ training_counts.industrial_visit_completed or 0 }}</div>
+                        </div>
+                    </div>
 
-                <!-- School Enrolled -->
-                <div class="stat-card" data-type="school" onclick="openModal('school')">
-                    <i class="fas fa-graduation-cap fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">School Enrolled</div>
-                    <div class="stat-value">{{ training_counts.school_enrollment_count or 0 }}</div>
+                    <!-- Assessment -->
+                    <div class="stat-card" data-type="assessment" onclick="openModal('assessment')">
+                        <i class="fas fa-clipboard-check fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">Assessment</div>
+                            <div class="stat-value">{{ training_counts.assessment_completed or 0 }}</div>
+                        </div>
+                    </div>
+
+                    <!-- School Enrolled -->
+                    <div class="stat-card" data-type="school" onclick="openModal('school')">
+                        <i class="fas fa-graduation-cap fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">School Enrolled</div>
+                            <div class="stat-value">{{ training_counts.school_enrollment_count or 0 }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -707,7 +726,7 @@
             // AJAX request to get filtered data
             fetch(
                     `/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}`
-                    )
+                )
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
