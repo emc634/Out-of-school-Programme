@@ -44,67 +44,65 @@
             </div>
 
             <!-- Statistics Cards -->
-            <!-- Replace the existing stats-container with this grid of indicators -->
             <div class="stats-grid">
                 <!-- Total Students -->
-                <div class="stat-card" onclick="openModal('total')">
+                <div class="stat-card" data-type="total" onclick="openModal('total')">
                     <i class="fas fa-users fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">Total Students</div>
                     <div class="stat-value">{{ total_records or 0 }}</div>
                 </div>
 
                 <!-- Single Career Counselling -->
-                <div class="stat-card" onclick="openModal('single_counselling')">
+                <div class="stat-card" data-type="single_counselling" onclick="openModal('single_counselling')">
                     <i class="fas fa-user fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">Single Career Counselling</div>
                     <div class="stat-value">{{ training_counts.single_completed or 0 }}</div>
                 </div>
 
                 <!-- Group Career Counselling -->
-                <div class="stat-card" onclick="openModal('group_counselling')">
+                <div class="stat-card" data-type="group_counselling" onclick="openModal('group_counselling')">
                     <i class="fas fa-users fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">Group Career Counselling</div>
                     <div class="stat-value">{{ training_counts.group_completed or 0 }}</div>
                 </div>
 
                 <!-- OJT Status -->
-                <div class="stat-card" onclick="openModal('ojt')">
+                <div class="stat-card" data-type="ojt" onclick="openModal('ojt')">
                     <i class="fas fa-briefcase fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">OJT Status</div>
                     <div class="stat-value">{{ training_counts.ojt_completed or 0 }}</div>
                 </div>
 
                 <!-- Guest Lecture -->
-                <div class="stat-card" onclick="openModal('guest_lecture')">
+                <div class="stat-card" data-type="guest_lecture" onclick="openModal('guest_lecture')">
                     <i class="fas fa-chalkboard-teacher fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">Guest Lecture</div>
                     <div class="stat-value">{{ training_counts.guest_lecture_completed or 0 }}</div>
                 </div>
 
                 <!-- Industrial Visit -->
-                <div class="stat-card" onclick="openModal('industrial_visit')">
+                <div class="stat-card" data-type="industrial_visit" onclick="openModal('industrial_visit')">
                     <i class="fas fa-industry fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">Industrial Visit</div>
                     <div class="stat-value">{{ training_counts.industrial_visit_completed or 0 }}</div>
                 </div>
 
                 <!-- Assessment -->
-                <div class="stat-card" onclick="openModal('assessment')">
+                <div class="stat-card" data-type="assessment" onclick="openModal('assessment')">
                     <i class="fas fa-clipboard-check fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">Assessment</div>
                     <div class="stat-value">{{ training_counts.assessment_completed or 0 }}</div>
                 </div>
 
                 <!-- School Enrolled -->
-                <div class="stat-card" onclick="openModal('school')">
+                <div class="stat-card" data-type="school" onclick="openModal('school')">
                     <i class="fas fa-graduation-cap fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">School Enrolled</div>
                     <div class="stat-value">{{ training_counts.school_enrollment_count or 0 }}</div>
                 </div>
             </div>
 
-            <!-- Add this modal at the bottom of the body -->
-            <!-- Add this modal at the bottom of the body, before the scripts -->
+            <!-- Modal -->
             <div id="trainingModal" class="modal">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -115,6 +113,32 @@
                         <div class="modal-filters">
                             <form id="modalFilterForm">
                                 <div class="filters-grid">
+                                    <!-- District Dropdown -->
+                                    <div class="filter-group">
+                                        <label class="form-label">District</label>
+                                        <select id="modalDistrict" name="district" class="form-control form-select">
+                                            <option value="">All Districts</option>
+                                            <option value="Bilaspur">Bilaspur</option>
+                                            <option value="Chamba">Chamba</option>
+                                            <option value="Hamirpur">Hamirpur</option>
+                                            <option value="Kangra">Kangra</option>
+                                            <option value="Kullu">Kullu</option>
+                                            <option value="Mandi">Mandi</option>
+                                            <option value="Sirmour">Sirmour</option>
+                                            <option value="Solan">Solan</option>
+                                            <option value="Una">Una</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Center Dropdown -->
+                                    <div class="filter-group">
+                                        <label class="form-label">Center</label>
+                                        <select id="modalCenter" name="center" class="form-control form-select" disabled>
+                                            <option value="">All Centers</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Other filters -->
                                     <div class="filter-group">
                                         <label class="form-label">Gender</label>
                                         <select class="form-control" name="gender">
@@ -124,6 +148,7 @@
                                             <option value="Other">Other</option>
                                         </select>
                                     </div>
+
                                     <div class="filter-group">
                                         <label class="form-label">Trade</label>
                                         <select class="form-control" name="trade">
@@ -136,13 +161,6 @@
                                             <option value="Electronics">Electronics</option>
                                             <option value="Tourism & Hospitality">Tourism & Hospitality</option>
                                             <option value="ITeS">ITeS</option>
-                                        </select>
-                                    </div>
-                                    <div class="filter-group">
-                                        <label class="form-label">Center</label>
-                                        <select class="form-control" name="center" id="modalCenter">
-                                            <option value="">All Centers</option>
-                                            <!-- Centers will be populated by JavaScript -->
                                         </select>
                                     </div>
                                 </div>
@@ -208,28 +226,14 @@
                             <label class="form-label">Trade</label>
                             <select id="trade" name="trade" class="form-control form-select">
                                 <option value="">All Trades</option>
-                                <option value="Agriculture"
-                                    {% if current_filters.trade == 'Agriculture' %}selected{% endif %}>Agriculture
-                                </option>
-                                <option value="Beauty & Wellness"
-                                    {% if current_filters.trade == 'Beauty & Wellness' %}selected{% endif %}>Beauty &
-                                    Wellness</option>
-                                <option value="Plumbing"
-                                    {% if current_filters.trade == 'Plumbing' %}selected{% endif %}>Plumbing</option>
-                                <option value="Food Processing"
-                                    {% if current_filters.trade == 'Food Processing' %}selected{% endif %}>Food
-                                    Processing</option>
-                                <option value="Automotive"
-                                    {% if current_filters.trade == 'Automotive' %}selected{% endif %}>Automotive
-                                </option>
-                                <option value="Electronics"
-                                    {% if current_filters.trade == 'Electronics' %}selected{% endif %}>Electronics
-                                </option>
-                                <option value="Tourism & Hospitality"
-                                    {% if current_filters.trade == 'Tourism & Hospitality' %}selected{% endif %}>Tourism
-                                    & Hospitality</option>
-                                <option value="ITeS" {% if current_filters.trade == 'ITeS' %}selected{% endif %}>ITeS
-                                </option>
+                                <option value="Agriculture" {% if current_filters.trade == 'Agriculture' %}selected{% endif %}>Agriculture</option>
+                                <option value="Beauty & Wellness" {% if current_filters.trade == 'Beauty & Wellness' %}selected{% endif %}>Beauty & Wellness</option>
+                                <option value="Plumbing" {% if current_filters.trade == 'Plumbing' %}selected{% endif %}>Plumbing</option>
+                                <option value="Food Processing" {% if current_filters.trade == 'Food Processing' %}selected{% endif %}>Food Processing</option>
+                                <option value="Automotive" {% if current_filters.trade == 'Automotive' %}selected{% endif %}>Automotive</option>
+                                <option value="Electronics" {% if current_filters.trade == 'Electronics' %}selected{% endif %}>Electronics</option>
+                                <option value="Tourism & Hospitality" {% if current_filters.trade == 'Tourism & Hospitality' %}selected{% endif %}>Tourism & Hospitality</option>
+                                <option value="ITeS" {% if current_filters.trade == 'ITeS' %}selected{% endif %}>ITeS</option>
                             </select>
                         </div>
 
@@ -238,24 +242,15 @@
                             <label class="form-label">District</label>
                             <select id="district" name="district" class="form-control form-select">
                                 <option value="">All Districts</option>
-                                <option value="Bilaspur"
-                                    {% if current_filters.district == 'Bilaspur' %}selected{% endif %}>Bilaspur</option>
-                                <option value="Chamba" {% if current_filters.district == 'Chamba' %}selected{% endif %}>
-                                    Chamba</option>
-                                <option value="Hamirpur"
-                                    {% if current_filters.district == 'Hamirpur' %}selected{% endif %}>Hamirpur</option>
-                                <option value="Kangra" {% if current_filters.district == 'Kangra' %}selected{% endif %}>
-                                    Kangra</option>
-                                <option value="Kullu" {% if current_filters.district == 'Kullu' %}selected{% endif %}>
-                                    Kullu</option>
-                                <option value="Mandi" {% if current_filters.district == 'Mandi' %}selected{% endif %}>
-                                    Mandi</option>
-                                <option value="Sirmour"
-                                    {% if current_filters.district == 'Sirmour' %}selected{% endif %}>Sirmour</option>
-                                <option value="Solan" {% if current_filters.district == 'Solan' %}selected{% endif %}>
-                                    Solan</option>
-                                <option value="Una" {% if current_filters.district == 'Una' %}selected{% endif %}>Una
-                                </option>
+                                <option value="Bilaspur" {% if current_filters.district == 'Bilaspur' %}selected{% endif %}>Bilaspur</option>
+                                <option value="Chamba" {% if current_filters.district == 'Chamba' %}selected{% endif %}>Chamba</option>
+                                <option value="Hamirpur" {% if current_filters.district == 'Hamirpur' %}selected{% endif %}>Hamirpur</option>
+                                <option value="Kangra" {% if current_filters.district == 'Kangra' %}selected{% endif %}>Kangra</option>
+                                <option value="Kullu" {% if current_filters.district == 'Kullu' %}selected{% endif %}>Kullu</option>
+                                <option value="Mandi" {% if current_filters.district == 'Mandi' %}selected{% endif %}>Mandi</option>
+                                <option value="Sirmour" {% if current_filters.district == 'Sirmour' %}selected{% endif %}>Sirmour</option>
+                                <option value="Solan" {% if current_filters.district == 'Solan' %}selected{% endif %}>Solan</option>
+                                <option value="Una" {% if current_filters.district == 'Una' %}selected{% endif %}>Una</option>
                             </select>
                         </div>
 
@@ -273,12 +268,9 @@
                             <label class="form-label">Gender</label>
                             <select class="form-control" name="gender">
                                 <option value="">All Genders</option>
-                                <option value="Male" {% if current_filters.gender == 'Male' %}selected{% endif %}>Male
-                                </option>
-                                <option value="Female" {% if current_filters.gender == 'Female' %}selected{% endif %}>
-                                    Female</option>
-                                <option value="Other" {% if current_filters.gender == 'Other' %}selected{% endif %}>
-                                    Other</option>
+                                <option value="Male" {% if current_filters.gender == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if current_filters.gender == 'Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if current_filters.gender == 'Other' %}selected{% endif %}>Other</option>
                             </select>
                         </div>
 
@@ -287,12 +279,8 @@
                             <label class="form-label">OJT Status</label>
                             <select class="form-control" name="ojt_status">
                                 <option value="">All Statuses</option>
-                                <option value="Completed"
-                                    {% if current_filters.ojt_status == 'Completed' %}selected{% endif %}>Completed
-                                </option>
-                                <option value="Not Completed"
-                                    {% if current_filters.ojt_status == 'Not Completed' %}selected{% endif %}>Not
-                                    Completed</option>
+                                <option value="Completed" {% if current_filters.ojt_status == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.ojt_status == 'Not Completed' %}selected{% endif %}>Not Completed</option>
                             </select>
                         </div>
 
@@ -301,12 +289,8 @@
                             <label class="form-label">Single Career Counselling</label>
                             <select class="form-control" name="single_counselling">
                                 <option value="">All Statuses</option>
-                                <option value="Completed"
-                                    {% if current_filters.single_counselling == 'Completed' %}selected{% endif %}>
-                                    Completed</option>
-                                <option value="Not Completed"
-                                    {% if current_filters.single_counselling == 'Not Completed' %}selected{% endif %}>
-                                    Not Completed</option>
+                                <option value="Completed" {% if current_filters.single_counselling == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.single_counselling == 'Not Completed' %}selected{% endif %}>Not Completed</option>
                             </select>
                         </div>
 
@@ -315,12 +299,8 @@
                             <label class="form-label">Group Career Counselling</label>
                             <select class="form-control" name="group_counselling">
                                 <option value="">All Statuses</option>
-                                <option value="Completed"
-                                    {% if current_filters.group_counselling == 'Completed' %}selected{% endif %}>
-                                    Completed</option>
-                                <option value="Not Completed"
-                                    {% if current_filters.group_counselling == 'Not Completed' %}selected{% endif %}>Not
-                                    Completed</option>
+                                <option value="Completed" {% if current_filters.group_counselling == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.group_counselling == 'Not Completed' %}selected{% endif %}>Not Completed</option>
                             </select>
                         </div>
 
@@ -329,12 +309,8 @@
                             <label class="form-label">Guest Lecture</label>
                             <select class="form-control" name="guest_lecture">
                                 <option value="">All Statuses</option>
-                                <option value="Completed"
-                                    {% if current_filters.guest_lecture == 'Completed' %}selected{% endif %}>Completed
-                                </option>
-                                <option value="Not Completed"
-                                    {% if current_filters.guest_lecture == 'Not Completed' %}selected{% endif %}>Not
-                                    Completed</option>
+                                <option value="Completed" {% if current_filters.guest_lecture == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.guest_lecture == 'Not Completed' %}selected{% endif %}>Not Completed</option>
                             </select>
                         </div>
 
@@ -343,12 +319,8 @@
                             <label class="form-label">Industrial Visit</label>
                             <select class="form-control" name="industrial_visit">
                                 <option value="">All Statuses</option>
-                                <option value="Completed"
-                                    {% if current_filters.industrial_visit == 'Completed' %}selected{% endif %}>
-                                    Completed</option>
-                                <option value="Not Completed"
-                                    {% if current_filters.industrial_visit == 'Not Completed' %}selected{% endif %}>Not
-                                    Completed</option>
+                                <option value="Completed" {% if current_filters.industrial_visit == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.industrial_visit == 'Not Completed' %}selected{% endif %}>Not Completed</option>
                             </select>
                         </div>
 
@@ -357,12 +329,8 @@
                             <label class="form-label">Assessment</label>
                             <select class="form-control" name="assessment">
                                 <option value="">All Statuses</option>
-                                <option value="Completed"
-                                    {% if current_filters.assessment == 'Completed' %}selected{% endif %}>Completed
-                                </option>
-                                <option value="Not Completed"
-                                    {% if current_filters.assessment == 'Not Completed' %}selected{% endif %}>Not
-                                    Completed</option>
+                                <option value="Completed" {% if current_filters.assessment == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.assessment == 'Not Completed' %}selected{% endif %}>Not Completed</option>
                             </select>
                         </div>
 
@@ -371,11 +339,8 @@
                             <label class="form-label">School Enrolled</label>
                             <select class="form-control" name="school">
                                 <option value="">All Statuses</option>
-                                <option value="Enrolled"
-                                    {% if current_filters.school == 'Enrolled' %}selected{% endif %}>Enrolled</option>
-                                <option value="Not Enrolled"
-                                    {% if current_filters.school == 'Not Enrolled' %}selected{% endif %}>Not Enrolled
-                                </option>
+                                <option value="Enrolled" {% if current_filters.school == 'Enrolled' %}selected{% endif %}>Enrolled</option>
+                                <option value="Not Enrolled" {% if current_filters.school == 'Not Enrolled' %}selected{% endif %}>Not Enrolled</option>
                             </select>
                         </div>
                     </div>
@@ -457,46 +422,39 @@
                                 <!-- Training Data -->
                                 <td>{{ student.trade or '' }}</td>
                                 <td>
-                                    <span
-                                        class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.single_counselling or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.group_counselling or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.ojt or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.guest_lecture or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.industrial_visit or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span
-                                        class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.assessment or 'Not Completed' }}
                                     </span>
                                 </td>
-                                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}
-                                </td>
+                                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}</td>
                                 <td>{{ student.school_enrollment or '' }}</td>
                                 <td>{{ student.total_days or 0 }}</td>
-                                <td>{{ student.attendance or 0 }}</td>
+                                <td>{{ student.attendance or 0 }}%</td>
 
                                 <!-- Bank Data -->
                                 <td>{{ student.aadhar or '' }}</td>
@@ -576,21 +534,17 @@
     <script>
         const centerData = {
             "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
-            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla",
-                "Salooni", "Sihunta", "Sundla", "Tissa"
-            ],
+            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla", "Salooni", "Sihunta", "Sundla", "Tissa"],
             "Hamirpur": ["Hamirpur"],
             "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
             "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
             "Mandi": ["Sadar-2", "Seraj-2"],
-            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla",
-                "Majra"
-            ],
+            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
             "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
             "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
 
-        // Function to update centers based on selected district
+        // Function to update centers based on selected district (for main form)
         function updateCenters() {
             const districtSelect = document.getElementById('district');
             const centerSelect = document.getElementById('center');
@@ -621,29 +575,25 @@
             }
         }
 
-        // Initialize the form when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add event listener for district change
-            document.getElementById('district').addEventListener('change', updateCenters);
+        // Function to update centers in modal based on selected district
+        function updateModalCenters() {
+            const districtSelect = document.getElementById('modalDistrict');
+            const centerSelect = document.getElementById('modalCenter');
+            const selectedDistrict = districtSelect.value;
 
-            // Initialize centers based on current district selection
-            updateCenters();
-        });
+            // Clear existing options
+            centerSelect.innerHTML = '<option value="">All Centers</option>';
+            centerSelect.disabled = !selectedDistrict;
 
-        // Flash messages timeout
-        document.addEventListener('DOMContentLoaded', function () {
-            const flashMessages = document.querySelectorAll('.alert');
-            flashMessages.forEach(message => {
-                setTimeout(() => {
-                    message.style.opacity = '0';
-                    setTimeout(() => message.remove(), 500);
-                }, 3000);
-            });
-        });
-
-        // Export data functionality (placeholder)
-        function exportData() {
-            alert('Export functionality to be implemented');
+            if (selectedDistrict && centerData[selectedDistrict]) {
+                centerSelect.disabled = false;
+                centerData[selectedDistrict].forEach(center => {
+                    const option = document.createElement('option');
+                    option.value = center;
+                    option.textContent = center;
+                    centerSelect.appendChild(option);
+                });
+            }
         }
 
         // Modal functionality
@@ -668,6 +618,8 @@
 
             // Reset form and load initial data
             document.getElementById('modalFilterForm').reset();
+            document.getElementById('modalCenter').innerHTML = '<option value="">All Centers</option>';
+            document.getElementById('modalCenter').disabled = true;
             loadModalData(type);
 
             // Show modal
@@ -678,12 +630,12 @@
             document.getElementById('trainingModal').style.display = "none";
         }
 
-        function loadModalData(type, gender = '', trade = '', center = '') {
+        function loadModalData(type, district = '', center = '', gender = '', trade = '') {
             const tableBody = document.getElementById('modalTableBody');
             tableBody.innerHTML = '<tr><td colspan="26" class="text-center">Loading data...</td></tr>';
 
             // AJAX request to get filtered data
-            fetch(`/admin_dashboard/modal_data?type=${type}&gender=${gender}&trade=${trade}&center=${center}`)
+            fetch(`/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -699,65 +651,65 @@
                     let html = '';
                     data.forEach(student => {
                         html += `
-                    <tr>
-                        <!-- Students Data -->
-                        <td>${student.can_id || ''}</td>
-                        <td>${student.student_name || ''}</td>
-                        <td>${student.father_name || ''}</td>
-                        <td>${student.mother_name || ''}</td>
-                        <td>${student.batch_id || ''}</td>
-                        <td>${student.mobile || ''}</td>
-                        <td>${student.religion || ''}</td>
-                        <td>${student.category || ''}</td>
-                        <td>${student.dob || ''}</td>
-                        <td>${student.district || ''}</td>
-                        <td>${student.center || ''}</td>
-                        <td>${student.gender || ''}</td>
+                            <tr>
+                                <!-- Students Data -->
+                                <td>${student.can_id || ''}</td>
+                                <td>${student.student_name || ''}</td>
+                                <td>${student.father_name || ''}</td>
+                                <td>${student.mother_name || ''}</td>
+                                <td>${student.batch_id || ''}</td>
+                                <td>${student.mobile || ''}</td>
+                                <td>${student.religion || ''}</td>
+                                <td>${student.category || ''}</td>
+                                <td>${student.dob || ''}</td>
+                                <td>${student.district || ''}</td>
+                                <td>${student.center || ''}</td>
+                                <td>${student.gender || ''}</td>
 
-                        <!-- Training Data -->
-                        <td>${student.trade || ''}</td>
-                        <td>
-                            <span class="status-badge ${student.single_counselling === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                                ${student.single_counselling || 'Not Completed'}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge ${student.group_counselling === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                                ${student.group_counselling || 'Not Completed'}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge ${student.ojt === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                                ${student.ojt || 'Not Completed'}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge ${student.guest_lecture === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                                ${student.guest_lecture || 'Not Completed'}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge ${student.industrial_visit === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                                ${student.industrial_visit || 'Not Completed'}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="status-badge ${student.assessment === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                                ${student.assessment || 'Not Completed'}
-                            </span>
-                        </td>
-                        <td>${student.assessment_date || ''}</td>
-                        <td>${student.school_enrollment || ''}</td>
-                        <td>${student.total_days || 0}</td>
-                        <td>${student.attendance || 0}</td>
+                                <!-- Training Data -->
+                                <td>${student.trade || ''}</td>
+                                <td>
+                                    <span class="status-badge ${student.single_counselling === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                        ${student.single_counselling || 'Not Completed'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge ${student.group_counselling === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                        ${student.group_counselling || 'Not Completed'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge ${student.ojt === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                        ${student.ojt || 'Not Completed'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge ${student.guest_lecture === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                        ${student.guest_lecture || 'Not Completed'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge ${student.industrial_visit === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                        ${student.industrial_visit || 'Not Completed'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge ${student.assessment === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                        ${student.assessment || 'Not Completed'}
+                                    </span>
+                                </td>
+                                <td>${student.assessment_date || ''}</td>
+                                <td>${student.school_enrollment || ''}</td>
+                                <td>${student.total_days || 0}</td>
+                                <td>${student.attendance || 0}</td>
 
-                        <!-- Bank Data -->
-                        <td>${student.aadhar || ''}</td>
-                        <td>${student.account_number || ''}</td>
-                        <td>${student.account_holder || ''}</td>
-                        <td>${student.ifsc || ''}</td>
-                    </tr>
-                `;
+                                <!-- Bank Data -->
+                                <td>${student.aadhar || ''}</td>
+                                <td>${student.account_number || ''}</td>
+                                <td>${student.account_holder || ''}</td>
+                                <td>${student.ifsc || ''}</td>
+                            </tr>
+                        `;
                     });
 
                     tableBody.innerHTML = html;
@@ -768,12 +720,27 @@
                 });
         }
 
-        // Initialize modal functionality when DOM is loaded
+        // Initialize the form when DOM is loaded
         document.addEventListener('DOMContentLoaded', function () {
-            // Close modal when clicking on close button
+            // Main form district-center relationship
+            document.getElementById('district').addEventListener('change', updateCenters);
+            updateCenters();
+
+            // Modal form district-center relationship
+            document.getElementById('modalDistrict').addEventListener('change', updateModalCenters);
+
+            // Flash messages timeout
+            const flashMessages = document.querySelectorAll('.alert');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 500);
+                }, 3000);
+            });
+
+            // Modal functionality
             document.querySelector('.close').addEventListener('click', closeModal);
 
-            // Close modal when clicking outside modal content
             window.addEventListener('click', function (event) {
                 const modal = document.getElementById('trainingModal');
                 if (event.target === modal) {
@@ -781,56 +748,25 @@
                 }
             });
 
-            // Handle modal form submission
             document.getElementById('modalFilterForm').addEventListener('submit', function (e) {
                 e.preventDefault();
                 const type = document.getElementById('trainingModal').dataset.type;
+                const district = this.elements.district.value;
+                const center = this.elements.center.value;
                 const gender = this.elements.gender.value;
                 const trade = this.elements.trade.value;
-                const center = this.elements.center.value;
 
-                loadModalData(type, gender, trade, center);
+                loadModalData(type, district, center, gender, trade);
             });
 
-            // Populate centers dropdown for modal
-            const centerSelect = document.getElementById('modalCenter');
-            centerSelect.innerHTML = '<option value="">All Centers</option>';
-
-            // Flatten all centers from centerData
-            const allCenters = [];
-            for (const district in centerData) {
-                centerData[district].forEach(center => {
-                    if (!allCenters.includes(center)) {
-                        allCenters.push(center);
-                    }
-                });
-            }
-
-            // Sort and add to dropdown
-            allCenters.sort().forEach(center => {
-                const option = document.createElement('option');
-                option.value = center;
-                option.textContent = center;
-                centerSelect.appendChild(option);
-            });
-
-            // Debugging: Check if event listeners are attached
-            console.log('Modal event listeners initialized');
-
-            // Test if buttons are working
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.addEventListener('click', function () {
-                    console.log('Stat card clicked:', this);
-                });
-            });
+            // Debugging
+            console.log('Initialization complete');
         });
 
-        console.log('Number of stat cards:', document.querySelectorAll('.stat-card').length);
-        document.querySelectorAll('.stat-card').forEach(card => {
-            card.addEventListener('click', function () {
-                console.log('Clicked on:', this);
-            });
-        });
+        // Export data functionality (placeholder)
+        function exportData() {
+            alert('Export functionality to be implemented');
+        }
     </script>
 </body>
 

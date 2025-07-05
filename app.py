@@ -949,18 +949,15 @@ def admin_dashboard():
 def modal_data():
     # Get parameters
     training_type = request.args.get('type')
-    gender = request.args.get('gender', '')
-    trade = request.args.get('trade', '')
-    center = request.args.get('center', '')
+    district = request.args.get('district', '').strip()
+    center = request.args.get('center', '').strip()
+    gender = request.args.get('gender', '').strip()
+    trade = request.args.get('trade', '').strip()
     
     try:
         conn = get_db_connection()
-        if not conn:
-            return jsonify([])
-            
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
         
-        # Base query with all columns
         base_query = """
             SELECT 
                 s.*, 
@@ -985,6 +982,14 @@ def modal_data():
                 params.append('Completed')
         
         # Add additional filters
+        if district:
+            base_query += " AND LOWER(s.district) = LOWER(%s)"  # Case-insensitive
+            params.append(district)
+            
+        if center:
+            base_query += " AND LOWER(s.center) = LOWER(%s)"  # Case-insensitive
+            params.append(center)
+            
         if gender:
             base_query += " AND s.gender = %s"
             params.append(gender)
@@ -992,10 +997,6 @@ def modal_data():
         if trade:
             base_query += " AND st.trade = %s"
             params.append(trade)
-            
-        if center:
-            base_query += " AND s.center = %s"
-            params.append(center)
         
         cursor.execute(base_query, params)
         students = cursor.fetchall()
@@ -1003,19 +1004,12 @@ def modal_data():
         # Convert to list of dicts for JSON serialization
         result = []
         for student in students:
-            # Format dates and percentages for frontend
             student_dict = dict(student)
-            
             # Format dates
             if student_dict.get('dob'):
                 student_dict['dob'] = student_dict['dob'].strftime('%d-%m-%Y')
             if student_dict.get('assessment_date'):
                 student_dict['assessment_date'] = student_dict['assessment_date'].strftime('%d-%m-%Y')
-                
-            # Format attendance percentage
-            if student_dict.get('attendance'):
-                student_dict['attendance'] = f"{student_dict['attendance']}%"
-                
             result.append(student_dict)
             
         return jsonify(result)
