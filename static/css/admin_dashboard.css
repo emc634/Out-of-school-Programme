@@ -161,10 +161,10 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.7);
     width: 100%;
-    max-width: 220px;
+    max-width: 200px;
     position: relative;
     overflow: hidden;
-    height: auto;
+    height: 140px;
 }
 
 .stat-card::before {
@@ -187,7 +187,7 @@
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 1.3rem;
     font-weight: 800;
     margin: var(--space-xxs) 0;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -198,7 +198,7 @@
 }
 
 .stat-label {
-    font-size: 0.95rem;
+    font-size: 0.81rem;
     color: var(--gray-600);
     margin-bottom: var(--space-sm);
     line-height: 1.3;
