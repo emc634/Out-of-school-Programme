@@ -14,9 +14,12 @@
     <main class="main-content">
         <div class="container">
             <div class="admin-header">
+                <div class="logo-container1">
+                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img1" alt="Left Logo">
+                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img1" alt="center Logo">
+                </div>
                 <div>
                     <h1>Admin Dashboard</h1>
-                    <p class="text-secondary">Manage and analyze student data</p>
                 </div>
                 <div class="flex gap-2">
                     <button class="btn btn-primary" onclick="exportData()">
@@ -133,7 +136,8 @@
                                     <!-- Center Dropdown -->
                                     <div class="filter-group">
                                         <label class="form-label">Center</label>
-                                        <select id="modalCenter" name="center" class="form-control form-select" disabled>
+                                        <select id="modalCenter" name="center" class="form-control form-select"
+                                            disabled>
                                             <option value="">All Centers</option>
                                         </select>
                                     </div>
@@ -226,14 +230,28 @@
                             <label class="form-label">Trade</label>
                             <select id="trade" name="trade" class="form-control form-select">
                                 <option value="">All Trades</option>
-                                <option value="Agriculture" {% if current_filters.trade == 'Agriculture' %}selected{% endif %}>Agriculture</option>
-                                <option value="Beauty & Wellness" {% if current_filters.trade == 'Beauty & Wellness' %}selected{% endif %}>Beauty & Wellness</option>
-                                <option value="Plumbing" {% if current_filters.trade == 'Plumbing' %}selected{% endif %}>Plumbing</option>
-                                <option value="Food Processing" {% if current_filters.trade == 'Food Processing' %}selected{% endif %}>Food Processing</option>
-                                <option value="Automotive" {% if current_filters.trade == 'Automotive' %}selected{% endif %}>Automotive</option>
-                                <option value="Electronics" {% if current_filters.trade == 'Electronics' %}selected{% endif %}>Electronics</option>
-                                <option value="Tourism & Hospitality" {% if current_filters.trade == 'Tourism & Hospitality' %}selected{% endif %}>Tourism & Hospitality</option>
-                                <option value="ITeS" {% if current_filters.trade == 'ITeS' %}selected{% endif %}>ITeS</option>
+                                <option value="Agriculture"
+                                    {% if current_filters.trade == 'Agriculture' %}selected{% endif %}>Agriculture
+                                </option>
+                                <option value="Beauty & Wellness"
+                                    {% if current_filters.trade == 'Beauty & Wellness' %}selected{% endif %}>Beauty &
+                                    Wellness</option>
+                                <option value="Plumbing"
+                                    {% if current_filters.trade == 'Plumbing' %}selected{% endif %}>Plumbing</option>
+                                <option value="Food Processing"
+                                    {% if current_filters.trade == 'Food Processing' %}selected{% endif %}>Food
+                                    Processing</option>
+                                <option value="Automotive"
+                                    {% if current_filters.trade == 'Automotive' %}selected{% endif %}>Automotive
+                                </option>
+                                <option value="Electronics"
+                                    {% if current_filters.trade == 'Electronics' %}selected{% endif %}>Electronics
+                                </option>
+                                <option value="Tourism & Hospitality"
+                                    {% if current_filters.trade == 'Tourism & Hospitality' %}selected{% endif %}>Tourism
+                                    & Hospitality</option>
+                                <option value="ITeS" {% if current_filters.trade == 'ITeS' %}selected{% endif %}>ITeS
+                                </option>
                             </select>
                         </div>
 
@@ -242,15 +260,24 @@
                             <label class="form-label">District</label>
                             <select id="district" name="district" class="form-control form-select">
                                 <option value="">All Districts</option>
-                                <option value="Bilaspur" {% if current_filters.district == 'Bilaspur' %}selected{% endif %}>Bilaspur</option>
-                                <option value="Chamba" {% if current_filters.district == 'Chamba' %}selected{% endif %}>Chamba</option>
-                                <option value="Hamirpur" {% if current_filters.district == 'Hamirpur' %}selected{% endif %}>Hamirpur</option>
-                                <option value="Kangra" {% if current_filters.district == 'Kangra' %}selected{% endif %}>Kangra</option>
-                                <option value="Kullu" {% if current_filters.district == 'Kullu' %}selected{% endif %}>Kullu</option>
-                                <option value="Mandi" {% if current_filters.district == 'Mandi' %}selected{% endif %}>Mandi</option>
-                                <option value="Sirmour" {% if current_filters.district == 'Sirmour' %}selected{% endif %}>Sirmour</option>
-                                <option value="Solan" {% if current_filters.district == 'Solan' %}selected{% endif %}>Solan</option>
-                                <option value="Una" {% if current_filters.district == 'Una' %}selected{% endif %}>Una</option>
+                                <option value="Bilaspur"
+                                    {% if current_filters.district == 'Bilaspur' %}selected{% endif %}>Bilaspur</option>
+                                <option value="Chamba" {% if current_filters.district == 'Chamba' %}selected{% endif %}>
+                                    Chamba</option>
+                                <option value="Hamirpur"
+                                    {% if current_filters.district == 'Hamirpur' %}selected{% endif %}>Hamirpur</option>
+                                <option value="Kangra" {% if current_filters.district == 'Kangra' %}selected{% endif %}>
+                                    Kangra</option>
+                                <option value="Kullu" {% if current_filters.district == 'Kullu' %}selected{% endif %}>
+                                    Kullu</option>
+                                <option value="Mandi" {% if current_filters.district == 'Mandi' %}selected{% endif %}>
+                                    Mandi</option>
+                                <option value="Sirmour"
+                                    {% if current_filters.district == 'Sirmour' %}selected{% endif %}>Sirmour</option>
+                                <option value="Solan" {% if current_filters.district == 'Solan' %}selected{% endif %}>
+                                    Solan</option>
+                                <option value="Una" {% if current_filters.district == 'Una' %}selected{% endif %}>Una
+                                </option>
                             </select>
                         </div>
 
@@ -268,9 +295,12 @@
                             <label class="form-label">Gender</label>
                             <select class="form-control" name="gender">
                                 <option value="">All Genders</option>
-                                <option value="Male" {% if current_filters.gender == 'Male' %}selected{% endif %}>Male</option>
-                                <option value="Female" {% if current_filters.gender == 'Female' %}selected{% endif %}>Female</option>
-                                <option value="Other" {% if current_filters.gender == 'Other' %}selected{% endif %}>Other</option>
+                                <option value="Male" {% if current_filters.gender == 'Male' %}selected{% endif %}>Male
+                                </option>
+                                <option value="Female" {% if current_filters.gender == 'Female' %}selected{% endif %}>
+                                    Female</option>
+                                <option value="Other" {% if current_filters.gender == 'Other' %}selected{% endif %}>
+                                    Other</option>
                             </select>
                         </div>
 
@@ -279,8 +309,12 @@
                             <label class="form-label">OJT Status</label>
                             <select class="form-control" name="ojt_status">
                                 <option value="">All Statuses</option>
-                                <option value="Completed" {% if current_filters.ojt_status == 'Completed' %}selected{% endif %}>Completed</option>
-                                <option value="Not Completed" {% if current_filters.ojt_status == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                                <option value="Completed"
+                                    {% if current_filters.ojt_status == 'Completed' %}selected{% endif %}>Completed
+                                </option>
+                                <option value="Not Completed"
+                                    {% if current_filters.ojt_status == 'Not Completed' %}selected{% endif %}>Not
+                                    Completed</option>
                             </select>
                         </div>
 
@@ -289,8 +323,12 @@
                             <label class="form-label">Single Career Counselling</label>
                             <select class="form-control" name="single_counselling">
                                 <option value="">All Statuses</option>
-                                <option value="Completed" {% if current_filters.single_counselling == 'Completed' %}selected{% endif %}>Completed</option>
-                                <option value="Not Completed" {% if current_filters.single_counselling == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                                <option value="Completed"
+                                    {% if current_filters.single_counselling == 'Completed' %}selected{% endif %}>
+                                    Completed</option>
+                                <option value="Not Completed"
+                                    {% if current_filters.single_counselling == 'Not Completed' %}selected{% endif %}>
+                                    Not Completed</option>
                             </select>
                         </div>
 
@@ -299,8 +337,12 @@
                             <label class="form-label">Group Career Counselling</label>
                             <select class="form-control" name="group_counselling">
                                 <option value="">All Statuses</option>
-                                <option value="Completed" {% if current_filters.group_counselling == 'Completed' %}selected{% endif %}>Completed</option>
-                                <option value="Not Completed" {% if current_filters.group_counselling == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                                <option value="Completed"
+                                    {% if current_filters.group_counselling == 'Completed' %}selected{% endif %}>
+                                    Completed</option>
+                                <option value="Not Completed"
+                                    {% if current_filters.group_counselling == 'Not Completed' %}selected{% endif %}>Not
+                                    Completed</option>
                             </select>
                         </div>
 
@@ -309,8 +351,12 @@
                             <label class="form-label">Guest Lecture</label>
                             <select class="form-control" name="guest_lecture">
                                 <option value="">All Statuses</option>
-                                <option value="Completed" {% if current_filters.guest_lecture == 'Completed' %}selected{% endif %}>Completed</option>
-                                <option value="Not Completed" {% if current_filters.guest_lecture == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                                <option value="Completed"
+                                    {% if current_filters.guest_lecture == 'Completed' %}selected{% endif %}>Completed
+                                </option>
+                                <option value="Not Completed"
+                                    {% if current_filters.guest_lecture == 'Not Completed' %}selected{% endif %}>Not
+                                    Completed</option>
                             </select>
                         </div>
 
@@ -319,8 +365,12 @@
                             <label class="form-label">Industrial Visit</label>
                             <select class="form-control" name="industrial_visit">
                                 <option value="">All Statuses</option>
-                                <option value="Completed" {% if current_filters.industrial_visit == 'Completed' %}selected{% endif %}>Completed</option>
-                                <option value="Not Completed" {% if current_filters.industrial_visit == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                                <option value="Completed"
+                                    {% if current_filters.industrial_visit == 'Completed' %}selected{% endif %}>
+                                    Completed</option>
+                                <option value="Not Completed"
+                                    {% if current_filters.industrial_visit == 'Not Completed' %}selected{% endif %}>Not
+                                    Completed</option>
                             </select>
                         </div>
 
@@ -329,8 +379,12 @@
                             <label class="form-label">Assessment</label>
                             <select class="form-control" name="assessment">
                                 <option value="">All Statuses</option>
-                                <option value="Completed" {% if current_filters.assessment == 'Completed' %}selected{% endif %}>Completed</option>
-                                <option value="Not Completed" {% if current_filters.assessment == 'Not Completed' %}selected{% endif %}>Not Completed</option>
+                                <option value="Completed"
+                                    {% if current_filters.assessment == 'Completed' %}selected{% endif %}>Completed
+                                </option>
+                                <option value="Not Completed"
+                                    {% if current_filters.assessment == 'Not Completed' %}selected{% endif %}>Not
+                                    Completed</option>
                             </select>
                         </div>
 
@@ -339,8 +393,11 @@
                             <label class="form-label">School Enrolled</label>
                             <select class="form-control" name="school">
                                 <option value="">All Statuses</option>
-                                <option value="Enrolled" {% if current_filters.school == 'Enrolled' %}selected{% endif %}>Enrolled</option>
-                                <option value="Not Enrolled" {% if current_filters.school == 'Not Enrolled' %}selected{% endif %}>Not Enrolled</option>
+                                <option value="Enrolled"
+                                    {% if current_filters.school == 'Enrolled' %}selected{% endif %}>Enrolled</option>
+                                <option value="Not Enrolled"
+                                    {% if current_filters.school == 'Not Enrolled' %}selected{% endif %}>Not Enrolled
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -422,36 +479,43 @@
                                 <!-- Training Data -->
                                 <td>{{ student.trade or '' }}</td>
                                 <td>
-                                    <span class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.single_counselling or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.group_counselling or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.ojt or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.guest_lecture or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.industrial_visit or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.assessment or 'Not Completed' }}
                                     </span>
                                 </td>
-                                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}</td>
+                                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}
+                                </td>
                                 <td>{{ student.school_enrollment or '' }}</td>
                                 <td>{{ student.total_days or 0 }}</td>
                                 <td>{{ student.attendance or 0 }}%</td>
@@ -534,12 +598,16 @@
     <script>
         const centerData = {
             "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
-            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla", "Salooni", "Sihunta", "Sundla", "Tissa"],
+            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla",
+                "Salooni", "Sihunta", "Sundla", "Tissa"
+            ],
             "Hamirpur": ["Hamirpur"],
             "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
             "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
             "Mandi": ["Sadar-2", "Seraj-2"],
-            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
+            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla",
+                "Majra"
+            ],
             "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
             "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
@@ -635,7 +703,8 @@
             tableBody.innerHTML = '<tr><td colspan="26" class="text-center">Loading data...</td></tr>';
 
             // AJAX request to get filtered data
-            fetch(`/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}`)
+            fetch(
+                    `/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
