@@ -321,7 +321,7 @@ def student_signin():
             user = cursor.fetchone()
             
             # Verify credentials
-            if user is None or not user['password']!= password:
+            if user is None or user['password']!= password:
                 flash("Invalid CAN ID or password", "error")  # Updated message
                 return redirect(url_for("student_signin"))
             
