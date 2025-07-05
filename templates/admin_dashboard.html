@@ -14,11 +14,13 @@
     <main class="main-content">
         <div class="container">
             <div class="admin-header">
-                <div class="logo-container1">
-                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img1" alt="Left Logo">
-                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img1" alt="center Logo">
-                </div>
-                <div>
+                <div class="admin-logo-title-container">
+                    <div class="logo-container1">
+                        <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img1"
+                            alt="Left Logo">
+                        <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img1"
+                            alt="center Logo">
+                    </div>
                     <h1>Admin Dashboard</h1>
                 </div>
                 <div class="flex gap-2">
@@ -704,7 +706,8 @@
 
             // AJAX request to get filtered data
             fetch(
-                    `/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}`)
+                    `/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}`
+                    )
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

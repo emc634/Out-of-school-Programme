@@ -21,22 +21,24 @@
     box-shadow: var(--shadow-md);
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
+.admin-logo-title-container{
+    display: flex;
+    flex-direction: column;
+}
 
 .logo-container1 {
     display: flex;
     justify-content: center;
-    gap: var(--space-xl);
-    margin-bottom: var(--space-lg);
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
     animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .logo-img1 {
-    max-height: 80px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-height: 60px;
 }
 
 .logo-img1:hover {
-    transform: scale(1.05) rotate(2deg);
     filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
 }
 
