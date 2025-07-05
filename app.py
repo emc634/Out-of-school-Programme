@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session,jsonify
 import psycopg2
 from psycopg2 import extras
 from datetime import datetime
@@ -886,10 +886,28 @@ def admin_dashboard():
         has_prev = page > 1
         has_next = page < total_pages
         
+        # NEW: Get training counts for indicators (unfiltered)
+        training_query = """
+            SELECT 
+                COUNT(*) AS total_students,
+                SUM(CASE WHEN single_counselling = 'Completed' THEN 1 ELSE 0 END) AS single_completed,
+                SUM(CASE WHEN group_counselling = 'Completed' THEN 1 ELSE 0 END) AS group_completed,
+                SUM(CASE WHEN ojt = 'Completed' THEN 1 ELSE 0 END) AS ojt_completed,
+                SUM(CASE WHEN guest_lecture = 'Completed' THEN 1 ELSE 0 END) AS guest_lecture_completed,
+                SUM(CASE WHEN industrial_visit = 'Completed' THEN 1 ELSE 0 END) AS industrial_visit_completed,
+                SUM(CASE WHEN assessment = 'Completed' THEN 1 ELSE 0 END) AS assessment_completed,
+                SUM(CASE WHEN school_enrollment IS NOT NULL AND school_enrollment <> '' THEN 1 ELSE 0 END) AS school_enrollment_count
+            FROM student_training
+        """
+        
+        cursor.execute(training_query)
+        training_counts = cursor.fetchone()
+        
         return render_template(
             'admin_dashboard.html',
             students=students,
             total_records=total_records,
+            training_counts=training_counts,  # Pass to template
             page=page,
             total_pages=total_pages,
             has_prev=has_prev,
@@ -900,15 +918,111 @@ def admin_dashboard():
     except Exception as e:
         print("Dashboard error:", str(e))
         flash("An error occurred while loading dashboard", "error")
+        # Create empty training_counts on error
+        training_counts = {
+            'total_students': 0,
+            'single_completed': 0,
+            'group_completed': 0,
+            'ojt_completed': 0,
+            'guest_lecture_completed': 0,
+            'industrial_visit_completed': 0,
+            'assessment_completed': 0,
+            'school_enrollment_count': 0
+        }
         return render_template("admin_dashboard.html", 
                              students=[], 
                              total_records=0,
+                             training_counts=training_counts,
                              page=1,
                              total_pages=1,
                              has_prev=False,
                              has_next=False,
                              current_filters=current_filters)
     
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
+@app.route('/admin_dashboard/modal_data')
+def modal_data():
+    # Get parameters
+    training_type = request.args.get('type')
+    gender = request.args.get('gender', '')
+    trade = request.args.get('trade', '')
+    center = request.args.get('center', '')
+    
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return jsonify([])
+            
+        cursor = conn.cursor(cursor_factory=extras.DictCursor)
+        
+        # Base query with all columns
+        base_query = """
+            SELECT 
+                s.*, 
+                st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
+                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                st.trade, st.total_days, st.attendance,
+                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+            FROM students s
+            JOIN student_training st ON s.can_id = st.can_id
+            JOIN bank_details bd ON s.can_id = bd.can_id
+            WHERE 1=1
+        """
+        
+        params = []
+        
+        # Add training type condition
+        if training_type != 'total':
+            if training_type == 'school':
+                base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
+            else:
+                base_query += f" AND st.{training_type} = %s"
+                params.append('Completed')
+        
+        # Add additional filters
+        if gender:
+            base_query += " AND s.gender = %s"
+            params.append(gender)
+            
+        if trade:
+            base_query += " AND st.trade = %s"
+            params.append(trade)
+            
+        if center:
+            base_query += " AND s.center = %s"
+            params.append(center)
+        
+        cursor.execute(base_query, params)
+        students = cursor.fetchall()
+        
+        # Convert to list of dicts for JSON serialization
+        result = []
+        for student in students:
+            # Format dates and percentages for frontend
+            student_dict = dict(student)
+            
+            # Format dates
+            if student_dict.get('dob'):
+                student_dict['dob'] = student_dict['dob'].strftime('%d-%m-%Y')
+            if student_dict.get('assessment_date'):
+                student_dict['assessment_date'] = student_dict['assessment_date'].strftime('%d-%m-%Y')
+                
+            # Format attendance percentage
+            if student_dict.get('attendance'):
+                student_dict['attendance'] = f"{student_dict['attendance']}%"
+                
+            result.append(student_dict)
+            
+        return jsonify(result)
+        
+    except Exception as e:
+        print("Modal data error:", str(e))
+        return jsonify([])
     finally:
         if 'cursor' in locals():
             cursor.close()

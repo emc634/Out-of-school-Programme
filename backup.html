@@ -8,6 +8,180 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-subtext {
+            font-size: 12px;
+            color: #777;
+            margin-top: 4px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 1200px;
+            max-height: 85vh;
+            overflow: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .filters-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .filter-group {
+            margin-bottom: 12px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .modal-table-container {
+            overflow-x: auto;
+        }
+        
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .modal-table th, 
+        .modal-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            gap: 12px;
+        }
+        
+        .modal-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-not-completed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,164 +189,218 @@
         <div class="container">
             <div class="admin-header">
                 <div>
-                    <h1>Student Management Dashboard</h1>
+                    <h1>Admin Dashboard</h1>
                     <p class="text-secondary">Manage and analyze student data</p>
                 </div>
                 <div class="flex gap-2">
+                    <button class="btn btn-primary" onclick="exportAllData()">
+                        <i class="fas fa-download btn-icon"></i> Export All Data
+                    </button>
                     <button class="btn btn-secondary" onclick="location.reload()">
                         <i class="fas fa-sync btn-icon"></i> Refresh
                     </button>
-                    <a href="#" class="btn btn-outline">
+                    <a href="{{ url_for('logout') }}" class="btn btn-outline">
                         <i class="fas fa-sign-out-alt btn-icon"></i> Logout
                     </a>
                 </div>
             </div>
 
             <div class="flash-messages">
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i> Data loaded successfully
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
                 </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
             </div>
 
             <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card" onclick="openModal('totalStudents')">
-                    <i class="fas fa-users fa-2x mb-3 text-primary stat-icon"></i>
+            <div class="stats-container">
+                <div class="stat-card">
                     <div class="stat-label">Total Students</div>
-                    <div class="stat-value" id="total-students">0</div>
+                    <div class="stat-value">{{ total_records or 0 }}</div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('counselling')">
+                <div class="stat-card" onclick="openModal('single_counselling', '1:1 Career Counselling')">
                     <div class="stat-label">1:1 Career Counselling</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed" id="counselling-completed">0</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed" id="counselling-not-completed">0</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
+                    <div class="stat-value">{{ training_counts.single_counselling_completed or 0 }}</div>
+                    <div class="stat-subtext">Completed</div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('groupCounselling')">
+                <div class="stat-card" onclick="openModal('group_counselling', 'Group Career Counselling')">
                     <div class="stat-label">Group Career Counselling</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed" id="group-completed">0</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed" id="group-not-completed">0</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
+                    <div class="stat-value">{{ training_counts.group_counselling_completed or 0 }}</div>
+                    <div class="stat-subtext">Completed</div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('ojt')">
-                    <div class="stat-label">OJT Status</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed" id="ojt-completed">0</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed" id="ojt-not-completed">0</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="stat-card" onclick="openModal('guestLecture')">
+                <div class="stat-card" onclick="openModal('guest_lecture', 'Guest Lecture')">
                     <div class="stat-label">Guest Lecture</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed" id="guest-completed">0</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed" id="guest-not-completed">0</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
+                    <div class="stat-value">{{ training_counts.guest_lecture_completed or 0 }}</div>
+                    <div class="stat-subtext">Completed</div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('industrialVisit')">
+                <div class="stat-card" onclick="openModal('ojt', 'OJT Status')">
+                    <div class="stat-label">OJT Status</div>
+                    <div class="stat-value">{{ training_counts.ojt_completed or 0 }}</div>
+                    <div class="stat-subtext">Completed</div>
+                </div>
+                
+                <div class="stat-card" onclick="openModal('industrial_visit', 'Industrial Visit')">
                     <div class="stat-label">Industrial Visit</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed" id="visit-completed">0</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed" id="visit-not-completed">0</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
+                    <div class="stat-value">{{ training_counts.industrial_visit_completed or 0 }}</div>
+                    <div class="stat-subtext">Completed</div>
                 </div>
                 
-                <div class="stat-card" onclick="openModal('assessment')">
+                <div class="stat-card" onclick="openModal('assessment', 'Assessment')">
                     <div class="stat-label">Assessment</div>
-                    <div class="stat-value-container">
-                        <div>
-                            <div class="stat-value stat-value-completed" id="assessment-completed">0</div>
-                            <div class="stat-sub-label">Completed</div>
-                        </div>
-                        <div>
-                            <div class="stat-value stat-value-not-completed" id="assessment-not-completed">0</div>
-                            <div class="stat-sub-label">Not Completed</div>
-                        </div>
-                    </div>
+                    <div class="stat-value">{{ training_counts.assessment_completed or 0 }}</div>
+                    <div class="stat-subtext">Completed</div>
                 </div>
             </div>
-            
-            <!-- Main Student Table -->
-            <div class="main-table-container">
+
+            <!-- Data Table -->
+            <div class="data-table-container">
                 <div class="table-header">
-                    <h2>All Students</h2>
-                    <div class="actions">
-                        <button class="btn btn-outline" onclick="refreshData()">
-                            <i class="fas fa-sync btn-icon"></i> Refresh
-                        </button>
-                    </div>
+                    <h3>Student Records</h3>
+                    <div class="text-muted">Showing {{ students|length }} of {{ total_records }} records</div>
                 </div>
-                <div class="table-wrapper">
-                    <table class="main-table">
+
+                <div class="table-container">
+                    <table>
                         <thead>
                             <tr>
+                                <!-- Students Table Columns -->
                                 <th>CAN ID</th>
                                 <th>Student Name</th>
+                                <th>Father's Name</th>
+                                <th>Mother's Name</th>
                                 <th>Batch ID</th>
                                 <th>Mobile</th>
+                                <th>Religion</th>
                                 <th>Category</th>
+                                <th>DOB</th>
                                 <th>District</th>
                                 <th>Center</th>
                                 <th>Gender</th>
                                 <th>Trade</th>
-                                <th>OJT Status</th>
+                                <th>Total Days</th>
+                                <th>Attendance</th>
+                                <th>Aadhar</th>
+                                <th>Account Number</th>
+                                <th>Account Holder</th>
+                                <th>IFSC</th>
                             </tr>
                         </thead>
-                        <tbody id="main-student-data">
-                            <!-- Data will be populated by JavaScript -->
+                        <tbody>
+                            {% if students %}
+                            {% for student in students %}
+                            <tr>
+                                <!-- Students Data -->
+                                <td>{{ student.can_id or '' }}</td>
+                                <td>{{ student.student_name or '' }}</td>
+                                <td>{{ student.father_name or '' }}</td>
+                                <td>{{ student.mother_name or '' }}</td>
+                                <td>{{ student.batch_id or '' }}</td>
+                                <td>{{ student.mobile or '' }}</td>
+                                <td>{{ student.religion or '' }}</td>
+                                <td>{{ student.category or '' }}</td>
+                                <td>{{ student.dob.strftime('%d-%m-%Y') if student.dob else '' }}</td>
+                                <td>{{ student.district or '' }}</td>
+                                <td>{{ student.center or '' }}</td>
+                                <td>{{ student.gender or '' }}</td>
+                                <td>{{ student.trade or '' }}</td>
+                                <td>{{ student.total_days or 0 }}</td>
+                                <td>{{ student.attendance or 0 }}%</td>
+                                <td>{{ student.aadhar or '' }}</td>
+                                <td>{{ student.account_number or '' }}</td>
+                                <td>{{ student.account_holder or '' }}</td>
+                                <td>{{ student.ifsc or '' }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="19" class="text-center">No records found</td>
+                            </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Pagination -->
+                {% if total_pages > 1 %}
+                <div class="pagination">
+                    {% if has_prev %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page-1) }}" class="page-link">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    {% set start_page = [page - 2, 1]|max %}
+                    {% set end_page = [page + 2, total_pages]|min %}
+
+                    {% if start_page > 1 %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=1) }}" class="page-link">1</a>
+                    </div>
+                    {% if start_page > 2 %}
+                    <div class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    {% for page_num in range(start_page, end_page + 1) %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page_num) }}"
+                            class="page-link {% if page_num == page %}active{% endif %}">
+                            {{ page_num }}
+                        </a>
+                    </div>
+                    {% endfor %}
+
+                    {% if end_page < total_pages %}
+                    {% if end_page < total_pages - 1 %}
+                    <div class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </div>
+                    {% endif %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=total_pages) }}"
+                            class="page-link">{{ total_pages }}</a>
+                    </div>
+                    {% endif %}
+
+                    {% if has_next %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page+1) }}" class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
         </div>
+    </main>
 
-        <!-- Modal for Student Data -->
-        <div id="data-modal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="modal-title">Student Data</h3>
-                    <span class="close-modal" onclick="closeModal()">&times;</span>
-                </div>
-                
-                <div class="modal-filters">
+    <!-- Modal for Training Status Details -->
+    <div id="training-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Training Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="filters-container">
+                <div class="filters-grid">
                     <div class="filter-group">
                         <label class="form-label">Gender</label>
-                        <select id="filter-gender" class="form-control">
+                        <select id="modal-gender" class="form-control">
                             <option value="">All Genders</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -182,7 +410,7 @@
                     
                     <div class="filter-group">
                         <label class="form-label">Category</label>
-                        <select id="filter-category" class="form-control">
+                        <select id="modal-category" class="form-control">
                             <option value="">All Categories</option>
                             <option value="General">General</option>
                             <option value="OBC">OBC</option>
@@ -194,7 +422,7 @@
                     
                     <div class="filter-group">
                         <label class="form-label">OJT Status</label>
-                        <select id="filter-ojt" class="form-control">
+                        <select id="modal-ojt" class="form-control">
                             <option value="">All Statuses</option>
                             <option value="Completed">Completed</option>
                             <option value="Not Completed">Not Completed</option>
@@ -203,7 +431,7 @@
                     
                     <div class="filter-group">
                         <label class="form-label">District</label>
-                        <select id="filter-district" class="form-control">
+                        <select id="modal-district" class="form-control">
                             <option value="">All Districts</option>
                             <option value="Bilaspur">Bilaspur</option>
                             <option value="Chamba">Chamba</option>
@@ -219,14 +447,14 @@
                     
                     <div class="filter-group">
                         <label class="form-label">Center/Block</label>
-                        <select id="filter-center" class="form-control" disabled>
+                        <select id="modal-center" class="form-control" disabled>
                             <option value="">Select District First</option>
                         </select>
                     </div>
                     
                     <div class="filter-group">
                         <label class="form-label">Trade</label>
-                        <select id="filter-trade" class="form-control">
+                        <select id="modal-trade" class="form-control">
                             <option value="">All Trades</option>
                             <option value="Agriculture">Agriculture</option>
                             <option value="Beauty & Wellness">Beauty & Wellness</option>
@@ -240,45 +468,53 @@
                     </div>
                 </div>
                 
-                <div class="modal-body">
-                    <div class="table-wrapper">
-                        <table class="modal-table">
-                            <thead>
-                                <tr>
-                                    <th>CAN ID</th>
-                                    <th>Student Name</th>
-                                    <th>Batch ID</th>
-                                    <th>Mobile</th>
-                                    <th>Category</th>
-                                    <th>District</th>
-                                    <th>Center</th>
-                                    <th>Gender</th>
-                                    <th>Trade</th>
-                                    <th>OJT Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="student-data">
-                                <!-- Data will be populated by JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="modal-footer">
-                    <button class="btn btn-outline" onclick="closeModal()">Close</button>
-                    <button class="btn btn-primary" onclick="exportData()">
-                        <i class="fas fa-download btn-icon"></i> Export Data
+                <div class="filter-actions">
+                    <button class="btn btn-primary" onclick="applyModalFilters()">
+                        <i class="fas fa-filter btn-icon"></i> Apply Filters
+                    </button>
+                    <button class="btn btn-outline" onclick="resetModalFilters()">
+                        <i class="fas fa-undo btn-icon"></i> Reset
                     </button>
                 </div>
             </div>
+            
+            <div class="modal-table-container">
+                <table class="modal-table">
+                    <thead>
+                        <tr>
+                            <th>CAN ID</th>
+                            <th>Student Name</th>
+                            <th>Batch ID</th>
+                            <th>District</th>
+                            <th>Center</th>
+                            <th>Gender</th>
+                            <th>Category</th>
+                            <th>Trade</th>
+                            <th id="training-status-header">Training Status</th>
+                            <th>OJT Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-table-body">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="exportFilteredData()">
+                    <i class="fas fa-download btn-icon"></i> Export Data
+                </button>
+            </div>
         </div>
-    </main>
+    </div>
 
     <script>
-        // District-center mapping
-        const centersByDistrict = {
+        // Center data mapping
+        const centerData = {
             "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
-            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla", "Salooni", "Sihunta", "Sundla", "Tissa"],
+            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla",
+                "Salooni", "Sihunta", "Sundla", "Tissa"
+            ],
             "Hamirpur": ["Hamirpur"],
             "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
             "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
@@ -288,171 +524,261 @@
             "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
 
-        // Modal titles for each card
-        const modalTitles = {
-            totalStudents: "All Students",
-            counselling: "1:1 Career Counselling",
-            groupCounselling: "Group Career Counselling",
-            ojt: "OJT Status",
-            guestLecture: "Guest Lecture",
-            industrialVisit: "Industrial Visit",
-            assessment: "Assessment"
-        };
-
-        // DOM Elements
-        const districtFilter = document.getElementById('filter-district');
-        const centerFilter = document.getElementById('filter-center');
-        const studentDataBody = document.getElementById('student-data');
-        const mainStudentDataBody = document.getElementById('main-student-data');
-        const modalTitle = document.getElementById('modal-title');
-        const modal = document.getElementById('data-modal');
-        let currentCardType = '';
-        let studentData = [];
-
-        // Initialize filters and table
-        function initFilters() {
-            renderTables();
-            
-            // Set up event listeners
-            document.getElementById('filter-gender').addEventListener('change', filterStudents);
-            document.getElementById('filter-category').addEventListener('change', filterStudents);
-            document.getElementById('filter-ojt').addEventListener('change', filterStudents);
-            document.getElementById('filter-district').addEventListener('change', function() {
-                updateCenterDropdown(this, centerFilter);
-                filterStudents();
-            });
-            document.getElementById('filter-center').addEventListener('change', filterStudents);
-            document.getElementById('filter-trade').addEventListener('change', filterStudents);
-        }
-
-        // Render tables with data
-        function renderTables() {
-            renderTable(studentDataBody, studentData);
-            renderTable(mainStudentDataBody, studentData);
-        }
+        // Modal state
+        let currentTrainingType = '';
+        let currentTrainingTitle = '';
+        let currentFilteredData = [];
         
-        function renderTable(container, data) {
-            container.innerHTML = '';
+        // Function to update centers based on selected district
+        function updateCenters(selectElement, targetId) {
+            const districtSelect = document.getElementById(selectElement);
+            const centerSelect = document.getElementById(targetId);
+            const selectedDistrict = districtSelect.value;
             
-            if (data.length === 0) {
-                container.innerHTML = `
-                    <tr>
-                        <td colspan="10" class="text-center" style="padding: 1.5rem; text-align: center; color: var(--gray-500);">No student data available</td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            data.forEach(student => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${student.can_id}</td>
-                    <td>${student.name}</td>
-                    <td>${student.batch}</td>
-                    <td>${student.mobile}</td>
-                    <td>${student.category}</td>
-                    <td>${student.district}</td>
-                    <td>${student.center}</td>
-                    <td>${student.gender}</td>
-                    <td>${student.trade}</td>
-                    <td><span class="status-badge ${student.ojt === 'Completed' ? 'status-completed' : 'status-not-completed'}">${student.ojt}</span></td>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        // Filter students based on selected filters
-        function filterStudents() {
-            const gender = document.getElementById('filter-gender').value;
-            const category = document.getElementById('filter-category').value;
-            const ojt = document.getElementById('filter-ojt').value;
-            const district = document.getElementById('filter-district').value;
-            const center = document.getElementById('filter-center').value;
-            const trade = document.getElementById('filter-trade').value;
-            
-            const filtered = studentData.filter(student => {
-                return (!gender || student.gender === gender) &&
-                       (!category || student.category === category) &&
-                       (!ojt || student.ojt === ojt) &&
-                       (!district || student.district === district) &&
-                       (!center || student.center === center) &&
-                       (!trade || student.trade === trade);
-            });
-            
-            renderTable(studentDataBody, filtered);
-        }
-
-        // Update center dropdown based on selected district
-        function updateCenterDropdown(districtSelect, centerSelect) {
-            const district = districtSelect.value;
+            // Clear existing options
             centerSelect.innerHTML = '<option value="">All Centers</option>';
             
-            if (district && centersByDistrict[district]) {
+            if (selectedDistrict && centerData[selectedDistrict]) {
                 centerSelect.disabled = false;
-                centersByDistrict[district].forEach(center => {
+                
+                // Add new options
+                centerData[selectedDistrict].forEach(center => {
                     const option = document.createElement('option');
                     option.value = center;
                     option.textContent = center;
                     centerSelect.appendChild(option);
                 });
             } else {
-                centerSelect.disabled = true;
-                centerSelect.innerHTML = '<option value="">Select District First</option>';
+                centerSelect.disabled = false;
             }
         }
-
-        // Open modal with appropriate title
-        function openModal(cardType) {
-            currentCardType = cardType;
-            modalTitle.textContent = modalTitles[cardType];
-            modal.style.display = 'flex';
+        
+        // Open modal with training details
+        function openModal(trainingType, trainingTitle) {
+            currentTrainingType = trainingType;
+            currentTrainingTitle = trainingTitle;
+            
+            // Update modal title
+            document.getElementById('modal-title').textContent = trainingTitle + ' Details';
+            
+            // Update training status header
+            document.getElementById('training-status-header').textContent = trainingTitle;
             
             // Reset filters
-            document.getElementById('filter-gender').value = '';
-            document.getElementById('filter-category').value = '';
-            document.getElementById('filter-ojt').value = '';
-            document.getElementById('filter-district').value = '';
-            document.getElementById('filter-center').value = '';
-            document.getElementById('filter-center').disabled = true;
-            document.getElementById('filter-trade').value = '';
+            resetModalFilters();
             
-            // Show all data initially
-            renderTable(studentDataBody, studentData);
-        }
-
-        // Close modal
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
-        // Export data
-        function exportData() {
-            alert(`Exporting data for ${modalTitles[currentCardType]}`);
-            // In a real application, this would trigger a download
+            // Apply filters to get initial data
+            applyModalFilters();
+            
+            // Show modal
+            document.getElementById('training-modal').style.display = 'block';
         }
         
-        // Refresh data
-        function refreshData() {
-            alert("Refreshing student data...");
-            // In a real application, this would fetch updated data
+        // Close modal
+        function closeModal() {
+            document.getElementById('training-modal').style.display = 'none';
         }
-
-        // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
+        
+        // Apply filters in modal
+        function applyModalFilters() {
+            // In a real application, this would fetch data from the server
+            // For demo purposes, we'll simulate filtered data
+            
+            // Get filter values
+            const gender = document.getElementById('modal-gender').value;
+            const category = document.getElementById('modal-category').value;
+            const ojt = document.getElementById('modal-ojt').value;
+            const district = document.getElementById('modal-district').value;
+            const center = document.getElementById('modal-center').value;
+            const trade = document.getElementById('modal-trade').value;
+            
+            // Simulate API call to get filtered data
+            setTimeout(() => {
+                // This would be replaced with actual API call
+                // For demo, we'll generate sample data
+                generateSampleData(currentTrainingType, gender, category, ojt, district, center, trade);
+                
+                // Update the table with the filtered data
+                updateModalTable();
+            }, 300);
+        }
+        
+        // Reset filters in modal
+        function resetModalFilters() {
+            document.getElementById('modal-gender').value = '';
+            document.getElementById('modal-category').value = '';
+            document.getElementById('modal-ojt').value = '';
+            document.getElementById('modal-district').value = '';
+            document.getElementById('modal-center').innerHTML = '<option value="">All Centers</option>';
+            document.getElementById('modal-center').disabled = true;
+            document.getElementById('modal-trade').value = '';
+        }
+        
+        // Generate sample data for demo
+        function generateSampleData(trainingType, gender, category, ojt, district, center, trade) {
+            // In a real application, this would come from the server
+            currentFilteredData = [
+                {
+                    can_id: 'CAN001',
+                    student_name: 'Rahul Sharma',
+                    batch_id: 'BATCH2023-01',
+                    district: 'Kangra',
+                    center: 'Nurpur',
+                    gender: 'Male',
+                    category: 'General',
+                    trade: 'Agriculture',
+                    training_status: 'Completed',
+                    ojt_status: 'Completed'
+                },
+                {
+                    can_id: 'CAN002',
+                    student_name: 'Priya Patel',
+                    batch_id: 'BATCH2023-02',
+                    district: 'Una',
+                    center: 'Amb',
+                    gender: 'Female',
+                    category: 'OBC',
+                    trade: 'Beauty & Wellness',
+                    training_status: 'Completed',
+                    ojt_status: 'Not Completed'
+                },
+                {
+                    can_id: 'CAN003',
+                    student_name: 'Amit Singh',
+                    batch_id: 'BATCH2023-03',
+                    district: 'Solan',
+                    center: 'Dharampur',
+                    gender: 'Male',
+                    category: 'SC',
+                    trade: 'Automotive',
+                    training_status: 'Completed',
+                    ojt_status: 'Completed'
+                },
+                {
+                    can_id: 'CAN004',
+                    student_name: 'Neha Gupta',
+                    batch_id: 'BATCH2023-04',
+                    district: 'Chamba',
+                    center: 'Chamba',
+                    gender: 'Female',
+                    category: 'General',
+                    trade: 'Food Processing',
+                    training_status: 'Completed',
+                    ojt_status: 'Completed'
+                },
+                {
+                    can_id: 'CAN005',
+                    student_name: 'Vikram Joshi',
+                    batch_id: 'BATCH2023-05',
+                    district: 'Mandi',
+                    center: 'Seraj-2',
+                    gender: 'Male',
+                    category: 'ST',
+                    trade: 'Electronics',
+                    training_status: 'Completed',
+                    ojt_status: 'Not Completed'
+                }
+            ];
+            
+            // Apply filters to sample data
+            if (gender) {
+                currentFilteredData = currentFilteredData.filter(student => student.gender === gender);
+            }
+            
+            if (category) {
+                currentFilteredData = currentFilteredData.filter(student => student.category === category);
+            }
+            
+            if (ojt) {
+                currentFilteredData = currentFilteredData.filter(student => student.ojt_status === ojt);
+            }
+            
+            if (district) {
+                currentFilteredData = currentFilteredData.filter(student => student.district === district);
+            }
+            
+            if (center) {
+                currentFilteredData = currentFilteredData.filter(student => student.center === center);
+            }
+            
+            if (trade) {
+                currentFilteredData = currentFilteredData.filter(student => student.trade === trade);
+            }
+        }
+        
+        // Update modal table with filtered data
+        function updateModalTable() {
+            const tableBody = document.getElementById('modal-table-body');
+            tableBody.innerHTML = '';
+            
+            if (currentFilteredData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="text-center">No records found</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            currentFilteredData.forEach(student => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${student.can_id}</td>
+                    <td>${student.student_name}</td>
+                    <td>${student.batch_id}</td>
+                    <td>${student.district}</td>
+                    <td>${student.center}</td>
+                    <td>${student.gender}</td>
+                    <td>${student.category}</td>
+                    <td>${student.trade}</td>
+                    <td>
+                        <span class="modal-badge status-completed">${student.training_status}</span>
+                    </td>
+                    <td>
+                        <span class="modal-badge ${student.ojt_status === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                            ${student.ojt_status}
+                        </span>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // Export filtered data
+        function exportFilteredData() {
+            alert(Exporting filtered data for ${currentTrainingTitle} (${currentFilteredData.length} records));
+            // In a real application, this would trigger a download
+            // of the filtered data in CSV or XLSX format
+        }
+        
+        // Export all data
+        function exportAllData() {
+            alert('Exporting all student data');
+            // In a real application, this would trigger a download
+            // of all student data in CSV or XLSX format
+        }
+        
+        // Initialize the form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add event listeners for district changes
+            document.getElementById('modal-district').addEventListener('change', function() {
+                updateCenters('modal-district', 'modal-center');
+            });
+            
             // Flash messages timeout
             const flashMessages = document.querySelectorAll('.alert');
             flashMessages.forEach(message => {
                 setTimeout(() => {
                     message.style.opacity = '0';
                     setTimeout(() => message.remove(), 500);
-                }, 5000);
+                }, 3000);
             });
-            
-            // Initialize filters
-            initFilters();
             
             // Close modal when clicking outside
             window.addEventListener('click', function(event) {
+                const modal = document.getElementById('training-modal');
                 if (event.target === modal) {
                     closeModal();
                 }
@@ -460,4 +786,5 @@
         });
     </script>
 </body>
+
 </html>

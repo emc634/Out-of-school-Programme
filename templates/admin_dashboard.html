@@ -44,11 +44,155 @@
             </div>
 
             <!-- Statistics Cards -->
-            <div class="stats-container">
-                <div class="stat-card">
+            <!-- Replace the existing stats-container with this grid of indicators -->
+            <div class="stats-grid">
+                <!-- Total Students -->
+                <div class="stat-card" onclick="openModal('total')">
                     <i class="fas fa-users fa-2x mt-2 text-primary"></i>
                     <div class="stat-label">Total Students</div>
                     <div class="stat-value">{{ total_records or 0 }}</div>
+                </div>
+
+                <!-- Single Career Counselling -->
+                <div class="stat-card" onclick="openModal('single_counselling')">
+                    <i class="fas fa-user fa-2x mt-2 text-primary"></i>
+                    <div class="stat-label">Single Career Counselling</div>
+                    <div class="stat-value">{{ training_counts.single_completed or 0 }}</div>
+                </div>
+
+                <!-- Group Career Counselling -->
+                <div class="stat-card" onclick="openModal('group_counselling')">
+                    <i class="fas fa-users fa-2x mt-2 text-primary"></i>
+                    <div class="stat-label">Group Career Counselling</div>
+                    <div class="stat-value">{{ training_counts.group_completed or 0 }}</div>
+                </div>
+
+                <!-- OJT Status -->
+                <div class="stat-card" onclick="openModal('ojt')">
+                    <i class="fas fa-briefcase fa-2x mt-2 text-primary"></i>
+                    <div class="stat-label">OJT Status</div>
+                    <div class="stat-value">{{ training_counts.ojt_completed or 0 }}</div>
+                </div>
+
+                <!-- Guest Lecture -->
+                <div class="stat-card" onclick="openModal('guest_lecture')">
+                    <i class="fas fa-chalkboard-teacher fa-2x mt-2 text-primary"></i>
+                    <div class="stat-label">Guest Lecture</div>
+                    <div class="stat-value">{{ training_counts.guest_lecture_completed or 0 }}</div>
+                </div>
+
+                <!-- Industrial Visit -->
+                <div class="stat-card" onclick="openModal('industrial_visit')">
+                    <i class="fas fa-industry fa-2x mt-2 text-primary"></i>
+                    <div class="stat-label">Industrial Visit</div>
+                    <div class="stat-value">{{ training_counts.industrial_visit_completed or 0 }}</div>
+                </div>
+
+                <!-- Assessment -->
+                <div class="stat-card" onclick="openModal('assessment')">
+                    <i class="fas fa-clipboard-check fa-2x mt-2 text-primary"></i>
+                    <div class="stat-label">Assessment</div>
+                    <div class="stat-value">{{ training_counts.assessment_completed or 0 }}</div>
+                </div>
+
+                <!-- School Enrolled -->
+                <div class="stat-card" onclick="openModal('school')">
+                    <i class="fas fa-graduation-cap fa-2x mt-2 text-primary"></i>
+                    <div class="stat-label">School Enrolled</div>
+                    <div class="stat-value">{{ training_counts.school_enrollment_count or 0 }}</div>
+                </div>
+            </div>
+
+            <!-- Add this modal at the bottom of the body -->
+            <!-- Add this modal at the bottom of the body, before the scripts -->
+            <div id="trainingModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalTitle">Students</h2>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="modal-filters">
+                            <form id="modalFilterForm">
+                                <div class="filters-grid">
+                                    <div class="filter-group">
+                                        <label class="form-label">Gender</label>
+                                        <select class="form-control" name="gender">
+                                            <option value="">All Genders</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label class="form-label">Trade</label>
+                                        <select class="form-control" name="trade">
+                                            <option value="">All Trades</option>
+                                            <option value="Agriculture">Agriculture</option>
+                                            <option value="Beauty & Wellness">Beauty & Wellness</option>
+                                            <option value="Plumbing">Plumbing</option>
+                                            <option value="Food Processing">Food Processing</option>
+                                            <option value="Automotive">Automotive</option>
+                                            <option value="Electronics">Electronics</option>
+                                            <option value="Tourism & Hospitality">Tourism & Hospitality</option>
+                                            <option value="ITeS">ITeS</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label class="form-label">Center</label>
+                                        <select class="form-control" name="center" id="modalCenter">
+                                            <option value="">All Centers</option>
+                                            <!-- Centers will be populated by JavaScript -->
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="filter-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-filter btn-icon"></i> Apply Filters
+                                    </button>
+                                    <button type="reset" class="btn btn-outline">Reset Filters</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>CAN ID</th>
+                                        <th>Student Name</th>
+                                        <th>Father's Name</th>
+                                        <th>Mother's Name</th>
+                                        <th>Batch ID</th>
+                                        <th>Mobile</th>
+                                        <th>Religion</th>
+                                        <th>Category</th>
+                                        <th>DOB</th>
+                                        <th>District</th>
+                                        <th>Center</th>
+                                        <th>Gender</th>
+                                        <th>Trade</th>
+                                        <th>Single Counselling</th>
+                                        <th>Group Counselling</th>
+                                        <th>OJT Status</th>
+                                        <th>Guest Lecture</th>
+                                        <th>Industrial Visit</th>
+                                        <th>Assessment</th>
+                                        <th>Assessment Date</th>
+                                        <th>School Enrollment</th>
+                                        <th>Total Days</th>
+                                        <th>Attendance</th>
+                                        <th>Aadhar</th>
+                                        <th>Account Number</th>
+                                        <th>Account Holder</th>
+                                        <th>IFSC</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalTableBody">
+                                    <!-- Data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -439,7 +583,9 @@
             "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
             "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
             "Mandi": ["Sadar-2", "Seraj-2"],
-            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
+            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla",
+                "Majra"
+            ],
             "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
             "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
@@ -499,6 +645,192 @@
         function exportData() {
             alert('Export functionality to be implemented');
         }
+
+        // Modal functionality
+        function openModal(type) {
+            const modal = document.getElementById('trainingModal');
+            const modalTitle = document.getElementById('modalTitle');
+
+            // Set modal title based on type
+            const titles = {
+                'total': 'All Students',
+                'single_counselling': 'Students with Single Career Counselling Completed',
+                'group_counselling': 'Students with Group Career Counselling Completed',
+                'ojt': 'Students with OJT Completed',
+                'guest_lecture': 'Students with Guest Lecture Completed',
+                'industrial_visit': 'Students with Industrial Visit Completed',
+                'assessment': 'Students with Assessment Completed',
+                'school': 'Students Enrolled in School'
+            };
+
+            modalTitle.textContent = titles[type] || 'Students';
+            modal.dataset.type = type;
+
+            // Reset form and load initial data
+            document.getElementById('modalFilterForm').reset();
+            loadModalData(type);
+
+            // Show modal
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById('trainingModal').style.display = "none";
+        }
+
+        function loadModalData(type, gender = '', trade = '', center = '') {
+            const tableBody = document.getElementById('modalTableBody');
+            tableBody.innerHTML = '<tr><td colspan="26" class="text-center">Loading data...</td></tr>';
+
+            // AJAX request to get filtered data
+            fetch(`/admin_dashboard/modal_data?type=${type}&gender=${gender}&trade=${trade}&center=${center}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="26" class="text-center">No records found</td></tr>';
+                        return;
+                    }
+
+                    let html = '';
+                    data.forEach(student => {
+                        html += `
+                    <tr>
+                        <!-- Students Data -->
+                        <td>${student.can_id || ''}</td>
+                        <td>${student.student_name || ''}</td>
+                        <td>${student.father_name || ''}</td>
+                        <td>${student.mother_name || ''}</td>
+                        <td>${student.batch_id || ''}</td>
+                        <td>${student.mobile || ''}</td>
+                        <td>${student.religion || ''}</td>
+                        <td>${student.category || ''}</td>
+                        <td>${student.dob || ''}</td>
+                        <td>${student.district || ''}</td>
+                        <td>${student.center || ''}</td>
+                        <td>${student.gender || ''}</td>
+
+                        <!-- Training Data -->
+                        <td>${student.trade || ''}</td>
+                        <td>
+                            <span class="status-badge ${student.single_counselling === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                ${student.single_counselling || 'Not Completed'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${student.group_counselling === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                ${student.group_counselling || 'Not Completed'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${student.ojt === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                ${student.ojt || 'Not Completed'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${student.guest_lecture === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                ${student.guest_lecture || 'Not Completed'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${student.industrial_visit === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                ${student.industrial_visit || 'Not Completed'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${student.assessment === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                ${student.assessment || 'Not Completed'}
+                            </span>
+                        </td>
+                        <td>${student.assessment_date || ''}</td>
+                        <td>${student.school_enrollment || ''}</td>
+                        <td>${student.total_days || 0}</td>
+                        <td>${student.attendance || 0}</td>
+
+                        <!-- Bank Data -->
+                        <td>${student.aadhar || ''}</td>
+                        <td>${student.account_number || ''}</td>
+                        <td>${student.account_holder || ''}</td>
+                        <td>${student.ifsc || ''}</td>
+                    </tr>
+                `;
+                    });
+
+                    tableBody.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    tableBody.innerHTML = '<tr><td colspan="26" class="text-center">Error loading data</td></tr>';
+                });
+        }
+
+        // Initialize modal functionality when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Close modal when clicking on close button
+            document.querySelector('.close').addEventListener('click', closeModal);
+
+            // Close modal when clicking outside modal content
+            window.addEventListener('click', function (event) {
+                const modal = document.getElementById('trainingModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Handle modal form submission
+            document.getElementById('modalFilterForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const type = document.getElementById('trainingModal').dataset.type;
+                const gender = this.elements.gender.value;
+                const trade = this.elements.trade.value;
+                const center = this.elements.center.value;
+
+                loadModalData(type, gender, trade, center);
+            });
+
+            // Populate centers dropdown for modal
+            const centerSelect = document.getElementById('modalCenter');
+            centerSelect.innerHTML = '<option value="">All Centers</option>';
+
+            // Flatten all centers from centerData
+            const allCenters = [];
+            for (const district in centerData) {
+                centerData[district].forEach(center => {
+                    if (!allCenters.includes(center)) {
+                        allCenters.push(center);
+                    }
+                });
+            }
+
+            // Sort and add to dropdown
+            allCenters.sort().forEach(center => {
+                const option = document.createElement('option');
+                option.value = center;
+                option.textContent = center;
+                centerSelect.appendChild(option);
+            });
+
+            // Debugging: Check if event listeners are attached
+            console.log('Modal event listeners initialized');
+
+            // Test if buttons are working
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.addEventListener('click', function () {
+                    console.log('Stat card clicked:', this);
+                });
+            });
+        });
+
+        console.log('Number of stat cards:', document.querySelectorAll('.stat-card').length);
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', function () {
+                console.log('Clicked on:', this);
+            });
+        });
     </script>
 </body>
 
