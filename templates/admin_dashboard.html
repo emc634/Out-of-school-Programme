@@ -123,14 +123,17 @@
                             <div class="stat-value">{{ training_counts.school_enrollment_count or 0 }}</div>
                         </div>
                     </div>
+                    <!-- Other Training -->
+                    <div class="stat-card" data-type="other_training" onclick="openModal('other_training')">
+                        <i class="fas fa-book fa-2x mt-2 text-primary"></i>
+                        <div class="stats">
+                            <div class="stat-label">Other Training</div>
+                            <div class="stat-value">{{ training_counts.other_training_completed or 0 }}</div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Other Training -->
-                <div class="stat-card" data-type="other_training" onclick="openModal('other_training')">
-                    <i class="fas fa-book fa-2x mt-2 text-primary"></i>
-                    <div class="stat-label">Other Training</div>
-                    <div class="stat-value">{{ training_counts.other_training_completed or 0 }}</div>
-                </div>
+
             </div>
 
             <!-- Modal -->
@@ -322,7 +325,8 @@
                                     Solan</option>
                                 <option value="Una" {% if current_filters.district=='Una' %}selected{% endif %}>
                                     Una</option>
-                                <option value="Bilaspur"{% if current_filters.district == 'Bilaspur' %}selected{% endif %}>
+                                <option value="Bilaspur"
+                                    {% if current_filters.district == 'Bilaspur' %}selected{% endif %}>
                                     Bilaspur</option>
                                 <option value="Chamba" {% if current_filters.district == 'Chamba' %}selected{% endif %}>
                                     Chamba</option>
@@ -689,23 +693,24 @@
 
                     {% if end_page < total_pages %} {% if end_page < total_pages - 1 %} <div class="page-item disabled">
                         <span class="page-link">...</span>
-                </div>
-                {% endif %}
-                <div class="page-item">
-                    <a href="{{ url_for('admin_dashboard', page=total_pages) }}" class="page-link">{{ total_pages }}</a>
-                </div>
-                {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=total_pages) }}"
+                            class="page-link">{{ total_pages }}</a>
+                    </div>
+                    {% endif %}
 
-                {% if has_next %}
-                <div class="page-item">
-                    <a href="{{ url_for('admin_dashboard', page=page+1) }}" class="page-link">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
+                    {% if has_next %}
+                    <div class="page-item">
+                        <a href="{{ url_for('admin_dashboard', page=page+1) }}" class="page-link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>
-            {% endif %}
-        </div>
         </div>
     </main>
 
