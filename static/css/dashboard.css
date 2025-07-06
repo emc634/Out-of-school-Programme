@@ -1,34 +1,4 @@
 /* Modern Dashboard Styles */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.7rem 1.4rem;
-    border-radius: var(--border-radius);
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-align: center;
-    cursor: pointer;
-    transition: var(--transition);
-    border: none;
-    white-space: nowrap;
-}
-
-.btn-outline-primary {
-    background: transparent;
-    border: 2px solid var(--primary);
-    color: var(--primary);
-}
-
-.btn-outline-primary:hover {
-    background: var(--primary);
-    color: var(--white);
-}
-
-.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-}
 
 .dashboard-container {
     max-width: 1250px;
