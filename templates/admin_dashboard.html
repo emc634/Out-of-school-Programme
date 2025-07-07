@@ -22,9 +22,11 @@
                     <h1>Admin Dashboard</h1>
                 </div>
                 <div class="flex gap-2">
-                    <button class="btn btn-primary" onclick="exportData()">
+                    <a href="{{ url_for('download_excel_route') }}">
+                    <button class="btn btn-primary" >
                         <i class="fas fa-download btn-icon"></i> Export Data
                     </button>
+                    </a>
                     <button class="btn btn-secondary" onclick="location.reload()">
                         <i class="fas fa-sync btn-icon"></i> Refresh
                     </button>
@@ -825,10 +827,6 @@
             console.log('Initialization complete');
         });
 
-        // Export data functionality (placeholder)
-        function exportData() {
-            alert('Export functionality to be implemented');
-        }
     </script>
 </body>
 
