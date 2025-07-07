@@ -444,37 +444,6 @@
             "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
 
-        // Function to update centers based on selected district (for main form)
-        function updateCenters() {
-            const districtSelect = document.getElementById('district');
-            const centerSelect = document.getElementById('center');
-            const selectedDistrict = districtSelect.value;
-            const currentCenter = "{{ current_filters.center if current_filters.center else '' }}";
-
-            // Clear existing options
-            centerSelect.innerHTML = '<option value="">All Centers</option>';
-
-            if (selectedDistrict && centerData[selectedDistrict]) {
-                centerSelect.disabled = false;
-
-                // Add new options
-                centerData[selectedDistrict].forEach(center => {
-                    const option = document.createElement('option');
-                    option.value = center;
-                    option.textContent = center;
-
-                    // Preserve selected center if it matches
-                    if (center === currentCenter) {
-                        option.selected = true;
-                    }
-
-                    centerSelect.appendChild(option);
-                });
-            } else {
-                centerSelect.disabled = false; // Keep enabled to show "All Centers"
-            }
-        }
-
         // Function to update centers in modal based on selected district
         function updateModalCenters() {
             const districtSelect = document.getElementById('modalDistrict');
@@ -634,10 +603,6 @@
 
         // Initialize the form when DOM is loaded
         document.addEventListener('DOMContentLoaded', function () {
-            // Main form district-center relationship
-            document.getElementById('district').addEventListener('change', updateCenters);
-            updateCenters();
-
             // Modal form district-center relationship
             document.getElementById('modalDistrict').addEventListener('change', updateModalCenters);
 
