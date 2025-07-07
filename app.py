@@ -1,4 +1,7 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session,jsonify
+from flask import Flask, render_template, request, flash, redirect, url_for, session,jsonify,send_file
+import pandas as pd
+from io import BytesIO
+import openpyxl
 import psycopg2
 from psycopg2 import extras
 from datetime import datetime
@@ -1030,6 +1033,34 @@ def reset_filters():
         for key in session['filters'].keys():
             session['filters'][key] = None
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/download')
+def download_excel():
+    # 1. Connect to DB (replace with your DB)
+    conn = get_db_connection()
+    # 2. Query data
+    tables = ['students', 'student_training', 'bank_details']
+    
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine=openpyxl) as writer:
+        for table in tables:
+            # Query each table
+            df = pd.read_sql_query(f"SELECT * FROM {table}", conn)
+            # Write to Excel sheet (sheet name same as table name)
+            df.to_excel(writer, index=False, sheet_name=table.capitalize())
+    conn.close()
+    output.seek(0)
+    
+    # 4. Send file to user
+    return send_file(output,
+                     download_name="data.xlsx",
+                     as_attachment=True,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+@app.route('/download_excel')
+def download_excel_route():
+    return download_excel()
+
 
 @app.route('/logout')
 def logout():
