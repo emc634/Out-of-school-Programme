@@ -388,403 +388,154 @@
         </div>
     </main>
 
-    <!-- Modal for Training Status Details -->
-    <div id="training-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Training Details</h2>
-                <span class="close" onclick="closeModal()">&times;</span>
-            </div>
-            
+    <!-- Filters Section -->
             <div class="filters-container">
-                <div class="filters-grid">
-                    <div class="filter-group">
-                        <label class="form-label">Gender</label>
-                        <select id="modal-gender" class="form-control">
-                            <option value="">All Genders</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">Category</label>
-                        <select id="modal-category" class="form-control">
-                            <option value="">All Categories</option>
-                            <option value="General">General</option>
-                            <option value="OBC">OBC</option>
-                            <option value="SC">SC</option>
-                            <option value="ST">ST</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">OJT Status</label>
-                        <select id="modal-ojt" class="form-control">
-                            <option value="">All Statuses</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Not Completed">Not Completed</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">District</label>
-                        <select id="modal-district" class="form-control">
-                            <option value="">All Districts</option>
-                            <option value="Bilaspur">Bilaspur</option>
-                            <option value="Chamba">Chamba</option>
-                            <option value="Hamirpur">Hamirpur</option>
-                            <option value="Kangra">Kangra</option>
-                            <option value="Kullu">Kullu</option>
-                            <option value="Mandi">Mandi</option>
-                            <option value="Sirmour">Sirmour</option>
-                            <option value="Solan">Solan</option>
-                            <option value="Una">Una</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">Center/Block</label>
-                        <select id="modal-center" class="form-control" disabled>
-                            <option value="">Select District First</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label class="form-label">Trade</label>
-                        <select id="modal-trade" class="form-control">
-                            <option value="">All Trades</option>
-                            <option value="Agriculture">Agriculture</option>
-                            <option value="Beauty & Wellness">Beauty & Wellness</option>
-                            <option value="Plumbing">Plumbing</option>
-                            <option value="Food Processing">Food Processing</option>
-                            <option value="Automotive">Automotive</option>
-                            <option value="Electronics">Electronics</option>
-                            <option value="Tourism & Hospitality">Tourism & Hospitality</option>
-                            <option value="ITeS">ITeS</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="filter-actions">
-                    <button class="btn btn-primary" onclick="applyModalFilters()">
-                        <i class="fas fa-filter btn-icon"></i> Apply Filters
-                    </button>
-                    <button class="btn btn-outline" onclick="resetModalFilters()">
-                        <i class="fas fa-undo btn-icon"></i> Reset
-                    </button>
-                </div>
-            </div>
-            
-            <div class="modal-table-container">
-                <table class="modal-table">
-                    <thead>
-                        <tr>
-                            <th>CAN ID</th>
-                            <th>Student Name</th>
-                            <th>Batch ID</th>
-                            <th>District</th>
-                            <th>Center</th>
-                            <th>Gender</th>
-                            <th>Category</th>
-                            <th>Trade</th>
-                            <th id="training-status-header">Training Status</th>
-                            <th>OJT Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="modal-table-body">
-                        <!-- Data will be populated by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="exportFilteredData()">
-                    <i class="fas fa-download btn-icon"></i> Export Data
-                </button>
-            </div>
-        </div>
-    </div>
+                <h3 class="mb-3">
+                    <i class="fas fa-filter text-primary"></i> Filter Students
+                </h3>
+                <form id="filter-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+                    <div class="filters-grid">
+                        <!-- Trade Dropdown -->
+                        <div class="filter-group">
+                            <label class="form-label">Trade</label>
+                            <select id="trade" name="trade" class="form-control form-select">
+                                <option value="">All Trades</option>
+                                <option value="Agriculture" {% if current_filters.trade=='Agriculture' %}selected{% endif %}>Agriculture</option>
+                                <option value="Beauty & Wellness" {% if current_filters.trade=='Beauty & Wellness' %}selected{% endif %}>Beauty & Wellness</option>
+                                <option value="Plumbing" {% if current_filters.trade=='Plumbing' %}selected{% endif %}>Plumbing</option>
+                                <option value="Food Processing" {% if current_filters.trade=='Food Processing' %}selected{% endif %}>Food Processing</option>
+                                <option value="Automotive" {% if current_filters.trade=='Automotive' %}selected{% endif %}>Automotive</option>
+                                <option value="Electronics" {% if current_filters.trade=='Electronics' %}selected{% endif %}>Electronics</option>
+                                <option value="Tourism & Hospitality" {% if current_filters.trade=='Tourism & Hospitality' %}selected{% endif %}>Tourism & Hospitality</option>
+                                <option value="ITeS" {% if current_filters.trade=='ITeS' %}selected{% endif %}>ITeS</option>
+                            </select>
+                        </div>
 
-    <script>
-        // Center data mapping
-        const centerData = {
-            "Bilaspur": ["Jhandutta", "Sadar", "Shri Naina Devi Ji"],
-            "Chamba": ["Banikhet", "Chamba", "Chowari", "Garola", "Gehra", "Hardaspura", "Kalhel", "Kiani", "Mehla",
-                "Salooni", "Sihunta", "Sundla", "Tissa"
-            ],
-            "Hamirpur": ["Hamirpur"],
-            "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
-            "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
-            "Mandi": ["Sadar-2", "Seraj-2"],
-            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
-            "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
-            "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
-        };
+                        <!-- District Dropdown -->
+                        <div class="filter-group">
+                            <label class="form-label">District</label>
+                            <select id="district" name="district" class="form-control form-select">
+                                <option value="">All Districts</option>
+                                <option value="Bilaspur" {% if current_filters.district=='Bilaspur' %}selected{% endif %}>Bilaspur</option>
+                                <option value="Chamba" {% if current_filters.district=='Chamba' %}selected{% endif %}>Chamba</option>
+                                <option value="Hamirpur" {% if current_filters.district=='Hamirpur' %}selected{% endif %}>Hamirpur</option>
+                                <option value="Kangra" {% if current_filters.district=='Kangra' %}selected{% endif %}>Kangra</option>
+                                <option value="Kullu" {% if current_filters.district=='Kullu' %}selected{% endif %}>Kullu</option>
+                                <option value="Mandi" {% if current_filters.district=='Mandi' %}selected{% endif %}>Mandi</option>
+                                <option value="Sirmour" {% if current_filters.district=='Sirmour' %}selected{% endif %}>Sirmour</option>
+                                <option value="Solan" {% if current_filters.district=='Solan' %}selected{% endif %}>Solan</option>
+                                <option value="Una" {% if current_filters.district=='Una' %}selected{% endif %}>Una</option>
+                            </select>
+                        </div>
 
-        // Modal state
-        let currentTrainingType = '';
-        let currentTrainingTitle = '';
-        let currentFilteredData = [];
-        
-        // Function to update centers based on selected district
-        function updateCenters(selectElement, targetId) {
-            const districtSelect = document.getElementById(selectElement);
-            const centerSelect = document.getElementById(targetId);
-            const selectedDistrict = districtSelect.value;
-            
-            // Clear existing options
-            centerSelect.innerHTML = '<option value="">All Centers</option>';
-            
-            if (selectedDistrict && centerData[selectedDistrict]) {
-                centerSelect.disabled = false;
-                
-                // Add new options
-                centerData[selectedDistrict].forEach(center => {
-                    const option = document.createElement('option');
-                    option.value = center;
-                    option.textContent = center;
-                    centerSelect.appendChild(option);
-                });
-            } else {
-                centerSelect.disabled = false;
-            }
-        }
-        
-        // Open modal with training details
-        function openModal(trainingType, trainingTitle) {
-            currentTrainingType = trainingType;
-            currentTrainingTitle = trainingTitle;
-            
-            // Update modal title
-            document.getElementById('modal-title').textContent = trainingTitle + ' Details';
-            
-            // Update training status header
-            document.getElementById('training-status-header').textContent = trainingTitle;
-            
-            // Reset filters
-            resetModalFilters();
-            
-            // Apply filters to get initial data
-            applyModalFilters();
-            
-            // Show modal
-            document.getElementById('training-modal').style.display = 'block';
-        }
-        
-        // Close modal
-        function closeModal() {
-            document.getElementById('training-modal').style.display = 'none';
-        }
-        
-        // Apply filters in modal
-        function applyModalFilters() {
-            // In a real application, this would fetch data from the server
-            // For demo purposes, we'll simulate filtered data
-            
-            // Get filter values
-            const gender = document.getElementById('modal-gender').value;
-            const category = document.getElementById('modal-category').value;
-            const ojt = document.getElementById('modal-ojt').value;
-            const district = document.getElementById('modal-district').value;
-            const center = document.getElementById('modal-center').value;
-            const trade = document.getElementById('modal-trade').value;
-            
-            // Simulate API call to get filtered data
-            setTimeout(() => {
-                // This would be replaced with actual API call
-                // For demo, we'll generate sample data
-                generateSampleData(currentTrainingType, gender, category, ojt, district, center, trade);
-                
-                // Update the table with the filtered data
-                updateModalTable();
-            }, 300);
-        }
-        
-        // Reset filters in modal
-        function resetModalFilters() {
-            document.getElementById('modal-gender').value = '';
-            document.getElementById('modal-category').value = '';
-            document.getElementById('modal-ojt').value = '';
-            document.getElementById('modal-district').value = '';
-            document.getElementById('modal-center').innerHTML = '<option value="">All Centers</option>';
-            document.getElementById('modal-center').disabled = true;
-            document.getElementById('modal-trade').value = '';
-        }
-        
-        // Generate sample data for demo
-        function generateSampleData(trainingType, gender, category, ojt, district, center, trade) {
-            // In a real application, this would come from the server
-            currentFilteredData = [
-                {
-                    can_id: 'CAN001',
-                    student_name: 'Rahul Sharma',
-                    batch_id: 'BATCH2023-01',
-                    district: 'Kangra',
-                    center: 'Nurpur',
-                    gender: 'Male',
-                    category: 'General',
-                    trade: 'Agriculture',
-                    training_status: 'Completed',
-                    ojt_status: 'Completed'
-                },
-                {
-                    can_id: 'CAN002',
-                    student_name: 'Priya Patel',
-                    batch_id: 'BATCH2023-02',
-                    district: 'Una',
-                    center: 'Amb',
-                    gender: 'Female',
-                    category: 'OBC',
-                    trade: 'Beauty & Wellness',
-                    training_status: 'Completed',
-                    ojt_status: 'Not Completed'
-                },
-                {
-                    can_id: 'CAN003',
-                    student_name: 'Amit Singh',
-                    batch_id: 'BATCH2023-03',
-                    district: 'Solan',
-                    center: 'Dharampur',
-                    gender: 'Male',
-                    category: 'SC',
-                    trade: 'Automotive',
-                    training_status: 'Completed',
-                    ojt_status: 'Completed'
-                },
-                {
-                    can_id: 'CAN004',
-                    student_name: 'Neha Gupta',
-                    batch_id: 'BATCH2023-04',
-                    district: 'Chamba',
-                    center: 'Chamba',
-                    gender: 'Female',
-                    category: 'General',
-                    trade: 'Food Processing',
-                    training_status: 'Completed',
-                    ojt_status: 'Completed'
-                },
-                {
-                    can_id: 'CAN005',
-                    student_name: 'Vikram Joshi',
-                    batch_id: 'BATCH2023-05',
-                    district: 'Mandi',
-                    center: 'Seraj-2',
-                    gender: 'Male',
-                    category: 'ST',
-                    trade: 'Electronics',
-                    training_status: 'Completed',
-                    ojt_status: 'Not Completed'
-                }
-            ];
-            
-            // Apply filters to sample data
-            if (gender) {
-                currentFilteredData = currentFilteredData.filter(student => student.gender === gender);
-            }
-            
-            if (category) {
-                currentFilteredData = currentFilteredData.filter(student => student.category === category);
-            }
-            
-            if (ojt) {
-                currentFilteredData = currentFilteredData.filter(student => student.ojt_status === ojt);
-            }
-            
-            if (district) {
-                currentFilteredData = currentFilteredData.filter(student => student.district === district);
-            }
-            
-            if (center) {
-                currentFilteredData = currentFilteredData.filter(student => student.center === center);
-            }
-            
-            if (trade) {
-                currentFilteredData = currentFilteredData.filter(student => student.trade === trade);
-            }
-        }
-        
-        // Update modal table with filtered data
-        function updateModalTable() {
-            const tableBody = document.getElementById('modal-table-body');
-            tableBody.innerHTML = '';
-            
-            if (currentFilteredData.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="10" class="text-center">No records found</td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            currentFilteredData.forEach(student => {
-                const row = document.createElement('tr');
-                
-                row.innerHTML = `
-                    <td>${student.can_id}</td>
-                    <td>${student.student_name}</td>
-                    <td>${student.batch_id}</td>
-                    <td>${student.district}</td>
-                    <td>${student.center}</td>
-                    <td>${student.gender}</td>
-                    <td>${student.category}</td>
-                    <td>${student.trade}</td>
-                    <td>
-                        <span class="modal-badge status-completed">${student.training_status}</span>
-                    </td>
-                    <td>
-                        <span class="modal-badge ${student.ojt_status === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                            ${student.ojt_status}
-                        </span>
-                    </td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-        }
-        
-        // Export filtered data
-        function exportFilteredData() {
-            alert(Exporting filtered data for ${currentTrainingTitle} (${currentFilteredData.length} records));
-            // In a real application, this would trigger a download
-            // of the filtered data in CSV or XLSX format
-        }
-        
-        // Export all data
-        function exportAllData() {
-            alert('Exporting all student data');
-            // In a real application, this would trigger a download
-            // of all student data in CSV or XLSX format
-        }
-        
-        // Initialize the form when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add event listeners for district changes
-            document.getElementById('modal-district').addEventListener('change', function() {
-                updateCenters('modal-district', 'modal-center');
-            });
-            
-            // Flash messages timeout
-            const flashMessages = document.querySelectorAll('.alert');
-            flashMessages.forEach(message => {
-                setTimeout(() => {
-                    message.style.opacity = '0';
-                    setTimeout(() => message.remove(), 500);
-                }, 3000);
-            });
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', function(event) {
-                const modal = document.getElementById('training-modal');
-                if (event.target === modal) {
-                    closeModal();
-                }
-            });
-        });
-    </script>
-</body>
+                        <!-- Center Dropdown (Populated by JS) -->
+                        <div class="filter-group">
+                            <label for="center" class="form-label">Center</label>
+                            <select id="center" name="center" class="form-control form-select">
+                                <option value="">All Centers</option>
+                                <!-- Options populated by JavaScript -->
+                            </select>
+                        </div>
 
-</html>
+                        <!-- Gender Dropdown -->
+                        <div class="filter-group">
+                            <label class="form-label">Gender</label>
+                            <select class="form-control" name="gender">
+                                <option value="">All Genders</option>
+                                <option value="Male" {% if current_filters.gender=='Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if current_filters.gender=='Female' %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if current_filters.gender=='Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <!-- OJT Status -->
+                        <div class="filter-group">
+                            <label class="form-label">OJT Status</label>
+                            <select class="form-control" name="ojt_status">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.ojt_status=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.ojt_status=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- Single Career Counselling -->
+                        <div class="filter-group">
+                            <label class="form-label">Single Career Counselling</label>
+                            <select class="form-control" name="single_counselling">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.single_counselling=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.single_counselling=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- Group Career Counselling -->
+                        <div class="filter-group">
+                            <label class="form-label">Group Career Counselling</label>
+                            <select class="form-control" name="group_counselling">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.group_counselling=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.group_counselling=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- Guest Lecture -->
+                        <div class="filter-group">
+                            <label class="form-label">Guest Lecture</label>
+                            <select class="form-control" name="guest_lecture">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.guest_lecture=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.guest_lecture=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- Industrial Visit -->
+                        <div class="filter-group">
+                            <label class="form-label">Industrial Visit</label>
+                            <select class="form-control" name="industrial_visit">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.industrial_visit=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.industrial_visit=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- Assessment -->
+                        <div class="filter-group">
+                            <label class="form-label">Assessment</label>
+                            <select class="form-control" name="assessment">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.assessment=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.assessment=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+
+                        <!-- School Enrolled -->
+                        <div class="filter-group">
+                            <label class="form-label">School Enrolled</label>
+                            <select class="form-control" name="school">
+                                <option value="">All Statuses</option>
+                                <option value="Enrolled" {% if current_filters.school=='Enrolled' %}selected{% endif %}>Enrolled</option>
+                                <option value="Not Enrolled" {% if current_filters.school=='Not Enrolled' %}selected{% endif %}>Not Enrolled</option>
+                            </select>
+                        </div>
+
+                        <!-- Other Training-->
+                        <div class="filter-group">
+                            <label class="form-label">Other Training</label>
+                            <select class="form-control" name="other_training">
+                                <option value="">All Statuses</option>
+                                <option value="Completed" {% if current_filters.other_training=='Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Not Completed" {% if current_filters.other_training=='Not Completed' %}selected{% endif %}>Not Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter btn-icon"></i> Apply Filters
+                        </button>
+                        <a href="{{ url_for('reset_filters') }}" class="btn btn-outline">
+                            <i class="fas fa-redo btn-icon"></i> Reset Filters
+                        </a>
+                    </div>
+                </form>
+            </div>
