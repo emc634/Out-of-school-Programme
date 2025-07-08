@@ -349,7 +349,7 @@
                                     </span>
                                 </td>
                                 <td>{{ student.total_days or 0 }}</td>
-                                <td>{{ student.attendance or 0 }}%</td>
+                                <td>{{ student.attendance or 0 }}</td>
                                 <td>
                                     <span class="status-badge {% if student.other_training == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.other_training or 'Not Completed' }}
