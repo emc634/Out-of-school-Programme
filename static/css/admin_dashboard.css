@@ -264,6 +264,36 @@
     }
 }
 
+/* Add this to CSS file */
+#exportModalDataBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    border: none;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--border-radius);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+#exportModalDataBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.25);
+}
+
+#exportModalDataBtn:active {
+    transform: translateY(0);
+}
+
+#exportModalDataBtn .btn-icon {
+    margin-right: 0.25rem;
+}
+
 /* Filters Section */
 .filters-container {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(245, 247, 255, 0.92) 100%);
