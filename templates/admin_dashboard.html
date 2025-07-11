@@ -671,7 +671,7 @@
         // Create a temporary form to submit the export request
         const formElement = document.createElement('form');
         formElement.method = 'GET';
-        formElement.action = '{{ url_for("export_modal_data") }}';
+        formElement.action = '{{ url_for("modal_data") }}';
         
         // Add hidden inputs for each filter parameter
         const typeInput = document.createElement('input');
