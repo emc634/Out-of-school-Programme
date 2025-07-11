@@ -16,22 +16,26 @@
             <div class="admin-header">
                 <div class="admin-logo-title-container">
                     <div class="logo-container1">
-                        <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img1" alt="Left Logo">
-                        <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img1" alt="Center Logo">
+                        <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img1"
+                            alt="Left Logo">
+                        <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img1"
+                            alt="Center Logo">
                     </div>
                     <h1>Admin Dashboard</h1>
                 </div>
                 <div class="flex gap-2">
                     <a href="{{ url_for('download_excel_route') }}">
-                    <button class="btn btn-primary" >
-                        <i class="fas fa-download btn-icon"></i> Export Data
-                    </button>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download btn-icon"></i> Export Data
+                        </button>
                     </a>
                     <button class="btn btn-secondary" onclick="location.reload()">
                         <i class="fas fa-sync btn-icon"></i> Refresh
                     </button>
-                    <a href="{{ url_for('logout') }}" class="btn btn-outline">
-                        <i class="fas fa-sign-out-alt btn-icon"></i> Logout
+                    <a href="{{ url_for('logout') }}">
+                        <button class="btn btn-outline">
+                            <i class="fas fa-sign-out-alt btn-icon"></i> Logout
+                        </button>
                     </a>
                 </div>
             </div>
@@ -164,7 +168,8 @@
                                     <!-- Center Dropdown -->
                                     <div class="filter-group">
                                         <label class="form-label">Center</label>
-                                        <select id="modalCenter" name="center" class="form-control form-select" disabled>
+                                        <select id="modalCenter" name="center" class="form-control form-select"
+                                            disabled>
                                             <option value="">All Centers</option>
                                         </select>
                                     </div>
@@ -313,45 +318,54 @@
                                 <!-- Training Data -->
                                 <td>{{ student.trade or '' }}</td>
                                 <td>
-                                    <span class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.single_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.single_counselling or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.group_counselling == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.group_counselling or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.ojt == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.ojt or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.guest_lecture == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.guest_lecture or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.industrial_visit == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.industrial_visit or 'Not Completed' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <span class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.assessment == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.assessment or 'Not Completed' }}
                                     </span>
                                 </td>
-                                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}</td>
+                                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}
+                                </td>
                                 <td>
-                                    <span class="status-badge {% if student.school_enrollment == 'Enrolled' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.school_enrollment == 'Enrolled' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.school_enrollment or 'Not Enrolled' }}
                                     </span>
                                 </td>
                                 <td>{{ student.total_days or 0 }}</td>
                                 <td>{{ student.attendance or 0 }}</td>
                                 <td>
-                                    <span class="status-badge {% if student.other_training == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                    <span
+                                        class="status-badge {% if student.other_training == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.other_training or 'Not Completed' }}
                                     </span>
                                 </td>
@@ -439,7 +453,9 @@
             "Kangra": ["Baijnath", "Nurpur", "Panchrukhi", "Rait"],
             "Kullu": ["Anni", "Banjar", "Kullu-1", "Kullu-2", "Naggar", "Nirmand"],
             "Mandi": ["Sadar-2", "Seraj-2"],
-            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla", "Majra"],
+            "Sirmour": ["Bakras", "Dadahu", "Narag", "Paonta Sahib", "Rajgarh", "Sataun", "Shillai", "Surla",
+                "Majra"
+            ],
             "Solan": ["Arki", "Dharampur", "Dhandun", "Kandaghat", "Nalagarh", "Rameshwar"],
             "Una": ["Amb", "Gagret-1", "Haroli", "Jol", "Una"]
         };
@@ -639,7 +655,6 @@
             // Debugging
             console.log('Initialization complete');
         });
-
     </script>
 </body>
 

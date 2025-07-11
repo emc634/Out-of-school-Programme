@@ -26,7 +26,7 @@ course_days={
 }
 
 @app.route('/')
-def index():
+def front():
     return render_template("front.html")
 
 
@@ -576,7 +576,7 @@ def dashboard():
     # Check if user is authenticated
     if not can_id:
         flash("Please log in to access the dashboard", "error")
-        return redirect(url_for('login'))
+        return redirect(url_for('student_signin'))
     
     if request.method == "POST":
         try:
@@ -1061,18 +1061,17 @@ def download_excel():
 def download_excel_route():
     return download_excel()
 
-
 @app.route('/logout')
 def logout():
-    # Clear all session data
     session.clear()
-    
-    # Flash a logout message
     flash("You have been logged out successfully", "success")
-    
-    # Create response with redirect to prevent back button access
     response = redirect(url_for('front'))
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
     return response
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host="0.0.0.0")
