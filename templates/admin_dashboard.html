@@ -205,6 +205,9 @@
                                         <i class="fas fa-filter btn-icon"></i> Apply Filters
                                     </button>
                                     <button type="reset" class="btn btn-outline">Reset Filters</button>
+                                    <button type="button" id="exportModalDataBtn" class="btn btn-success">
+                                        <i class="fas fa-file-export btn-icon"></i> Extract Data
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -655,6 +658,58 @@
             // Debugging
             console.log('Initialization complete');
         });
+
+    // Export Modal Data Functionality
+    document.getElementById('exportModalDataBtn').addEventListener('click', function() {
+        const form = document.getElementById('modalFilterForm');
+        const type = document.getElementById('trainingModal').dataset.type;
+        const district = form.elements.district.value;
+        const center = form.elements.center.value;
+        const gender = form.elements.gender.value;
+        const trade = form.elements.trade.value;
+        
+        // Create a temporary form to submit the export request
+        const formElement = document.createElement('form');
+        formElement.method = 'GET';
+        formElement.action = '{{ url_for("export_modal_data") }}';
+        
+        // Add hidden inputs for each filter parameter
+        const typeInput = document.createElement('input');
+        typeInput.type = 'hidden';
+        typeInput.name = 'type';
+        typeInput.value = type;
+        formElement.appendChild(typeInput);
+        
+        const districtInput = document.createElement('input');
+        districtInput.type = 'hidden';
+        districtInput.name = 'district';
+        districtInput.value = district;
+        formElement.appendChild(districtInput);
+        
+        const centerInput = document.createElement('input');
+        centerInput.type = 'hidden';
+        centerInput.name = 'center';
+        centerInput.value = center;
+        formElement.appendChild(centerInput);
+        
+        const genderInput = document.createElement('input');
+        genderInput.type = 'hidden';
+        genderInput.name = 'gender';
+        genderInput.value = gender;
+        formElement.appendChild(genderInput);
+        
+        const tradeInput = document.createElement('input');
+        tradeInput.type = 'hidden';
+        tradeInput.name = 'trade';
+        tradeInput.value = trade;
+        formElement.appendChild(tradeInput);
+        
+        // Add form to document and submit
+        document.body.appendChild(formElement);
+        formElement.submit();
+        document.body.removeChild(formElement);
+    });
+
     </script>
 </body>
 
