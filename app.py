@@ -769,7 +769,8 @@ def admin_dashboard():
             'single_counselling': None,
             'group_counselling': None,
             'assessment': None,
-            'industrial_visit': None
+            'industrial_visit': None,
+            'other_trainings': None
         }
     
     # Get current filters from session
@@ -809,7 +810,7 @@ def admin_dashboard():
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                st.trade, st.total_days, st.attendance,
+                st.trade, st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
             JOIN student_training st ON s.can_id = st.can_id
@@ -862,6 +863,10 @@ def admin_dashboard():
         if current_filters['industrial_visit']:
             query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
             params.append(current_filters['industrial_visit'].strip())
+            
+        if current_filters['other_trainings']:
+            query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
+            params.append(current_filters['other_trainings'].strip())
         
         # Get total count for pagination
         count_query = query.replace(
@@ -869,7 +874,7 @@ def admin_dashboard():
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                st.trade, st.total_days, st.attendance,
+                st.trade, st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc""",
             "SELECT COUNT(*)"
         )
@@ -889,7 +894,7 @@ def admin_dashboard():
         has_prev = page > 1
         has_next = page < total_pages
         
-        # NEW: Get training counts for indicators (unfiltered)
+        # Get training counts for indicators (unfiltered)
         training_query = """
             SELECT 
                 COUNT(*) AS total_students,
@@ -899,7 +904,8 @@ def admin_dashboard():
                 SUM(CASE WHEN guest_lecture = 'Completed' THEN 1 ELSE 0 END) AS guest_lecture_completed,
                 SUM(CASE WHEN industrial_visit = 'Completed' THEN 1 ELSE 0 END) AS industrial_visit_completed,
                 SUM(CASE WHEN assessment = 'Completed' THEN 1 ELSE 0 END) AS assessment_completed,
-                SUM(CASE WHEN school_enrollment IS NOT NULL AND school_enrollment <> '' THEN 1 ELSE 0 END) AS school_enrollment_count
+                SUM(CASE WHEN school_enrollment IS NOT NULL AND school_enrollment <> '' THEN 1 ELSE 0 END) AS school_enrollment_count,
+                SUM(CASE WHEN other_trainings = 'Completed' THEN 1 ELSE 0 END) AS other_training_completed
             FROM student_training
         """
         
@@ -910,7 +916,7 @@ def admin_dashboard():
             'admin_dashboard.html',
             students=students,
             total_records=total_records,
-            training_counts=training_counts,  # Pass to template
+            training_counts=training_counts,
             page=page,
             total_pages=total_pages,
             has_prev=has_prev,
@@ -930,7 +936,8 @@ def admin_dashboard():
             'guest_lecture_completed': 0,
             'industrial_visit_completed': 0,
             'assessment_completed': 0,
-            'school_enrollment_count': 0
+            'school_enrollment_count': 0,
+            'other_training_completed': 0
         }
         return render_template("admin_dashboard.html", 
                              students=[], 
@@ -966,7 +973,7 @@ def modal_data():
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                st.trade, st.total_days, st.attendance,
+                st.trade, st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
             JOIN student_training st ON s.can_id = st.can_id
@@ -980,17 +987,20 @@ def modal_data():
         if training_type != 'total':
             if training_type == 'school':
                 base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
+            elif training_type == 'other_trainings':
+                base_query += " AND st.other_trainings = %s"
+                params.append('Completed')
             else:
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
         
         # Add additional filters
         if district:
-            base_query += " AND LOWER(s.district) = LOWER(%s)"  # Case-insensitive
+            base_query += " AND LOWER(s.district) = LOWER(%s)"
             params.append(district)
             
         if center:
-            base_query += " AND LOWER(s.center) = LOWER(%s)"  # Case-insensitive
+            base_query += " AND LOWER(s.center) = LOWER(%s)"
             params.append(center)
             
         if gender:
@@ -1034,33 +1044,82 @@ def reset_filters():
             session['filters'][key] = None
     return redirect(url_for('admin_dashboard'))
 
-@app.route('/download')
-def download_excel():
-    # 1. Connect to DB (replace with your DB)
-    conn = get_db_connection()
-    # 2. Query data
-    tables = ['students', 'student_training', 'bank_details']
+@app.route('/export_filtered_data')
+def export_filtered_data():
+    # Get filters from request
+    training_type = request.args.get('type')
+    district = request.args.get('district', '')
+    center = request.args.get('center', '')
+    gender = request.args.get('gender', '')
+    trade = request.args.get('trade', '')
     
-    output = BytesIO()
-    with pd.ExcelWriter(output, engine=openpyxl) as writer:
-        for table in tables:
-            # Query each table
-            df = pd.read_sql_query(f"SELECT * FROM {table}", conn)
-            # Write to Excel sheet (sheet name same as table name)
-            df.to_excel(writer, index=False, sheet_name=table.capitalize())
-    conn.close()
-    output.seek(0)
+    try:
+        with open(get_db_connection()) as conn:
+            with conn.cursor() as cursor:
+                # Build base query (same as modal_data)
+                base_query = """
+                    SELECT 
+                        s.*, 
+                        st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
+                        st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                        st.trade, st.total_days, st.attendance, st.other_trainings,
+                        bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+                    FROM students s
+                    JOIN student_training st ON s.can_id = st.can_id
+                    JOIN bank_details bd ON s.can_id = bd.can_id
+                    WHERE 1=1
+                """
+                
+                params = []
+                
+                # Add training type condition
+                if training_type != 'total':
+                    if training_type == 'school':
+                        base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
+                    elif training_type == 'other_trainings':
+                        base_query += " AND st.other_trainings = %s"
+                        params.append('Completed')
+                    else:
+                        base_query += f" AND st.{training_type} = %s"
+                        params.append('Completed')
+                
+                # Add additional filters
+                if district:
+                    base_query += " AND LOWER(s.district) = LOWER(%s)"
+                    params.append(district)
+                    
+                if center:
+                    base_query += " AND LOWER(s.center) = LOWER(%s)"
+                    params.append(center)
+                    
+                if gender:
+                    base_query += " AND s.gender = %s"
+                    params.append(gender)
+                    
+                if trade:
+                    base_query += " AND st.trade = %s"
+                    params.append(trade)
+                
+                # Execute query and create DataFrame
+                df = pd.read_sql_query(base_query, conn, params=params)
+                
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                    df.to_excel(writer, index=False, sheet_name='Filtered_Data')
+                
+                output.seek(0)
+                return send_file(
+                    output,
+                    download_name="filtered_data.xlsx",
+                    as_attachment=True,
+                    mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                )
     
-    # 4. Send file to user
-    return send_file(output,
-                     download_name="data.xlsx",
-                     as_attachment=True,
-                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-@app.route('/download_excel')
-def download_excel_route():
-    return download_excel()
-
+    except Exception as e:
+        print(f"Export error: {str(e)}")
+        flash("Error generating export file", "error")
+        return redirect(url_for('admin_dashboard'))
+    
 @app.route('/logout')
 def logout():
     session.clear()

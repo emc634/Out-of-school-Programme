@@ -24,7 +24,7 @@
                     <h1>Admin Dashboard</h1>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ url_for('download_excel_route') }}">
+                    <a href="{{ url_for('export_filtered_data') }}">
                         <button class="btn btn-primary">
                             <i class="fas fa-download btn-icon"></i> Export Data
                         </button>
@@ -127,7 +127,7 @@
                         </div>
                     </div>
                     <!-- Other Training -->
-                    <div class="stat-card" data-type="other_training" onclick="openModal('other_training')">
+                    <div class="stat-card" data-type="other_trainings" onclick="openModal('other_trainings')">
                         <i class="fas fa-book fa-2x mt-2 text-primary"></i>
                         <div class="stats">
                             <div class="stat-label">Other Training</div>
@@ -261,7 +261,7 @@
                     <div class="text-muted">Showing {{ students|length }} of {{ total_records }} records</div>
                 </div>
 
-                <div class="table-container">
+                <div class="table-container" style="overflow-x: auto;">
                     <table>
                         <thead>
                             <tr>
@@ -366,10 +366,11 @@
                                 </td>
                                 <td>{{ student.total_days or 0 }}</td>
                                 <td>{{ student.attendance or 0 }}</td>
+                                <!-- In admin_dashboard.html -->
                                 <td>
                                     <span
-                                        class="status-badge {% if student.other_training == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
-                                        {{ student.other_training or 'Not Completed' }}
+                                        class="status-badge {% if student.other_trainings == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        {{ student.other_trainings or 'Not Completed' }}
                                     </span>
                                 </td>
 
@@ -394,7 +395,7 @@
                 <div class="pagination">
                     {% if has_prev %}
                     <div class="page-item">
-                        <a href="{{ url_for('admin_dashboard', page=page-1) }}" class="page-link">
+                        <a href="{{ url_for('admin_dashboard', page=page-1, **current_filters) }}" class="page-link">
                             <i class="fas fa-chevron-left"></i>
                         </a>
                     </div>
@@ -405,7 +406,7 @@
 
                     {% if start_page > 1 %}
                     <div class="page-item">
-                        <a href="{{ url_for('admin_dashboard', page=1) }}" class="page-link">1</a>
+                        <a href="{{ url_for('admin_dashboard', page=1, **current_filters) }}" class="page-link">1</a>
                     </div>
                     {% if start_page > 2 %}
                     <div class="page-item disabled">
@@ -416,26 +417,28 @@
 
                     {% for page_num in range(start_page, end_page + 1) %}
                     <div class="page-item">
-                        <a href="{{ url_for('admin_dashboard', page=page_num) }}"
+                        <a href="{{ url_for('admin_dashboard', page=page_num, **current_filters) }}"
                             class="page-link {% if page_num == page %}active{% endif %}">
                             {{ page_num }}
                         </a>
                     </div>
                     {% endfor %}
 
-                    {% if end_page < total_pages %} {% if end_page < total_pages - 1 %} <div class="page-item disabled">
+                    {% if end_page < total_pages %}
+                    {% if end_page < total_pages - 1 %}
+                    <div class="page-item disabled">
                         <span class="page-link">...</span>
                     </div>
                     {% endif %}
                     <div class="page-item">
-                        <a href="{{ url_for('admin_dashboard', page=total_pages) }}"
+                        <a href="{{ url_for('admin_dashboard', page=total_pages, **current_filters) }}"
                             class="page-link">{{ total_pages }}</a>
                     </div>
                     {% endif %}
 
                     {% if has_next %}
                     <div class="page-item">
-                        <a href="{{ url_for('admin_dashboard', page=page+1) }}" class="page-link">
+                        <a href="{{ url_for('admin_dashboard', page=page+1, **current_filters) }}" class="page-link">
                             <i class="fas fa-chevron-right"></i>
                         </a>
                     </div>
@@ -499,7 +502,7 @@
                 'industrial_visit': 'Students with Industrial Visit Completed',
                 'assessment': 'Students with Assessment Completed',
                 'school': 'Students Enrolled in School',
-                'other_training': 'Students with Other Training Completed'
+                'other_trainings': 'Students with Other Training Completed'
             };
 
             modalTitle.textContent = titles[type] || 'Students';
@@ -598,8 +601,8 @@
                                 <td>${student.total_days || 0}</td>
                                 <td>${student.attendance || 0}%</td>
                                 <td>
-                                    <span class="status-badge ${student.other_training === 'Completed' ? 'status-completed' : 'status-not-completed'}">
-                                        ${student.other_training || 'Not Completed'}
+                                    <span class="status-badge ${student.other_trainings === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                        ${student.other_trainings || 'Not Completed'}
                                     </span>
                                 </td>
 
@@ -659,57 +662,18 @@
             console.log('Initialization complete');
         });
 
-    // Export Modal Data Functionality
-    document.getElementById('exportModalDataBtn').addEventListener('click', function() {
-        const form = document.getElementById('modalFilterForm');
-        const type = document.getElementById('trainingModal').dataset.type;
-        const district = form.elements.district.value;
-        const center = form.elements.center.value;
-        const gender = form.elements.gender.value;
-        const trade = form.elements.trade.value;
-        
-        // Create a temporary form to submit the export request
-        const formElement = document.createElement('form');
-        formElement.method = 'GET';
-        formElement.action = '{{ url_for("modal_data") }}';
-        
-        // Add hidden inputs for each filter parameter
-        const typeInput = document.createElement('input');
-        typeInput.type = 'hidden';
-        typeInput.name = 'type';
-        typeInput.value = type;
-        formElement.appendChild(typeInput);
-        
-        const districtInput = document.createElement('input');
-        districtInput.type = 'hidden';
-        districtInput.name = 'district';
-        districtInput.value = district;
-        formElement.appendChild(districtInput);
-        
-        const centerInput = document.createElement('input');
-        centerInput.type = 'hidden';
-        centerInput.name = 'center';
-        centerInput.value = center;
-        formElement.appendChild(centerInput);
-        
-        const genderInput = document.createElement('input');
-        genderInput.type = 'hidden';
-        genderInput.name = 'gender';
-        genderInput.value = gender;
-        formElement.appendChild(genderInput);
-        
-        const tradeInput = document.createElement('input');
-        tradeInput.type = 'hidden';
-        tradeInput.name = 'trade';
-        tradeInput.value = trade;
-        formElement.appendChild(tradeInput);
-        
-        // Add form to document and submit
-        document.body.appendChild(formElement);
-        formElement.submit();
-        document.body.removeChild(formElement);
-    });
+        // Export Modal Data Functionality
+        document.getElementById('exportModalDataBtn').addEventListener('click', function () {
+            const form = document.getElementById('modalFilterForm');
+            const type = document.getElementById('trainingModal').dataset.type;
 
+            // Build URL with filters
+            const url =
+                `/export_filtered_data?type=${type}&district=${form.district.value}&center=${form.center.value}&gender=${form.gender.value}&trade=${form.trade.value}`;
+
+            // Trigger download
+            window.location.href = url;
+        });
     </script>
 </body>
 
