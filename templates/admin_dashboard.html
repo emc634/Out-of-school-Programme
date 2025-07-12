@@ -25,8 +25,8 @@
                 </div>
                 <div class="flex gap-2">
                     <a href="{{ url_for('export_filtered_data') }}">
-                        <button class="btn btn-primary">
-                            <i class="fas fa-download btn-icon"></i> Export Data
+                        <button type="button" id="exportModalDataBtn" class="btn btn-success">
+                            <i class="fas fa-file-export btn-icon"></i> Extract Data
                         </button>
                     </a>
                     <button class="btn btn-secondary" onclick="location.reload()">
