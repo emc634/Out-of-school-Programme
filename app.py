@@ -77,6 +77,11 @@ def student_signup():
             flash("Password didn't match, Please Try again", "error")
             return redirect(url_for("student_signup"))
         
+        if len(mobile)>10:
+            flash("Your Phone No. Exceeds 10 digits, Please recheck it again", "error")
+            return redirect(url_for("student_signup"))
+            
+        
         age=age_calculator(dob)
         if age<14:
             flash("Candidate must be atleast 14 to sign up", "error")
@@ -1164,7 +1169,7 @@ def export_filtered_data():
         writer.writerow([
             'CAN ID', 'Student Name', "Father's Name", "Mother's Name", 'Batch ID',
             'Mobile', 'Religion', 'Category', 'DOB', 'District', 'Center', 'Gender',
-            'Trade', 'Single Counselling', 'Group Counselling', 'OJT Status', 'Guest Lecture',
+            'Trade', 'One to One Counselling', 'Group Counselling', 'OJT Status', 'Guest Lecture',
             'Industrial Visit', 'Assessment', 'Assessment Date', 'School Enrollment',
             'Total Days', 'Attendance', 'Other Trainings',
             'Aadhar', 'Account Number', 'Account Holder', 'IFSC'
