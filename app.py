@@ -752,9 +752,6 @@ def admin_login():
     return render_template('admin_login.html')
 
 
-
-
-
 @app.route('/admin_dashboard')
 def admin_dashboard():
     # Initialize session filters if not present
@@ -1036,6 +1033,120 @@ def modal_data():
         if 'conn' in locals():
             conn.close()
 
+@app.route('/export_filtered_data')
+def export_filtered_data():
+    # Get all filter parameters from request
+    filters = {
+        'type': request.args.get('type', 'total'),
+        'district': request.args.get('district', ''),
+        'center': request.args.get('center', ''),
+        'gender': request.args.get('gender', ''),
+        'trade': request.args.get('trade', '')
+    }
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=extras.DictCursor)
+        
+        base_query = """
+            SELECT 
+                s.can_id, s.student_name, s.father_name, s.mother_name, s.batch_id,
+                s.mobile, s.religion, s.category, s.dob, s.district, s.center, s.gender,
+                st.trade, st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture,
+                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
+                st.total_days, st.attendance, st.other_trainings,
+                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+            FROM students s
+            JOIN student_training st ON s.can_id = st.can_id
+            JOIN bank_details bd ON s.can_id = bd.can_id
+            WHERE 1=1
+        """
+        
+        params = []
+        
+        # Add training type condition
+        if filters['type'] != 'total':
+            if filters['type'] == 'school':
+                base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
+            elif filters['type'] == 'other_trainings':
+                base_query += " AND st.other_trainings = %s"
+                params.append('Completed')
+            else:
+                base_query += f" AND st.{filters['type']} = %s"
+                params.append('Completed')
+        
+        # Add additional filters
+        if filters['district']:
+            base_query += " AND LOWER(s.district) = LOWER(%s)"
+            params.append(filters['district'])
+            
+        if filters['center']:
+            base_query += " AND LOWER(s.center) = LOWER(%s)"
+            params.append(filters['center'])
+            
+        if filters['gender']:
+            base_query += " AND s.gender = %s"
+            params.append(filters['gender'])
+            
+        if filters['trade']:
+            base_query += " AND st.trade = %s"
+            params.append(filters['trade'])
+        
+        cursor.execute(base_query, params)
+        students = cursor.fetchall()
+        
+        # Convert to CSV format
+        import csv
+        from io import StringIO
+        
+        output = StringIO()
+        writer = csv.writer(output)
+        
+        # Write header
+        writer.writerow([
+            'CAN ID', 'Student Name', "Father's Name", "Mother's Name", 'Batch ID',
+            'Mobile', 'Religion', 'Category', 'DOB', 'District', 'Center', 'Gender',
+            'Trade', 'Single Counselling', 'Group Counselling', 'OJT Status', 'Guest Lecture',
+            'Industrial Visit', 'Assessment', 'Assessment Date', 'School Enrollment',
+            'Total Days', 'Attendance', 'Other Trainings',
+            'Aadhar', 'Account Number', 'Account Holder', 'IFSC'
+        ])
+        
+        # Write data
+        for student in students:
+            writer.writerow([
+                student['can_id'], student['student_name'], student['father_name'], student['mother_name'],
+                student['batch_id'], student['mobile'], student['religion'], student['category'],
+                student['dob'].strftime('%d-%m-%Y') if student['dob'] else '',
+                student['district'], student['center'], student['gender'],
+                student['trade'], student['single_counselling'], student['group_counselling'],
+                student['ojt'], student['guest_lecture'], student['industrial_visit'],
+                student['assessment'],
+                student['assessment_date'].strftime('%d-%m-%Y') if student['assessment_date'] else '',
+                student['school_enrollment'], student['total_days'], student['attendance'],
+                student['other_trainings'], student['aadhar'], student['account_number'],
+                student['account_holder'], student['ifsc']
+            ])
+        
+        # Create response
+        from flask import make_response
+        response = make_response(output.getvalue())
+        response.headers['Content-Disposition'] = 'attachment; filename=student_data.csv'
+        response.headers['Content-type'] = 'text/csv'
+        
+        return response
+        
+    except Exception as e:
+        print("Export error:", str(e))
+        flash("An error occurred while exporting data", "error")
+        return redirect(url_for('admin_dashboard'))
+    finally:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
+
 @app.route('/reset_filters')
 def reset_filters():
     # Clear all filters from session
@@ -1043,82 +1154,6 @@ def reset_filters():
         for key in session['filters'].keys():
             session['filters'][key] = None
     return redirect(url_for('admin_dashboard'))
-
-@app.route('/export_filtered_data')
-def export_filtered_data():
-    # Get filters from request
-    training_type = request.args.get('type')
-    district = request.args.get('district', '')
-    center = request.args.get('center', '')
-    gender = request.args.get('gender', '')
-    trade = request.args.get('trade', '')
-    
-    try:
-        with open(get_db_connection()) as conn:
-            with conn.cursor() as cursor:
-                # Build base query (same as modal_data)
-                base_query = """
-                    SELECT 
-                        s.*, 
-                        st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                        st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                        st.trade, st.total_days, st.attendance, st.other_trainings,
-                        bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
-                    FROM students s
-                    JOIN student_training st ON s.can_id = st.can_id
-                    JOIN bank_details bd ON s.can_id = bd.can_id
-                    WHERE 1=1
-                """
-                
-                params = []
-                
-                # Add training type condition
-                if training_type != 'total':
-                    if training_type == 'school':
-                        base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
-                    elif training_type == 'other_trainings':
-                        base_query += " AND st.other_trainings = %s"
-                        params.append('Completed')
-                    else:
-                        base_query += f" AND st.{training_type} = %s"
-                        params.append('Completed')
-                
-                # Add additional filters
-                if district:
-                    base_query += " AND LOWER(s.district) = LOWER(%s)"
-                    params.append(district)
-                    
-                if center:
-                    base_query += " AND LOWER(s.center) = LOWER(%s)"
-                    params.append(center)
-                    
-                if gender:
-                    base_query += " AND s.gender = %s"
-                    params.append(gender)
-                    
-                if trade:
-                    base_query += " AND st.trade = %s"
-                    params.append(trade)
-                
-                # Execute query and create DataFrame
-                df = pd.read_sql_query(base_query, conn, params=params)
-                
-                output = BytesIO()
-                with pd.ExcelWriter(output, engine='openpyxl') as writer:
-                    df.to_excel(writer, index=False, sheet_name='Filtered_Data')
-                
-                output.seek(0)
-                return send_file(
-                    output,
-                    download_name="filtered_data.xlsx",
-                    as_attachment=True,
-                    mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                )
-    
-    except Exception as e:
-        print(f"Export error: {str(e)}")
-        flash("Error generating export file", "error")
-        return redirect(url_for('admin_dashboard'))
     
 @app.route('/logout')
 def logout():
