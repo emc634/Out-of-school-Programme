@@ -862,8 +862,12 @@ def admin_dashboard():
             params.append(current_filters['industrial_visit'].strip())
             
         if current_filters['other_trainings']:
-            query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
-            params.append(current_filters['other_trainings'].strip())
+            if current_filters['other_trainings'] == "Not Completed":
+                query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = LOWER(%s))"
+                params.append('Not Completed')
+            else:
+                query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
+                params.append(current_filters['other_trainings'].strip())
         
         # Get total count for pagination
         count_query = query.replace(
@@ -891,22 +895,78 @@ def admin_dashboard():
         has_prev = page > 1
         has_next = page < total_pages
         
-        # Get training counts for indicators (unfiltered)
+        # Get training counts for indicators (with same filters as main query)
         training_query = """
             SELECT 
                 COUNT(*) AS total_students,
-                SUM(CASE WHEN single_counselling = 'Completed' THEN 1 ELSE 0 END) AS single_completed,
-                SUM(CASE WHEN group_counselling = 'Completed' THEN 1 ELSE 0 END) AS group_completed,
-                SUM(CASE WHEN ojt = 'Completed' THEN 1 ELSE 0 END) AS ojt_completed,
-                SUM(CASE WHEN guest_lecture = 'Completed' THEN 1 ELSE 0 END) AS guest_lecture_completed,
-                SUM(CASE WHEN industrial_visit = 'Completed' THEN 1 ELSE 0 END) AS industrial_visit_completed,
-                SUM(CASE WHEN assessment = 'Completed' THEN 1 ELSE 0 END) AS assessment_completed,
-                SUM(CASE WHEN school_enrollment IS NOT NULL AND school_enrollment <> '' THEN 1 ELSE 0 END) AS school_enrollment_count,
-                SUM(CASE WHEN other_trainings = 'Completed' THEN 1 ELSE 0 END) AS other_training_completed
-            FROM student_training
+                SUM(CASE WHEN st.single_counselling = 'Completed' THEN 1 ELSE 0 END) AS single_completed,
+                SUM(CASE WHEN st.group_counselling = 'Completed' THEN 1 ELSE 0 END) AS group_completed,
+                SUM(CASE WHEN st.ojt = 'Completed' THEN 1 ELSE 0 END) AS ojt_completed,
+                SUM(CASE WHEN st.guest_lecture = 'Completed' THEN 1 ELSE 0 END) AS guest_lecture_completed,
+                SUM(CASE WHEN st.industrial_visit = 'Completed' THEN 1 ELSE 0 END) AS industrial_visit_completed,
+                SUM(CASE WHEN st.assessment = 'Completed' THEN 1 ELSE 0 END) AS assessment_completed,
+                SUM(CASE WHEN st.school_enrollment IS NOT NULL AND st.school_enrollment <> '' THEN 1 ELSE 0 END) AS school_enrollment_count,
+                SUM(CASE WHEN st.other_trainings IS NOT NULL AND st.other_trainings <> 'Not Completed' THEN 1 ELSE 0 END) AS other_training_completed
+            FROM students s
+            JOIN student_training st ON s.can_id = st.can_id
+            JOIN bank_details bd ON s.can_id = bd.can_id
+            WHERE 1=1
         """
         
-        cursor.execute(training_query)
+        # Apply the same filters to the training counts query
+        training_params = []
+        
+        if current_filters['trade']:
+            training_query += " AND LOWER(TRIM(st.trade)) = LOWER(%s)"
+            training_params.append(current_filters['trade'].strip())
+            
+        if current_filters['gender']:
+            training_query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
+            training_params.append(current_filters['gender'].strip())
+            
+        if current_filters['district']:
+            training_query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
+            training_params.append(current_filters['district'].strip())
+            
+        if current_filters['center']:
+            training_query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
+            training_params.append(current_filters['center'].strip())
+            
+        if current_filters['ojt_status']:
+            training_query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
+            training_params.append(current_filters['ojt_status'].strip())
+        
+        if current_filters['school']:
+            if current_filters['school'] == "Enrolled":
+                training_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
+            elif current_filters['school'] == "Not Enrolled":
+                training_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
+        
+        if current_filters['single_counselling']:
+            training_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
+            training_params.append(current_filters['single_counselling'].strip())
+            
+        if current_filters['group_counselling']:
+            training_query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
+            training_params.append(current_filters['group_counselling'].strip())
+            
+        if current_filters['assessment']:
+            training_query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
+            training_params.append(current_filters['assessment'].strip())
+            
+        if current_filters['industrial_visit']:
+            training_query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
+            training_params.append(current_filters['industrial_visit'].strip())
+            
+        if current_filters['other_trainings']:
+            if current_filters['other_trainings'] == "Not Completed":
+                training_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = LOWER(%s))"
+                training_params.append('Not Completed')
+            else:
+                training_query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
+                training_params.append(current_filters['other_trainings'].strip())
+        
+        cursor.execute(training_query, training_params)
         training_counts = cursor.fetchone()
         
         return render_template(
@@ -985,8 +1045,7 @@ def modal_data():
             if training_type == 'school':
                 base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
             elif training_type == 'other_trainings':
-                base_query += " AND st.other_trainings = %s"
-                params.append('Completed')
+                base_query += " AND st.other_trainings <> 'Not Completed'"
             else:
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
@@ -1069,8 +1128,7 @@ def export_filtered_data():
             if filters['type'] == 'school':
                 base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
             elif filters['type'] == 'other_trainings':
-                base_query += " AND st.other_trainings = %s"
-                params.append('Completed')
+                base_query += " AND st.other_trainings <> 'Not Completed'"
             else:
                 base_query += f" AND st.{filters['type']} = %s"
                 params.append('Completed')

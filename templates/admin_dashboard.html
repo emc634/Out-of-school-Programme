@@ -24,11 +24,9 @@
                     <h1>Admin Dashboard</h1>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ url_for('export_filtered_data') }}">
-                        <button type="button" id="exportModalDataBtn" class="btn btn-success">
-                            <i class="fas fa-file-export btn-icon"></i> Extract Data
-                        </button>
-                    </a>
+                    <button class="btn btn-primary" onclick="exportData()">
+                        <i class="fas fa-file-export btn-icon"></i> Extract Data
+                    </button>
                     <button class="btn btn-secondary" onclick="location.reload()">
                         <i class="fas fa-sync btn-icon"></i> Refresh
                     </button>
@@ -130,7 +128,7 @@
                     <div class="stat-card" data-type="other_trainings" onclick="openModal('other_trainings')">
                         <i class="fas fa-book fa-2x mt-2 text-primary"></i>
                         <div class="stats">
-                            <div class="stat-label">Other Training</div>
+                            <div class="stat-label">Other Trainings</div>
                             <div class="stat-value">{{ training_counts.other_training_completed or 0 }}</div>
                         </div>
                     </div>
@@ -228,7 +226,7 @@
                                         <th>Center</th>
                                         <th>Gender</th>
                                         <th>Trade</th>
-                                        <th>Single Counselling</th>
+                                        <th>One to One Counselling</th>
                                         <th>Group Counselling</th>
                                         <th>OJT Status</th>
                                         <th>Guest Lecture</th>
@@ -281,7 +279,7 @@
 
                                 <!-- Student Training Table Columns -->
                                 <th>Trade</th>
-                                <th>Single Counselling</th>
+                                <th>One to One Counselling</th>
                                 <th>Group Counselling</th>
                                 <th>OJT Status</th>
                                 <th>Guest Lecture</th>
@@ -360,7 +358,7 @@
                                 </td>
                                 <td>
                                     <span
-                                        class="status-badge {% if student.school_enrollment == 'Enrolled' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        class="status-badge {% if student.school_enrollment and student.school_enrollment != 'Not Enrolled' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.school_enrollment or 'Not Enrolled' }}
                                     </span>
                                 </td>
@@ -369,7 +367,7 @@
                                 <!-- In admin_dashboard.html -->
                                 <td>
                                     <span
-                                        class="status-badge {% if student.other_trainings == 'Completed' %}status-completed{% else %}status-not-completed{% endif %}">
+                                        class="status-badge {% if student.other_trainings and student.other_trainings != 'Not Completed' %}status-completed{% else %}status-not-completed{% endif %}">
                                         {{ student.other_trainings or 'Not Completed' }}
                                     </span>
                                 </td>
@@ -594,18 +592,18 @@
                                 </td>
                                 <td>${student.assessment_date || ''}</td>
                                 <td>
-                                    <span class="status-badge ${student.school_enrollment === 'Enrolled' ? 'status-completed' : 'status-not-completed'}">
+                                    <span class="status-badge ${student.school_enrollment && student.school_enrollment !== 'Not Enrolled' ? 'status-completed' : 'status-not-completed'}">
                                         ${student.school_enrollment || 'Not Enrolled'}
                                     </span>
                                 </td>
                                 <td>${student.total_days || 0}</td>
                                 <td>${student.attendance || 0}%</td>
+
                                 <td>
-                                    <span class="status-badge ${student.other_trainings === 'Completed' ? 'status-completed' : 'status-not-completed'}">
+                                    <span class="status-badge ${student.other_trainings && student.other_trainings !== 'Not Completed' ? 'status-completed' : 'status-not-completed'}">
                                         ${student.other_trainings || 'Not Completed'}
                                     </span>
                                 </td>
-
                                 <!-- Bank Data -->
                                 <td>${student.aadhar || ''}</td>
                                 <td>${student.account_number || ''}</td>
@@ -674,6 +672,44 @@
             // Trigger download
             window.location.href = url;
         });
+
+function exportData() {
+    // Get current filters from the modal (if open)
+    let filters = {};
+    const modal = document.getElementById('trainingModal');
+    
+    if (modal.style.display === "block") {
+        // If modal is open, use modal filters
+        const form = document.getElementById('modalFilterForm');
+        filters = {
+            type: modal.dataset.type,
+            district: form.district.value,
+            center: form.center.value,
+            gender: form.gender.value,
+            trade: form.trade.value,
+            other_trainings: form.querySelector('[name="other_trainings"]')?.value || ''
+        };
+    } else {
+        // Otherwise use empty/default filters
+        filters = {
+            type: 'total',
+            district: '',
+            center: '',
+            gender: '',
+            trade: '',
+            other_trainings: ''
+        };
+    }
+    
+    // Build URL with filters using URLSearchParams for proper encoding
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+        if (value) params.append(key, value);
+    }
+    
+    // Trigger download
+    window.location.href = `/export_filtered_data?${params.toString()}`;
+}
     </script>
 </body>
 
