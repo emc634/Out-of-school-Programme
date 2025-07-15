@@ -207,12 +207,14 @@
         });
 
         // Auto-dismiss flash messages (if any)
-        const flashMessages = document.querySelectorAll('.alert');
-        flashMessages.forEach(message => {
-            setTimeout(() => {
-                message.classList.add('fade-out');
-                setTimeout(() => message.remove(), 500);
-            }, 1000);
+        document.addEventListener('DOMContentLoaded', function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade-out');
+                    setTimeout(() => alert.remove(), 500);
+                }, 3000);
+            });
         });
 
         // Create floating particles

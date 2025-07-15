@@ -68,14 +68,15 @@
         </div>
     </main>
     <script>
-        // Fade out flash messages after 3 seconds
-        setTimeout(() => {
+        document.addEventListener('DOMContentLoaded', function () {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
-                alert.classList.add('fade-out');
-                setTimeout(() => alert.remove(), 500);
+                setTimeout(() => {
+                    alert.classList.add('fade-out');
+                    setTimeout(() => alert.remove(), 500);
+                }, 3000);
             });
-        }, 3000);
+        });
     </script>
 </body>
 

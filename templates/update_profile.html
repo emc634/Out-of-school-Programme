@@ -289,16 +289,14 @@
             });
         })
 
-        // Auto-hide flash messages
         document.addEventListener('DOMContentLoaded', function () {
-            const flashMessages = document.querySelectorAll('.alert');
-
-            flashMessages.forEach(message => {
-                setTimeout(() => {
-                    message.style.opacity = '0';
-                    setTimeout(() => message.remove(), 500);
-                }, 3000);
-            });
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.add('fade-out');
+                setTimeout(() => alert.remove(), 500);
+            }, 3000);
+        });
         });
     </script>
 </body>
