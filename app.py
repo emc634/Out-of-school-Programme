@@ -1,12 +1,12 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session,jsonify,send_file
 import pandas as pd
-from io import BytesIO
-import openpyxl
+from datetime import datetime,date
 import psycopg2
 from psycopg2 import extras
 from datetime import datetime
 import json
 from psycopg2 import IntegrityError, OperationalError
+from functools import wraps
 
 from functions import get_db_connection,age_calculator
 
@@ -24,6 +24,24 @@ course_days={
    "Tourism & Hospitality" :66,
    "ITeS":65
 }
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'can_id' not in session:
+            flash("Please login to access this page", "error")
+            return redirect(url_for('front'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'admin_id' not in session:  # You'll need to set this in admin_login
+            flash("Please login as admin to access this page", "error")
+            return redirect(url_for('front'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def front():
@@ -78,7 +96,7 @@ def student_signup():
             return redirect(url_for("student_signup"))
         
         if len(mobile)>10:
-            flash("Your Phone No. Exceeds 10 digits, Please recheck it again", "error")
+            flash("Your Phone No. is invalid, Please recheck it again", "error")
             return redirect(url_for("student_signup"))
             
         
@@ -140,6 +158,7 @@ def student_signup():
 
 # Student data entry
 @app.route('/student_profile', methods=["GET", "POST"])
+@login_required
 def student_profile():
     form_data=session.get("form_data",{})
     
@@ -224,6 +243,7 @@ def student_profile():
 #Password Reset
 
 @app.route("/reset_password", methods=["GET", "POST"])
+@login_required
 def reset_password():
     # Check if user is logged in
     can_id = session.get('can_id')
@@ -270,7 +290,7 @@ def reset_password():
                 return redirect(url_for("student_signin"))
             
             # Verify current password
-            if user["password"]!=new_password:
+            if user["password"]!=current_password:
                 flash("Current password is incorrect", "error")
                 return redirect(url_for("reset_password"))
             
@@ -349,12 +369,13 @@ def student_signin():
             if conn:
                 conn.close()  # Ensure connection always closes
         
-    login_data=session.pop('can_id',{})
+    login_data=session.pop('can_id','')
     return render_template("student_signin.html",login_data=login_data) 
 
 
 #displaying profile
 @app.route("/profile_display")
+@login_required
 def profile_display():
     can_id = session.get('can_id')
     if not can_id:
@@ -572,6 +593,7 @@ def update_profile():
 
 
 @app.route("/dashboard", methods=['GET', 'POST'])
+@login_required
 def dashboard():
     can_id = session.get('can_id')
     conn = None
@@ -759,6 +781,7 @@ def admin_login():
 
 
 @app.route('/admin_dashboard')
+@admin_required
 def admin_dashboard():
     # Initialize session filters if not present
     if 'filters' not in session:
