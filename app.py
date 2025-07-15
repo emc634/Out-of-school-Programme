@@ -29,7 +29,6 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'can_id' not in session:
-            flash("Please login to access this page", "error")
             return redirect(url_for('front'))
         return f(*args, **kwargs)
     return decorated_function
@@ -38,7 +37,6 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'admin_id' not in session:  # You'll need to set this in admin_login
-            flash("Please login as admin to access this page", "error")
             return redirect(url_for('front'))
         return f(*args, **kwargs)
     return decorated_function
@@ -331,7 +329,6 @@ def student_signin():
         can_id = request.form.get("canId")
         password = request.form.get("password")
         
-        # Validate form inputs
         if not can_id or not password:
             flash("Please fill in both fields", "error")
             return redirect(url_for("student_signin"))
@@ -339,22 +336,17 @@ def student_signin():
         conn = None
         cursor = None
         try:
-            # Connect to database
             conn = get_db_connection()
             cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cursor.execute(
-                'SELECT * FROM students WHERE can_id = %s', 
-                (can_id,)
-            )
+            cursor.execute('SELECT * FROM students WHERE can_id = %s', (can_id,))
             user = cursor.fetchone()
             
-            # Verify credentials
-            if user is None or user['password']!= password:
-                flash("Invalid CAN ID or password", "error")  # Updated message
+            if user is None or user['password'] != password:
+                flash("Invalid CAN ID or password", "error")
                 return redirect(url_for("student_signin"))
             
-            # Successful login
-            session['can_id'] = can_id  # Store CAN ID in session
+            # Set session for successful login
+            session['can_id'] = can_id
             
             flash("Login successful!", "success")
             return redirect(url_for("dashboard"))
@@ -367,10 +359,11 @@ def student_signin():
             if cursor:
                 cursor.close()
             if conn:
-                conn.close()  # Ensure connection always closes
-        
-    login_data=session.pop('can_id','')
-    return render_template("student_signin.html",login_data=login_data) 
+                conn.close()
+    
+    # FIX: Don't remove can_id from session when rendering template
+    login_data = session.get('can_id', '')  # Use get() instead of pop()
+    return render_template("student_signin.html", login_data=login_data)
 
 
 #displaying profile
@@ -750,17 +743,18 @@ def admin_login():
         conn = None
         cursor = None
         try:
-            # Connect with RealDictCursor so we get dict-like results
             conn = get_db_connection()
             cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            # Find admin by email
             cursor.execute('SELECT * FROM admins WHERE email = %s', (email,))
             admin = cursor.fetchone()
             
             if admin is None or admin["password"] != password:
                 flash("Invalid email or password", "error")
                 return redirect(url_for('admin_login'))
+            
+            # FIX: Set admin_id in session for @admin_required decorator
+            session['admin_id'] = admin['id']  # or admin['email'] depending on your admin table structure
             
             flash("Login Successful", "success")
             return redirect(url_for('admin_dashboard'))
@@ -1245,11 +1239,11 @@ def reset_filters():
 @app.route('/logout')
 def logout():
     session.clear()
-    flash("You have been logged out successfully", "success")
     response = redirect(url_for('front'))
-    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0'
     response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '-1'
+    response.headers['Expires'] = '0'
+    flash("You have been logged out successfully", "success")
     return response
 
 
