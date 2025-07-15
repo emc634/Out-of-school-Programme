@@ -714,47 +714,48 @@ def dashboard():
     return render_template("dashboard.html", student=student)
 
 
-@app.route('/admin_login',methods=['GET','POST'])
+@app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
-    if request.method=='POST':
-        email=request.form.get("email")
-        password=request.form.get('password')
+    if request.method == 'POST':
+        email = request.form.get("email")
+        password = request.form.get('password')
+        
+        # Validate inputs
         if not email or not password:
             flash("Please fill in both fields", "error")
             return redirect(url_for("admin_login"))
         
+        conn = None
+        cursor = None
         try:
+            # Connect with RealDictCursor so we get dict-like results
             conn = get_db_connection()
-            if not conn:
-                flash("Database connection failed", "error")
-                return redirect(url_for('admin_login'))
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            cursor = conn.cursor()
-            
-            
-            # Check if admin exists and get current attendance
+            # Find admin by email
             cursor.execute('SELECT * FROM admins WHERE email = %s', (email,))
-            result = cursor.fetchone()
-            if not result:
-                flash("Unexpected Email or Password, Please try again", "error")
+            admin = cursor.fetchone()
+            
+            if admin is None or admin["password"] != password:
+                flash("Invalid email or password", "error")
                 return redirect(url_for('admin_login'))
             
-            flash("Login Successful","success")
+            flash("Login Successful", "success")
             return redirect(url_for('admin_dashboard'))
-            
-        except Exception as e:
+        
+        except psycopg2.Error as e:
             print("Login error:", str(e))
-            flash("An error occurred during login", "error")
-            return redirect(url_for("admin_login"))
-
+            flash("Database error. Please try again.", "error")
+            return redirect(url_for('admin_login'))
+        
         finally:
-            if conn:
+            if cursor:
                 cursor.close()
+            if conn:
                 conn.close()
-            
-            
-            
+    
     return render_template('admin_login.html')
+
 
 
 @app.route('/admin_dashboard')
