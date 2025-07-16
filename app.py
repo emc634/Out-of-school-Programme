@@ -22,7 +22,7 @@ course_days={
    "Automotive":50,
    "Electronics":100,
    "Tourism & Hospitality" :66,
-   "ITeS":65
+   "Retail":65
 }
 
 def login_required(f):
