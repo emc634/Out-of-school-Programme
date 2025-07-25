@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session,jsonify,send_file
 import pandas as pd
+import os
 from datetime import datetime,date
 import psycopg2
+from dotenv import load_dotenv
 from psycopg2 import extras
 from datetime import datetime
 import json
@@ -9,9 +11,9 @@ from psycopg2 import IntegrityError, OperationalError
 from functools import wraps
 
 from functions import get_db_connection,age_calculator
-
+load_dotenv()
 app = Flask(__name__)
-app.secret_key = 'bhuvnn'
+app.secret_key = os.getenv('SECRET_KEY')
 
 
 course_days={
