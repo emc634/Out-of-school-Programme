@@ -653,6 +653,37 @@ tbody tr:hover {
     }
 }
 
+/* Mobile-specific styles */
+@media (max-width: 767px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-actions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .header-actions .btn {
+        width: 100%;
+    }
+
+    .filters-container {
+        padding: var(--space-md);
+    }
+
+    .stat-card {
+        padding: var(--space-md);
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
 @media (max-width: 575px) {
     .filters-grid {
         grid-template-columns: 1fr;
@@ -664,5 +695,98 @@ tbody tr:hover {
 
     .filter-actions .btn {
         width: 100%;
+    }
+
+    .admin-header {
+        padding: var(--space-sm);
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .admin-logo-title-container {
+        width: 100%;
+        align-items: center;
+    }
+
+    .header-info {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+    }
+
+    .stat-card {
+        padding: var(--space-sm);
+        min-height: 100px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+    }
+
+    .filters-container {
+        padding: var(--space-sm);
+    }
+
+    .data-table-container {
+        padding: 0;
+    }
+
+    .table-header {
+        padding: var(--space-sm);
+        text-align: center;
+    }
+
+    .table-container {
+        max-height: 50vh;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: var(--space-sm);
+    }
+
+    .modal-header {
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    .modal-table-container {
+        max-height: 45vh;
+    }
+
+    .modal-table-container table {
+        min-width: 600px;
+        font-size: 0.75rem;
+    }
+
+    .modal-table-container th,
+    .modal-table-container td {
+        padding: 6px 8px;
+    }
+
+    .pagination {
+        gap: 2px;
+        flex-wrap: wrap;
+    }
+
+    .page-link {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+        min-width: 32px;
+    }
+
+    #exportModalDataBtn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
     }
 }

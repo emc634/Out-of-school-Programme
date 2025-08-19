@@ -1219,20 +1219,13 @@ img:hover {
   transition: var(--transition);
 }
 
-.footer-logo:hover {
-  transform: scale(1.05);
-  color: var(--primary);
-}
 
-.logo-img {
+.footer-logo-img {
   max-height: 50px;
   width: 10%;
   transition: var(--transition);
 }
 
-.footer-logo:hover .logo-img {
-  transform: translateY(-2px);
-}
 
 .footer-logo-text {
   display: flex;

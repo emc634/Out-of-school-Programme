@@ -679,10 +679,9 @@ h4 {
     opacity: 1;
 }
 
-
 .app-footer {
+  background: white;
   padding: 20px 0;
-  border-top: 1px solid var(--border);
   text-align: center;
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -700,8 +699,9 @@ h4 {
 }
 
 .footer-content span {
-  font-weight: 500;
-  color: black;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--gray-900);
 }
 
 .footer-logo {
@@ -714,26 +714,11 @@ h4 {
   transition: var(--transition);
 }
 
-.footer-logo:hover {
-  transform: scale(1.05);
-  color: var(--primary);
-}
 
-.logo-img {
+.footer-logo-img {
   max-height: 50px;
   width: 10%;
   transition: var(--transition);
-}
-
-.footer-logo:hover .logo-img {
-  transform: translateY(-2px);
-}
-
-.footer-logo-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.2;
 }
 
 .logo-title {
@@ -774,3 +759,4 @@ h4 {
     text-align: center;
   }
 }
+
