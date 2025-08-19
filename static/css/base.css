@@ -1183,7 +1183,6 @@ img:hover {
 }
 
 .app-footer {
-  background: var(--white);
   padding: var(--space-md) 0;
   text-align: center;
   color: var(--text-secondary);

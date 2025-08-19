@@ -56,10 +56,11 @@ body {
     font-family: var(--font-main);
     color: var(--text);
     background: var(--gradient-background);
-    overflow-x: hidden;
+    overflow: hidden;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
 }
 
 /* Floating Background Elements - Updated colors */
@@ -140,7 +141,6 @@ body {
 
 /* Hero Section - Enhanced background */
 .hero {
-    min-height: 100vh;
     display: flex;
     align-items: center;
     position: relative;
@@ -680,8 +680,7 @@ h4 {
 }
 
 .app-footer {
-  background: white;
-  padding: 20px 0;
+  padding: 10px 0;
   text-align: center;
   color: var(--text-secondary);
   font-size: 0.9rem;
@@ -759,4 +758,3 @@ h4 {
     text-align: center;
   }
 }
-
