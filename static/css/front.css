@@ -1,46 +1,61 @@
 /* Modern Vibrant Theme Variables - Updated to match base.css */
 :root {
     /* Primary Colors - Using base.css palette */
-    --primary: #3a0ca3;          /* Using primary-dark as main primary */
-    --primary-light: #4361ee;    /* Electric blue */
-    --primary-dark: #240046;     /* Even deeper for contrast */
-    --secondary: #4cc9f0;        /* Cyan accent */
-    --secondary-dark: #00b4d8;   /* Darker cyan */
-    --accent: #4895ef;           /* Sky blue */
-    --accent-light: #80ffdb;     /* Light cyan */
-    
+    --primary: #3a0ca3;
+    /* Using primary-dark as main primary */
+    --primary-light: #4361ee;
+    /* Electric blue */
+    --primary-dark: #240046;
+    /* Even deeper for contrast */
+    --secondary: #4cc9f0;
+    /* Cyan accent */
+    --secondary-dark: #00b4d8;
+    /* Darker cyan */
+    --accent: #4895ef;
+    /* Sky blue */
+    --accent-light: #80ffdb;
+    /* Light cyan */
+
     /* Background Colors - Softer, not pure white */
-    --light: #f8fafc;            /* Matching base.css body-bg */
-    --card-bg: #ffffff;          /* Pure white for cards */
-    --section-bg: #f1f5f9;       /* Light gray background for sections */
-    --accent-bg: #e0f2fe;        /* Very light blue for accents */
-    
+    --light: #f8fafc;
+    /* Matching base.css body-bg */
+    --card-bg: #ffffff;
+    /* Pure white for cards */
+    --section-bg: #f1f5f9;
+    /* Light gray background for sections */
+    --accent-bg: #e0f2fe;
+    /* Very light blue for accents */
+
     /* Text Colors */
-    --dark: #0f172a;             /* Matching base.css gray-900 */
-    --text: #1e293b;             /* Matching base.css text */
-    --text-light: #64748b;       /* Matching base.css text-secondary */
-    --text-lighter: #94a3b8;     /* Even lighter text */
-    
+    --dark: #0f172a;
+    /* Matching base.css gray-900 */
+    --text: #1e293b;
+    /* Matching base.css text */
+    --text-light: #64748b;
+    /* Matching base.css text-secondary */
+    --text-lighter: #94a3b8;
+    /* Even lighter text */
+
     /* Gradients - Updated with new colors */
     --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
     --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-light));
     --gradient-background: linear-gradient(135deg, var(--light) 0%, var(--accent-bg) 100%);
-    
+
     /* Typography */
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Poppins', Roboto, sans-serif;
     --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Montserrat', Roboto, sans-serif;
-    
+
     /* Shadows - Enhanced */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
     --shadow-blue: 0 10px 25px rgba(58, 12, 163, 0.15);
     --shadow-blue-lg: 0 20px 40px rgba(58, 12, 163, 0.2);
-    
+
     /* Transitions */
     --transition: all 0.25s ease-in-out;
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    
+
     /* Border Radius */
     --border-radius: 12px;
     --border-radius-lg: 16px;
@@ -60,7 +75,7 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    
+
 }
 
 /* Floating Background Elements - Updated colors */
@@ -155,7 +170,7 @@ body {
     width: 100%;
     height: 100%;
     background: radial-gradient(circle at 30% 50%, rgba(58, 12, 163, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(76, 201, 240, 0.06) 0%, transparent 50%);
+        radial-gradient(circle at 70% 80%, rgba(76, 201, 240, 0.06) 0%, transparent 50%);
     z-index: -1;
 }
 
@@ -337,7 +352,7 @@ h4 {
 /* Visionaries Section - Enhanced background */
 .visionaries-section {
     background: var(--card-bg);
-    padding: 3rem;
+    padding: 5rem;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-lg);
     position: relative;
@@ -367,13 +382,41 @@ h4 {
     opacity: 0.3;
 }
 
+/* Slideshow Styles */
+.slideshow-container {
+    position: relative;
+    height: auto;
+    min-height: 400px; 
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.slide.active {
+    opacity: 1;
+    height: auto;
+}
+
 .visionaries-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 2rem;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
     position: relative;
     z-index: 1;
+    width: 100%;
 }
 
 .visionary-card {
@@ -390,6 +433,13 @@ h4 {
     position: relative;
     overflow: hidden;
     gap: 0;
+}
+
+.slide .section-title,
+.slide .section-subtitle {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 1.5rem;
 }
 
 .visionary-card:hover {
@@ -483,14 +533,65 @@ h4 {
     margin: 0;
 }
 
+/* Slide 2: Single image */
+.single-image-slide {
+    background: var(--card-bg);
+}
+
+.single-image-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.single-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.single-image-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+/* Slideshow navigation */
+.slideshow-navigation {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.nav-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #d1d5db;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.nav-dot.active {
+    background-color: var(--primary);
+}
+
 /* Animations - Keep existing animations */
 @keyframes float {
     0% {
         transform: translateY(0) rotate(0deg) scale(1);
     }
+
     50% {
         transform: translateY(-30px) rotate(5deg) scale(1.02);
     }
+
     100% {
         transform: translateY(0) rotate(0deg) scale(1);
     }
@@ -501,10 +602,12 @@ h4 {
         opacity: 0.03;
         transform: translateX(-50%) rotate(45deg) scale(1);
     }
+
     50% {
         opacity: 0.08;
         transform: translateX(-50%) rotate(45deg) scale(1.05);
     }
+
     100% {
         opacity: 0.03;
         transform: translateX(-50%) rotate(45deg) scale(1);
@@ -515,6 +618,7 @@ h4 {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -524,6 +628,7 @@ h4 {
     from {
         transform: scaleX(0);
     }
+
     to {
         transform: scaleX(1);
     }
@@ -533,6 +638,7 @@ h4 {
     from {
         width: 0;
     }
+
     to {
         width: 60px;
     }
@@ -543,6 +649,7 @@ h4 {
         opacity: 0;
         transform: translateX(-50px) rotateY(15deg);
     }
+
     to {
         opacity: 1;
         transform: translateX(0) rotateY(0);
@@ -554,6 +661,7 @@ h4 {
         opacity: 0;
         transform: translateX(50px) rotateY(-15deg);
     }
+
     to {
         opacity: 1;
         transform: translateX(0) rotateY(0);
@@ -572,6 +680,36 @@ h4 {
 
     .tagline {
         font-size: 1.7rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .visionaries-container {
+        gap: 2rem;
+    }
+    
+    .visionary-card {
+        padding: 1.2rem;
+    }
+}
+
+@media (hover: hover) {
+    .visionary-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-blue-lg);
+        border-color: rgba(58, 12, 163, 0.2);
+    }
+    
+    .visionary-card:hover::before {
+        opacity: 0.03;
+    }
+    
+    .visionary-card:hover .visionary-img-container::before {
+        animation: rotate 4s linear infinite;
+    }
+    
+    .visionary-card:hover .visionary-img {
+        transform: scale(1.03);
     }
 }
 
@@ -597,6 +735,10 @@ h4 {
         max-width: 600px;
         margin: 0 auto;
     }
+
+    .visionaries-container {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -606,7 +748,8 @@ h4 {
     }
 
     .visionaries-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
     }
 
     .welcome-heading {
@@ -621,8 +764,87 @@ h4 {
         font-size: 1.1rem;
     }
 
+    body {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .container {
+        padding: 1rem;
+        overflow: visible;
+    }
+    
     .visionaries-section {
-        padding: 2rem;
+        padding: 1.5rem;
+        overflow: visible;
+    }
+    
+    .slideshow-container {
+        height: auto;
+        min-height: 350px;
+        overflow: visible;
+    }
+    
+    .slide {
+        position: relative;
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+    }
+    
+    .slide.active {
+        opacity: 1;
+        height: auto;
+        overflow: visible;
+    }
+    
+    .visionary-card {
+        flex-direction: column;
+        text-align: left;
+        padding: 1rem;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .visionary-img-container {
+        width: 100px;
+        height: 100px;
+        min-width: 100px;
+        margin-bottom: 0;
+    }
+
+    .visionary-info {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+    }
+    
+    .visionary-name {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+        line-height: 1.3;
+    }
+    
+    .visionary-title {
+        font-size: 0.8rem;
+        line-height: 1.3;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .section-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .nav-dot {
+        width: 14px;
+        height: 14px;
     }
 }
 
@@ -652,6 +874,18 @@ h4 {
     .logo-img {
         height: 50px;
     }
+
+    .slideshow-container {
+        height: 300px;
+    }
+
+    .visionary-img-container {
+        height: 200px;
+    }
+    
+    .section-title {
+        font-size: 1.6rem;
+    }
 }
 
 /* Special Effects - Enhanced */
@@ -680,81 +914,112 @@ h4 {
 }
 
 .app-footer {
-  padding: 10px 0;
-  text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  position: relative;
-  z-index: 10;
-  animation: fadeIn 0.8s ease-out;
+    padding: 10px 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 10;
+    animation: fadeIn 0.8s ease-out;
 }
 
 .footer-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .footer-content span {
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: var(--gray-900);
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--gray-900);
 }
 
 .footer-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  font-weight: 600;
-  color: var(--primary-dark);
-  transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--primary-dark);
+    transition: var(--transition);
 }
 
 
 .footer-logo-img {
-  max-height: 50px;
-  width: 10%;
-  transition: var(--transition);
+    max-height: 50px;
+    width: 10%;
+    transition: var(--transition);
 }
 
 .logo-title {
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
 }
 
 .logo-tagline {
-  font-size: 0.65rem;
-  color: var(--text-light);
-  font-weight: 500;
-  letter-spacing: 0.3px;
+    font-size: 0.65rem;
+    color: var(--text-light);
+    font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .footer-content {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
+    .footer-content {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
 
-  .footer-logo {
-    margin-top: 0.25rem;
-  }
+    .footer-logo {
+        margin-top: 0.25rem;
+    }
 }
 
 @media (max-width: 480px) {
-  .app-footer {
-    padding: var(--space-sm) 0;
-  }
+    .app-footer {
+        padding: var(--space-sm) 0;
+    }
 
-  .footer-logo-text {
-    align-items: center;
-  }
+    .footer-logo-text {
+        align-items: center;
+    }
 
-  .logo-tagline {
-    text-align: center;
-  }
+    .logo-tagline {
+        text-align: center;
+    }
+
+    .visionaries-section {
+        padding: 1rem;
+    }
+    
+    .visionary-card {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+    
+    .visionary-img-container {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+    }
+    
+    .visionary-name {
+        font-size: 0.9rem;
+    }
+    
+    .visionary-title {
+        font-size: 0.75rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+    }
+    
+    .section-subtitle {
+        font-size: 0.85rem;
+    }
 }
