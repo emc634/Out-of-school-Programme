@@ -1,83 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
-</head>
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/form.css') }}"
+    />
+  </head>
 
-<body>
+  <body>
     <main class="main-content">
-        <div class="container">
-            <div class="form-header">
-                <div class="logo-container1">
-                    <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img1" alt="Left Logo">
-                    <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img1" alt="center Logo">
-                </div>
-                <h2 class="form-title">Admin Portal</h2>
-                <p class="section-subtitle">Secure access to administrative functions</p>
-            </div>
-
-            <!-- Flash messages -->
-            <div class="flash-messages">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-
-                {% endif %}
-                {% endwith %}
-            </div>
-
-            <form class="form-container" method="POST" action="/admin_login">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="email" class="form-label">Admin's Email</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="admin@example.com"
-                            required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••"
-                            required>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        Secure Login
-                    </button>
-                </div>
-                <div class="alt-action">
-                    <a href="{{ url_for('reset_password') }}">Reset password</a>
-                </div>
-            </form>
-
-
+      <div class="container">
+        <div class="form-header">
+          <div class="logo-container1">
+            <img
+              src="{{ url_for('static', filename='Images/logo1.png') }}"
+              class="logo-img1"
+              alt="Left Logo"
+            />
+            <img
+              src="{{ url_for('static', filename='Images/logo2.png') }}"
+              class="logo-img1"
+              alt="center Logo"
+            />
+          </div>
+          <h2 class="form-title">Admin Portal</h2>
+          <p class="section-subtitle">
+            Secure access to administrative functions
+          </p>
         </div>
+
+        <!-- Flash messages -->
+        <div class="flash-messages">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+        </div>
+
+        <form class="form-container" method="POST" action="/admin_login">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="email" class="form-label">Admin's Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-control"
+                placeholder="admin@example.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Secure Login</button>
+          </div>
+          <div class="alt-action">
+            <a href="{{ url_for('reset_password') }}">Reset password</a>
+          </div>
+        </form>
+      </div>
+        <footer class="app-footer">
+        <div class="footer-content">
+          <span>Powered by</span>
+            <img src="{{ url_for('static', filename='Images/company_logo.jpg') }}" alt="VALEUR FABTEX Logo" class="logo-img" />
+        </div>
+      </footer>
     </main>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.classList.add('fade-out');
-                    setTimeout(() => alert.remove(), 500);
-                }, 3000);
-            });
+      document.addEventListener("DOMContentLoaded", function () {
+        const alerts = document.querySelectorAll(".alert");
+        alerts.forEach((alert) => {
+          setTimeout(() => {
+            alert.classList.add("fade-out");
+            setTimeout(() => alert.remove(), 500);
+          }, 3000);
         });
+      });
     </script>
-</body>
-
+  </body>
 </html>

@@ -1,260 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student profile</title>
     <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_display.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/profile_display.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
 
-<body class="has-navbar">
+  <body class="has-navbar">
     <button class="mobile-toggle">
-        <i class="fas fa-bars"></i>
+      <i class="fas fa-bars"></i>
     </button>
     <nav class="navbar">
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='Images/logo1.png') }}" class="logo-img" alt="Left Logo">
-            <img src="{{ url_for('static', filename='Images/logo2.png') }}" class="logo-img" alt="center Logo">
-        </div>
-        <div class="navbar-content">
+      <div class="logo-container">
+        <img
+          src="{{ url_for('static', filename='Images/logo1.png') }}"
+          class="logo-img"
+          alt="Left Logo"
+        />
+        <img
+          src="{{ url_for('static', filename='Images/logo2.png') }}"
+          class="logo-img"
+          alt="center Logo"
+        />
+      </div>
+      <div class="navbar-content">
+        <ul class="nav-links">
+          <li>
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+          </li>
+          <li>
+            <a href="{{ url_for('profile_display') }}" class="nav-link active"
+              >Profile</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('update_profile') }}" class="nav-link"
+              >Update</a
+            >
+          </li>
+        </ul>
 
-            <ul class="nav-links">
-                <li><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
-                <li><a href="{{ url_for('profile_display') }}" class="nav-link active">Profile</a></li>
-                <li><a href="{{ url_for('update_profile') }}" class="nav-link">Update</a></li>
-            </ul>
-
-            <div class="nav-actions">
-                <a href="{{ url_for('front') }}" class="btn btn-outline-primary btn-sm">Logout</a>
-            </div>
+        <div class="nav-actions">
+          <a
+            href="{{ url_for('front') }}"
+            class="btn btn-outline-primary btn-sm"
+            >Logout</a
+          >
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="container profile-container">
-
-
-            <!-- Flash Messages -->
-            <div class="flash-messages">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-                {% endif %}
-                {% endwith %}
-            </div>
-
-            <!-- Profile Card -->
-            <div class="profile-card">
-                <div class="profile-header">
-                    <div class="profile-avatar">
-                        {{ student.student_name[0] }}
-                    </div>
-                    <div class="profile-info">
-                        <h2 class="profile-name">{{ student.student_name }}</h2>
-                        <p class="profile-id">CAN ID: {{ student.can_id }}</p>
-                    </div>
-                </div>
-                <div class="profile-body">
-                    <!-- Personal Information Section -->
-                    <div class="info-section">
-                        <h3 class="section-title">
-                            <i class="fas fa-user"></i>
-                            Personal Information
-                        </h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Full Name </div>
-                                <div class="info-value">{{ student.student_name }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Father's Name</div>
-                                <div class="info-value">{{ student.father_name }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Mother's Name</div>
-                                <div class="info-value">{{ student.mother_name }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Date of Birth</div>
-                                <div class="info-value">{{ student.dob }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Gender</div>
-                                <div class="info-value">{{ student.gender|capitalize }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Religion</div>
-                                <div class="info-value">{{ student.religion }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Category</div>
-                                <div class="info-value">{{ student.category|upper }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Aadhar Number</div>
-                                <div class="info-value">{{ bank.aadhar }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Mobile Number</div>
-                                <div class="info-value">{{ student.mobile }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Academic Information Section -->
-                    <div class="info-section">
-                        <h3 class="section-title">
-                            <i class="fas fa-graduation-cap"></i>
-                            Academic Information
-                        </h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">CAN ID</div>
-                                <div class="info-value">{{ student.can_id }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">District</div>
-                                <div class="info-value">{{ student.district }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Center/Block</div>
-                                <div class="info-value">{{ student.center }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Trade</div>
-                                <div class="info-value">{{ training.trade }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-section">
-                        <h3 class="section-title">
-                            <i class="fas fa-graduation-cap"></i>
-                            Bank Information
-                        </h3>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">Account Number</div>
-                                <div class="info-value">{{ bank.account_number }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">Account Holder</div>
-                                <div class="info-value">{{ bank.account_holder }}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">IFSC</div>
-                                <div class="info-value">{{ bank.ifsc }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="container profile-container">
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
         </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+          <div class="profile-header">
+            <div class="profile-avatar">{{ student.student_name[0] }}</div>
+            <div class="profile-info">
+              <h2 class="profile-name">{{ student.student_name }}</h2>
+              <p class="profile-id">CAN ID: {{ student.can_id }}</p>
+            </div>
+          </div>
+          <div class="profile-body">
+            <!-- Personal Information Section -->
+            <div class="info-section">
+              <h3 class="section-title">
+                <i class="fas fa-user"></i>
+                Personal Information
+              </h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">Full Name</div>
+                  <div class="info-value">{{ student.student_name }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Father's Name</div>
+                  <div class="info-value">{{ student.father_name }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Mother's Name</div>
+                  <div class="info-value">{{ student.mother_name }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Date of Birth</div>
+                  <div class="info-value">{{ student.dob }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Gender</div>
+                  <div class="info-value">{{ student.gender|capitalize }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Religion</div>
+                  <div class="info-value">{{ student.religion }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Category</div>
+                  <div class="info-value">{{ student.category|upper }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Aadhar Number</div>
+                  <div class="info-value">{{ bank.aadhar }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Mobile Number</div>
+                  <div class="info-value">{{ student.mobile }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Academic Information Section -->
+            <div class="info-section">
+              <h3 class="section-title">
+                <i class="fas fa-graduation-cap"></i>
+                Academic Information
+              </h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">CAN ID</div>
+                  <div class="info-value">{{ student.can_id }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">District</div>
+                  <div class="info-value">{{ student.district }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Center/Block</div>
+                  <div class="info-value">{{ student.center }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Trade</div>
+                  <div class="info-value">{{ training.trade }}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <h3 class="section-title">
+                <i class="fas fa-graduation-cap"></i>
+                Bank Information
+              </h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">Account Number</div>
+                  <div class="info-value">{{ bank.account_number }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Account Holder</div>
+                  <div class="info-value">{{ bank.account_holder }}</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">IFSC</div>
+                  <div class="info-value">{{ bank.ifsc }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+              <footer class="app-footer">
+        <div class="footer-content">
+          <span>Powered by</span>
+            <img src="{{ url_for('static', filename='Images/company_logo.jpg') }}" alt="VALEUR FABTEX Logo" class="logo-img" />
+        </div>
+      </footer>
     </main>
 
     <!-- Scripts -->
     <script>
-        // Mobile menu toggle functionality
-        document.querySelector('.mobile-toggle').addEventListener('click', function () {
-            document.querySelector('.navbar').classList.toggle('active');
-            document.querySelector('.navbar-overlay').classList.toggle('active');
+      // Mobile menu toggle functionality
+      document
+        .querySelector(".mobile-toggle")
+        .addEventListener("click", function () {
+          document.querySelector(".navbar").classList.toggle("active");
+          document.querySelector(".navbar-overlay").classList.toggle("active");
         });
 
-        // Close navbar when clicking on overlay
-        document.querySelector('.navbar-overlay').addEventListener('click', function () {
-            document.querySelector('.navbar').classList.remove('active');
-            this.classList.remove('active');
+      // Close navbar when clicking on overlay
+      document
+        .querySelector(".navbar-overlay")
+        .addEventListener("click", function () {
+          document.querySelector(".navbar").classList.remove("active");
+          this.classList.remove("active");
         });
 
-        // Close navbar when clicking on a nav link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function () {
-                document.querySelector('.navbar').classList.remove('active');
-                document.querySelector('.navbar-overlay').classList.remove('active');
-            });
-        })
+      // Close navbar when clicking on a nav link
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", function () {
+          document.querySelector(".navbar").classList.remove("active");
+          document.querySelector(".navbar-overlay").classList.remove("active");
+        });
+      });
 
-        // Add hover effect to info items
-        document.querySelectorAll('.info-item').forEach(item => {
-            item.addEventListener('mouseenter', function () {
-                this.style.transform = 'scale(1.03)';
-                this.style.boxShadow = '0 12px 25px rgba(0,0,0,0.1)';
-                this.style.zIndex = '2'; /* Bring hovered element to front */
-            });
-
-            item.addEventListener('mouseleave', function () {
-                this.style.transform = 'scale(1)';
-                this.style.boxShadow = 'none';
-                this.style.zIndex = '1';
-            });
+      // Add hover effect to info items
+      document.querySelectorAll(".info-item").forEach((item) => {
+        item.addEventListener("mouseenter", function () {
+          this.style.transform = "scale(1.03)";
+          this.style.boxShadow = "0 12px 25px rgba(0,0,0,0.1)";
+          this.style.zIndex = "2"; /* Bring hovered element to front */
         });
 
-        // Close menu when clicking on links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function () {
-                navLinks.classList.remove('active');
-                mobileToggle.querySelector('i').classList.replace('fa-times', 'fa-bars');
-            });
+        item.addEventListener("mouseleave", function () {
+          this.style.transform = "scale(1)";
+          this.style.boxShadow = "none";
+          this.style.zIndex = "1";
         });
+      });
 
-        // Auto-dismiss flash messages (if any)
-        document.addEventListener('DOMContentLoaded', function () {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.classList.add('fade-out');
-                    setTimeout(() => alert.remove(), 500);
-                }, 3000);
-            });
+      // Close menu when clicking on links
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", function () {
+          navLinks.classList.remove("active");
+          mobileToggle
+            .querySelector("i")
+            .classList.replace("fa-times", "fa-bars");
         });
+      });
 
-        // Create floating particles
-        function createParticles() {
-            const container = document.body;
-            const particleCount = 30;
+      // Auto-dismiss flash messages (if any)
+      document.addEventListener("DOMContentLoaded", function () {
+        const alerts = document.querySelectorAll(".alert");
+        alerts.forEach((alert) => {
+          setTimeout(() => {
+            alert.classList.add("fade-out");
+            setTimeout(() => alert.remove(), 500);
+          }, 3000);
+        });
+      });
 
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
+      // Create floating particles
+      function createParticles() {
+        const container = document.body;
+        const particleCount = 30;
 
-                // Random properties
-                const size = Math.random() * 20 + 5;
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-                const animationDuration = Math.random() * 20 + 10;
-                const delay = Math.random() * 5;
-                const colors = [
-                    'rgba(114, 9, 183, 0.5)',
-                    'rgba(67, 97, 238, 0.5)',
-                    'rgba(247, 37, 133, 0.5)',
-                    'rgba(4, 204, 160, 0.5)',
-                    'rgba(255, 209, 102, 0.5)'
-                ];
-                const color = colors[Math.floor(Math.random() * colors.length)];
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.classList.add("particle");
 
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.background = color;
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                particle.style.animation = `float ${animationDuration}s ease-in-out ${delay}s infinite`;
+          // Random properties
+          const size = Math.random() * 20 + 5;
+          const posX = Math.random() * 100;
+          const posY = Math.random() * 100;
+          const animationDuration = Math.random() * 20 + 10;
+          const delay = Math.random() * 5;
+          const colors = [
+            "rgba(114, 9, 183, 0.5)",
+            "rgba(67, 97, 238, 0.5)",
+            "rgba(247, 37, 133, 0.5)",
+            "rgba(4, 204, 160, 0.5)",
+            "rgba(255, 209, 102, 0.5)",
+          ];
+          const color = colors[Math.floor(Math.random() * colors.length)];
 
-                container.appendChild(particle);
-            }
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.background = color;
+          particle.style.left = `${posX}%`;
+          particle.style.top = `${posY}%`;
+          particle.style.animation = `float ${animationDuration}s ease-in-out ${delay}s infinite`;
+
+          container.appendChild(particle);
         }
+      }
 
-        // Initialize particles
-        window.addEventListener('load', createParticles);
+      // Initialize particles
+      window.addEventListener("load", createParticles);
     </script>
-</body>
-
+  </body>
 </html>
