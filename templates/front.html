@@ -54,54 +54,55 @@
 
         <!-- Right Column: Visionaries Section -->
         <div class="visionaries-section">
-
           <!-- Slideshow container -->
           <div class="slideshow-container">
-            <!-- Slide 1: Two visionaries -->
-            <div class="slide active">
+            <!-- Slide 1: Single image (now first) -->
+            <div class="slide single-image-slide active">
+                <div class="single-image-container">
+                  <img src="{{ url_for('static', filename='Images/programme.jpg') }}" alt="Children Learning"
+                    class="single-image" />
+                </div>
+              </div>
+            
+            <!-- Slide 2: Two visionaries (now second) -->
+            <div class="slide">
               <div class="visionaries-container">
-                <h2 class="section-title">Our Visionaries</h2>
-                <p class="section-subtitle">
-                  The leaders behind our mission to bring education to every child
-                </p>
-                <!-- Visionary 1: Chief Minister -->
-                <div class="visionary-card">
-                  <div class="visionary-img-container">
-                    <img src="{{ url_for('static', filename='Images/cm.jpg') }}" alt="Honorable Chief Minister"
-                      class="visionary-img" />
+                  <h2 class="section-title">Our Visionaries</h2>
+                  <p class="section-subtitle">
+                    The leaders behind our mission to bring education to every child
+                  </p>
+                  <!-- Visionary 1: Chief Minister -->
+                  <div class="visionary-card">
+                    <div class="visionary-img-container">
+                      <img src="{{ url_for('static', filename='Images/cm.jpg') }}" alt="Honorable Chief Minister"
+                        class="visionary-img" />
+                    </div>
+                    <div class="visionary-info">
+                      <h3 class="visionary-name">Sh. Sukhvinder Singh Sukhu</h3>
+                      <p class="visionary-title">Hon'ble Chief Minister, HP</p>
+                    </div>
                   </div>
-                  <div class="visionary-info">
-                    <h3 class="visionary-name">Sh. Sukhvinder Singh Sukhu</h3>
-                    <p class="visionary-title">Hon'ble Chief Minister, HP</p>
-                  </div>
-                </div>
 
-                <!-- Visionary 2: Education Minister -->
-                <div class="visionary-card">
-                  <div class="visionary-img-container">
-                    <img src="{{ url_for('static', filename='Images/edu_minister.png') }}"
-                      alt="Honorable Education Minister" class="visionary-img" />
-                  </div>
-                  <div class="visionary-info">
-                    <h3 class="visionary-name">Sh. Rohit Thakur</h3>
-                    <p class="visionary-title">Hon'ble Education Minister, HP</p>
-                  </div>
+                  <!-- Visionary 2: Education Minister -->
+                  <div class="visionary-card">
+                    <div class="visionary-img-container">
+                      <img src="{{ url_for('static', filename='Images/edu_minister.png') }}"
+                        alt="Honorable Education Minister" class="visionary-img" />
+                    </div>
+                    <div class="visionary-info">
+                      <h3 class="visionary-name">Sh. Rohit Thakur</h3>
+                      <p class="visionary-title">Hon'ble Education Minister, HP</p>
+                    </div>
                 </div>
               </div>
             </div>
-            <div class="slide single-image-slide">
-              <div class="single-image-container">
-                <img src="{{ url_for('static', filename='Images/programme.jpg') }}" alt="Children Learning"
-                  class="single-image" />
-              </div>
-            </div>
-          </div>
+        </div>
           <!-- Slideshow navigation dots -->
           <div class="slideshow-navigation">
             <div class="nav-dot active" data-slide="0"></div>
             <div class="nav-dot" data-slide="1"></div>
           </div>
-        </div>
+        
       </div>
     </section>
     <footer class="app-footer">
