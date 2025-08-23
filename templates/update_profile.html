@@ -32,6 +32,7 @@
             </div>
         </div>
     </nav>
+    <div class="navbar-overlay"></div>
 
     <main class="main-content">
         <div class="container">
@@ -88,11 +89,11 @@
                             <label for="gender" class="form-label">Gender</label>
                             <select id="gender" name="gender" class="form-control form-select">
                                 <option value="">Select Gender</option>
-                                <option value="Male" {% if form_data.gender == 'Male' %}selected{% endif %}>Male
+                                <option value="Male" {% if form_data.gender=='Male' %}selected{% endif %}>Male
                                 </option>
-                                <option value="Female" {% if form_data.gender == 'Female' %}selected{% endif %}>Female
+                                <option value="Female" {% if form_data.gender=='Female' %}selected{% endif %}>Female
                                 </option>
-                                <option value="Other" {% if form_data.gender == 'Other' %}selected{% endif %}>Other
+                                <option value="Other" {% if form_data.gender=='Other' %}selected{% endif %}>Other
                                 </option>
                             </select>
                         </div>
@@ -105,13 +106,13 @@
                             <label for="category" class="form-label">Category</label>
                             <select id="category" name="category" class="form-control form-select">
                                 <option value="">Select Category</option>
-                                <option value="General" {% if form_data.category == 'General' %}selected{% endif %}>
+                                <option value="General" {% if form_data.category=='General' %}selected{% endif %}>
                                     General
                                 </option>
-                                <option value="OBC" {% if form_data.category == 'OBC' %}selected{% endif %}>OBC</option>
-                                <option value="SC" {% if form_data.category == 'SC' %}selected{% endif %}>SC</option>
-                                <option value="ST" {% if form_data.category == 'ST' %}selected{% endif %}>ST</option>
-                                <option value="Other" {% if form_data.category == 'Other' %}selected{% endif %}>Other
+                                <option value="OBC" {% if form_data.category=='OBC' %}selected{% endif %}>OBC</option>
+                                <option value="SC" {% if form_data.category=='SC' %}selected{% endif %}>SC</option>
+                                <option value="ST" {% if form_data.category=='ST' %}selected{% endif %}>ST</option>
+                                <option value="Other" {% if form_data.category=='Other' %}selected{% endif %}>Other
                                 </option>
                             </select>
                         </div>
@@ -157,11 +158,11 @@
                             <label for="single_counselling" class="form-label">1:1 Career Counselling</label>
                             <select id="single_counselling" name="single_counselling" class="form-control form-select">
                                 <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.single_counselling == 'Completed' %}selected{% endif %}>
+                                <option value="Completed" {% if form_data.single_counselling=='Completed' %}selected{%
+                                    endif %}>
                                     COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.single_counselling == 'Not Completed' %}selected{% endif %}>NOT
+                                <option value="Not Completed" {% if form_data.single_counselling=='Not Completed'
+                                    %}selected{% endif %}>NOT
                                     COMPLETED
                                 </option>
                             </select>
@@ -170,11 +171,11 @@
                             <label for="group_counselling" class="form-label">Group Career Counselling</label>
                             <select id="group_counselling" name="group_counselling" class="form-control form-select">
                                 <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.group_counselling == 'Completed' %}selected{% endif %}>
+                                <option value="Completed" {% if form_data.group_counselling=='Completed' %}selected{%
+                                    endif %}>
                                     COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.group_counselling == 'Not Completed' %}selected{% endif %}>NOT
+                                <option value="Not Completed" {% if form_data.group_counselling=='Not Completed'
+                                    %}selected{% endif %}>NOT
                                     COMPLETED
                                 </option>
                             </select>
@@ -183,11 +184,11 @@
                             <label for="guestLecture" class="form-label">Guest Lecture</label>
                             <select id="guestLecture" name="guestLecture" class="form-control form-select">
                                 <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.guest_lecture == 'Completed' %}selected{% endif %}>
+                                <option value="Completed" {% if form_data.guest_lecture=='Completed' %}selected{% endif
+                                    %}>
                                     COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.guest_lecture == 'Not Completed' %}selected{% endif %}>NOT
+                                <option value="Not Completed" {% if form_data.guest_lecture=='Not Completed'
+                                    %}selected{% endif %}>NOT
                                     COMPLETED
                                 </option>
                             </select>
@@ -196,11 +197,11 @@
                             <label for="ojt" class="form-label">OJT Status</label>
                             <select id="ojt" name="ojt" class="form-control form-select">
                                 <option value="">SELECT</option>
-                                <option value="Completed" {% if form_data.ojt == 'Completed' %}selected{% endif %}>
+                                <option value="Completed" {% if form_data.ojt=='Completed' %}selected{% endif %}>
                                     COMPLETED
                                 </option>
-                                <option value="Not Completed"
-                                    {% if form_data.ojt == 'Not Completed' %}selected{% endif %}>NOT
+                                <option value="Not Completed" {% if form_data.ojt=='Not Completed' %}selected{% endif
+                                    %}>NOT
                                     COMPLETED</option>
                             </select>
                         </div>
@@ -208,11 +209,11 @@
                             <label for="industrialVisit" class="form-label">Industrial Visit</label>
                             <select id="industrialVisit" name="industrialVisit" class="form-control form-select">
                                 <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.industrial_visit == 'Completed' %}selected{% endif %}>
+                                <option value="Completed" {% if form_data.industrial_visit=='Completed' %}selected{%
+                                    endif %}>
                                     COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.industrial_visit == 'Not Completed' %}selected{% endif %}>NOT
+                                <option value="Not Completed" {% if form_data.industrial_visit=='Not Completed'
+                                    %}selected{% endif %}>NOT
                                     COMPLETED
                                 </option>
                             </select>
@@ -221,40 +222,42 @@
                             <label for="assessment" class="form-label">Assessment</label>
                             <select id="assessment" name="assessment" class="form-control form-select">
                                 <option value="">SELECT</option>
-                                <option value="Completed"
-                                    {% if form_data.assessment == 'Completed' %}selected{% endif %}>
+                                <option value="Completed" {% if form_data.assessment=='Completed' %}selected{% endif %}>
                                     COMPLETED</option>
-                                <option value="Not Completed"
-                                    {% if form_data.assessment == 'Not Completed' %}selected{% endif %}>
+                                <option value="Not Completed" {% if form_data.assessment=='Not Completed' %}selected{%
+                                    endif %}>
                                     NOT COMPLETED</option>
                             </select>
                         </div>
+
                         <div class="form-group">
-                            <label for="schoolName" class="form-label">Enrolled School</label>
-                            <input type="text" placeholder="Enter the School's Name" id="schoolName" name="schoolName"
-                                class="form-control">
+                            <label for="other_trainings" class="form-label">Post Training Progression</label>
+                            <select id="otherTrainings" name="other_trainings" class="form-control form-select">
+                                <option value="">SELECT</option>
+                                <option value="School Enrollment" {% if form_data.other_trainings=='School Enrollment'
+                                    %}selected{% endif %}>
+                                    School Enrollment</option>
+                                <option value="I.T.I" {% if form_data.other_trainings=='I.T.I' %}selected{% endif %}>
+                                    I.T.I</option>
+                                <option value="Self Employment" {% if form_data.other_trainings=='Self Employment'
+                                    %}selected{% endif %}>
+                                    Self Employment</option>
+                                <option value="Wage Employment" {% if form_data.other_trainings=='Wage Employment'
+                                    %}selected{% endif %}>
+                                    Wage Employment</option>
+                                <option value="Other" {% if form_data.other_trainings=='Other' %}selected{% endif %}>
+                                    Other</option>
+                            </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group hidden-field" id="udsiField">
                             <label for="udsiCode" class="form-label">UDSI Code</label>
                             <input type="text" placeholder="Enter the School's UDSI Code" id="udsicode" name="udsicode"
                                 class="form-control">
                         </div>
-
-                        <div class="form-group">
-                            <label for="other_trainings" class="form-label">Other Trainings</label>
-                            <select id="otherTrainings" name="other_trainings" class="form-control form-select">
-                                <option value="">SELECT</option>
-                                <option value="Self Employment"
-                                    {% if form_data.other_trainings == 'Self Employment' %}selected{% endif %}>
-                                    Self Employment</option>
-                                <option value="Wage Employment"
-                                    {% if form_data.other_trainings  == 'Wage Employment' %}selected{% endif %}>
-                                    Wage Employment</option>
-                                <option value="ITI" {% if form_data.other_trainings  == 'I.T.I' %}selected{% endif %}>
-                                    I.T.I</option>
-                                <option value="Other" {% if form_data.other_trainings  == 'Other' %}selected{% endif %}>
-                                    Other</option>
-                            </select>
+                        <div class="form-group hidden-field" id="schoolField">
+                            <label for="schoolName" class="form-label">Enrolled School</label>
+                            <input type="text" placeholder="Enter the School's Name" id="schoolName" name="schoolName"
+                                class="form-control">
                         </div>
                     </div>
                 </div>
@@ -266,36 +269,38 @@
                 </div>
             </form>
         </div>
-              <footer class="app-footer">
-        <div class="footer-content">
-          <span>Powered by</span>
-            <img src="{{ url_for('static', filename='Images/company_logo.png') }}" alt="VALEUR FABTEX Logo" class="footer-logo-img" />
-        </div>
-      </footer>
+        <footer class="app-footer">
+            <div class="footer-content">
+                <span>Powered by</span>
+                <img src="{{ url_for('static', filename='Images/company_logo.png') }}" alt="VALEUR FABTEX Logo"
+                    class="footer-logo-img" />
+            </div>
+        </footer>
     </main>
 
-    <script>
-        // Mobile menu toggle functionality
-        document.querySelector('.mobile-toggle').addEventListener('click', function () {
-            document.querySelector('.navbar').classList.toggle('active');
-            document.querySelector('.navbar-overlay').classList.toggle('active');
-        });
+<script>
+    // Mobile menu toggle functionality
+    document.querySelector('.mobile-toggle').addEventListener('click', function () {
+        document.querySelector('.navbar').classList.toggle('active');
+        document.querySelector('.navbar-overlay').classList.toggle('active');
+    });
 
-        // Close navbar when clicking on overlay
-        document.querySelector('.navbar-overlay').addEventListener('click', function () {
+    // Close navbar when clicking on overlay
+    document.querySelector('.navbar-overlay').addEventListener('click', function () {
+        document.querySelector('.navbar').classList.remove('active');
+        this.classList.remove('active');
+    });
+
+    // Close navbar when clicking on a nav link
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function () {
             document.querySelector('.navbar').classList.remove('active');
-            this.classList.remove('active');
+            document.querySelector('.navbar-overlay').classList.remove('active');
         });
+    });
 
-        // Close navbar when clicking on a nav link
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function () {
-                document.querySelector('.navbar').classList.remove('active');
-                document.querySelector('.navbar-overlay').classList.remove('active');
-            });
-        })
-
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        // Flash fade-out
         const alerts = document.querySelectorAll('.alert');
         alerts.forEach(alert => {
             setTimeout(() => {
@@ -303,8 +308,31 @@
                 setTimeout(() => alert.remove(), 500);
             }, 3000);
         });
-        });
-    </script>
+
+        // Post Training Progression toggle
+        const progressionSelect = document.getElementById('otherTrainings');
+        const udsiField = document.getElementById('udsiField');
+        const schoolField = document.getElementById('schoolField');
+
+        function toggleSchoolFields() {
+            console.log("Selected:", progressionSelect.value); // debug
+            if (progressionSelect.value.trim() === "School Enrollment") {
+                udsiField.style.display = "block";
+                schoolField.style.display = "block";
+            } else {
+                udsiField.style.display = "none";
+                schoolField.style.display = "none";
+            }
+        }
+
+        // Initial run (in case "School Enrollment" is preselected)
+        toggleSchoolFields();
+
+        // Trigger on change
+        progressionSelect.addEventListener('change', toggleSchoolFields);
+    });
+</script>
+
 </body>
 
 </html>
