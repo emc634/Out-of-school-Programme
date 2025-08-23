@@ -60,134 +60,156 @@
         </div>
 
         <!-- Statistics Cards -->
-        <div class="stat-container">
-          <div class="stats-grid">
-            <!-- Total Students -->
-            <div
-              class="stat-card"
-              data-type="total"
-              onclick="openModal('total')"
-            >
-              <i class="fas fa-users fa-2x mt-2 text-primary"></i>
-              <div class="stats">
+        <div class="stats-grid">
+          <!-- Total Students -->
+          <div class="stat-card" data-type="total" onclick="openModal('total')">
+            <div class="stat-card-content">
+              <i class="fas fa-users stat-icon"></i>
+              <div class="stat-info">
                 <div class="stat-label">Total Students</div>
-                <div class="stat-value">{{ total_records or 0 }}</div>
-              </div>
-            </div>
-
-            <!-- Single Career Counselling -->
-            <div
-              class="stat-card"
-              data-type="single_counselling"
-              onclick="openModal('single_counselling')"
-            >
-              <i class="fas fa-user fa-2x mt-2 text-primary"></i>
-              <div class="stats">
-                <div class="stat-label">
-                  One to One <br />Career Counselling
-                </div>
-                <div class="stat-value">
-                  {{ training_counts.single_completed or 0 }}
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ total_records or 0 }}</div>
+                  <div class="stat-percentage">100%</div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Group Career Counselling -->
-            <div
-              class="stat-card"
-              data-type="group_counselling"
-              onclick="openModal('group_counselling')"
-            >
-              <i class="fas fa-users fa-2x mt-2 text-primary"></i>
-              <div class="stats">
-                <div class="stat-label">Group <br />Career Counselling</div>
-                <div class="stat-value">
-                  {{ training_counts.group_completed or 0 }}
+          <!-- Single Career Counselling -->
+          <div class="stat-card" data-type="single_counselling" onclick="openModal('single_counselling')">
+            <div class="stat-card-content">
+              <i class="fas fa-user stat-icon"></i>
+              <div class="stat-info">
+                <div class="stat-label">One to One Career Counselling</div>
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ training_counts.single_completed or 0 }}</div>
+                  <div class="stat-percentage">
+                    {% if total_records and total_records > 0 %}
+                      {{ "%.1f"|format((training_counts.single_completed or 0) * 100.0 / total_records) }}%
+                    {% else %}
+                      0.0%
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- OJT Status -->
-            <div class="stat-card" data-type="ojt" onclick="openModal('ojt')">
-              <i class="fas fa-briefcase fa-2x mt-2 text-primary"></i>
-              <div class="stats">
+          <!-- Group Career Counselling -->
+          <div class="stat-card" data-type="group_counselling" onclick="openModal('group_counselling')">
+            <div class="stat-card-content">
+              <i class="fas fa-users stat-icon"></i>
+              <div class="stat-info">
+                <div class="stat-label">Group Career Counselling</div>
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ training_counts.group_completed or 0 }}</div>
+                  <div class="stat-percentage">
+                    {% if total_records and total_records > 0 %}
+                      {{ "%.1f"|format((training_counts.group_completed or 0) * 100.0 / total_records) }}%
+                    {% else %}
+                      0.0%
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OJT Status -->
+          <div class="stat-card" data-type="ojt" onclick="openModal('ojt')">
+            <div class="stat-card-content">
+              <i class="fas fa-briefcase stat-icon"></i>
+              <div class="stat-info">
                 <div class="stat-label">OJT Status</div>
-                <div class="stat-value">
-                  {{ training_counts.ojt_completed or 0 }}
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ training_counts.ojt_completed or 0 }}</div>
+                  <div class="stat-percentage">
+                    {% if total_records and total_records > 0 %}
+                      {{ "%.1f"|format((training_counts.ojt_completed or 0) * 100.0 / total_records) }}%
+                    {% else %}
+                      0.0%
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Guest Lecture -->
-            <div
-              class="stat-card"
-              data-type="guest_lecture"
-              onclick="openModal('guest_lecture')"
-            >
-              <i class="fas fa-chalkboard-teacher fa-2x mt-2 text-primary"></i>
-              <div class="stats">
+          <!-- Guest Lecture -->
+          <div class="stat-card" data-type="guest_lecture" onclick="openModal('guest_lecture')">
+            <div class="stat-card-content">
+              <i class="fas fa-chalkboard-teacher stat-icon"></i>
+              <div class="stat-info">
                 <div class="stat-label">Guest Lecture</div>
-                <div class="stat-value">
-                  {{ training_counts.guest_lecture_completed or 0 }}
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ training_counts.guest_lecture_completed or 0 }}</div>
+                  <div class="stat-percentage">
+                    {% if total_records and total_records > 0 %}
+                      {{ "%.1f"|format((training_counts.guest_lecture_completed or 0) * 100.0 / total_records) }}%
+                    {% else %}
+                      0.0%
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Industrial Visit -->
-            <div
-              class="stat-card"
-              data-type="industrial_visit"
-              onclick="openModal('industrial_visit')"
-            >
-              <i class="fas fa-industry fa-2x mt-2 text-primary"></i>
-              <div class="stats">
+          <!-- Industrial Visit -->
+          <div class="stat-card" data-type="industrial_visit" onclick="openModal('industrial_visit')">
+            <div class="stat-card-content">
+              <i class="fas fa-industry stat-icon"></i>
+              <div class="stat-info">
                 <div class="stat-label">Industrial Visit</div>
-                <div class="stat-value">
-                  {{ training_counts.industrial_visit_completed or 0 }}
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ training_counts.industrial_visit_completed or 0 }}</div>
+                  <div class="stat-percentage">
+                    {% if total_records and total_records > 0 %}
+                      {{ "%.1f"|format((training_counts.industrial_visit_completed or 0) * 100.0 / total_records) }}%
+                    {% else %}
+                      0.0%
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Assessment -->
-            <div
-              class="stat-card"
-              data-type="assessment"
-              onclick="openModal('assessment')"
-            >
-              <i class="fas fa-clipboard-check fa-2x mt-2 text-primary"></i>
-              <div class="stats">
+          <!-- Assessment -->
+          <div class="stat-card" data-type="assessment" onclick="openModal('assessment')">
+            <div class="stat-card-content">
+              <i class="fas fa-clipboard-check stat-icon"></i>
+              <div class="stat-info">
                 <div class="stat-label">Assessment</div>
-                <div class="stat-value">
-                  {{ training_counts.assessment_completed or 0 }}
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ training_counts.assessment_completed or 0 }}</div>
+                  <div class="stat-percentage">
+                    {% if total_records and total_records > 0 %}
+                      {{ "%.1f"|format((training_counts.assessment_completed or 0) * 100.0 / total_records) }}%
+                    {% else %}
+                      0.0%
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- School Enrolled -->
-            <div
-              class="stat-card"
-              data-type="school"
-              onclick="openModal('school')"
-            >
-              <i class="fas fa-graduation-cap fa-2x mt-2 text-primary"></i>
-              <div class="stats">
-                <div class="stat-label">School Enrolled</div>
-                <div class="stat-value">
-                  {{ training_counts.school_enrollment_count or 0 }}
-                </div>
-              </div>
-            </div>
-            <!-- Other Training -->
-            <div
-              class="stat-card"
-              data-type="other_trainings"
-              onclick="openModal('other_trainings')"
-            >
-              <i class="fas fa-book fa-2x mt-2 text-primary"></i>
-              <div class="stats">
+          <!-- Other Training -->
+          <div class="stat-card" data-type="other_trainings" onclick="openModal('other_trainings')">
+            <div class="stat-card-content">
+              <i class="fas fa-book stat-icon"></i>
+              <div class="stat-info">
                 <div class="stat-label">Other Trainings</div>
-                <div class="stat-value">
-                  {{ training_counts.other_training_completed or 0 }}
+                <div class="stat-numbers">
+                  <div class="stat-value">{{ training_counts.other_training_completed or 0 }}</div>
+                  <div class="stat-percentage">
+                    {% if total_records and total_records > 0 %}
+                      {{ "%.1f"|format((training_counts.other_training_completed or 0) * 100.0 / total_records) }}%
+                    {% else %}
+                      0.0%
+                    {% endif %}
+                  </div>
                 </div>
               </div>
             </div>
@@ -310,7 +332,6 @@
                       <th>Industrial Visit</th>
                       <th>Assessment</th>
                       <th>Assessment Date</th>
-                      <th>School Enrollment</th>
                       <th>Total Days</th>
                       <th>Attendance</th>
                       <th>Other Training</th>
@@ -365,7 +386,6 @@
                   <th>Industrial Visit</th>
                   <th>Assessment</th>
                   <th>Assessment Date</th>
-                  <th>School Enrollment</th>
                   <th>Total Days</th>
                   <th>Attendance</th>
                   <th>Other Training</th>
@@ -445,16 +465,8 @@
                     {{ student.assessment_date.strftime('%d-%m-%Y') if
                     student.assessment_date else '' }}
                   </td>
-                  <td>
-                    <span
-                      class="status-badge {% if student.school_enrollment and student.school_enrollment != 'Not Enrolled' %}status-completed{% else %}status-not-completed{% endif %}"
-                    >
-                      {{ student.school_enrollment or 'Not Enrolled' }}
-                    </span>
-                  </td>
                   <td>{{ student.total_days or 0 }}</td>
                   <td>{{ student.attendance or 0 }}</td>
-                  <!-- In admin_dashboard.html -->
                   <td>
                     <span
                       class="status-badge {% if student.other_trainings and student.other_trainings != 'Not Completed' %}status-completed{% else %}status-not-completed{% endif %}"
@@ -471,7 +483,7 @@
                 </tr>
                 {% endfor %} {% else %}
                 <tr>
-                  <td colspan="28" class="text-center">No records found</td>
+                  <td colspan="26" class="text-center">No records found</td>
                 </tr>
                 {% endif %}
               </tbody>
@@ -625,14 +637,12 @@
         // Set modal title based on type
         const titles = {
           total: "All Students",
-          single_counselling:
-            "Students with Single Career Counselling Completed",
+          single_counselling: "Students with Single Career Counselling Completed",
           group_counselling: "Students with Group Career Counselling Completed",
           ojt: "Students with OJT Completed",
           guest_lecture: "Students with Guest Lecture Completed",
           industrial_visit: "Students with Industrial Visit Completed",
           assessment: "Students with Assessment Completed",
-          school: "Students Enrolled in School",
           other_trainings: "Students with Other Training Completed",
         };
 
@@ -663,7 +673,7 @@
       ) {
         const tableBody = document.getElementById("modalTableBody");
         tableBody.innerHTML =
-          '<tr><td colspan="28" class="text-center">Loading data...</td></tr>';
+          '<tr><td colspan="27" class="text-center">Loading data...</td></tr>';
 
         // AJAX request to get filtered data
         fetch(
@@ -678,7 +688,7 @@
           .then((data) => {
             if (data.length === 0) {
               tableBody.innerHTML =
-                '<tr><td colspan="28" class="text-center">No records found</td></tr>';
+                '<tr><td colspan="27" class="text-center">No records found</td></tr>';
               return;
             }
 
@@ -769,20 +779,6 @@
                                     </span>
                                 </td>
                                 <td>${student.assessment_date || ""}</td>
-                                <td>
-                                    <span class="status-badge ${
-                                      student.school_enrollment &&
-                                      student.school_enrollment !==
-                                        "Not Enrolled"
-                                        ? "status-completed"
-                                        : "status-not-completed"
-                                    }">
-                                        ${
-                                          student.school_enrollment ||
-                                          "Not Enrolled"
-                                        }
-                                    </span>
-                                </td>
                                 <td>${student.total_days || 0}</td>
                                 <td>${student.attendance || 0}</td>
 
@@ -814,7 +810,7 @@
           .catch((error) => {
             console.error("Error:", error);
             tableBody.innerHTML =
-              '<tr><td colspan="28" class="text-center">Error loading data</td></tr>';
+              '<tr><td colspan="27" class="text-center">Error loading data</td></tr>';
           });
       }
 
