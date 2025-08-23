@@ -437,7 +437,6 @@ def update_profile():
             'assessment': assessment,
             'group_counselling': group_counselling,
             'single_counselling': single_counselling,
-            'school_enrollment': school_name,
             'udsi': udsi,
             'other_trainings': other_trainings,
             'ifsc': ifsc,
@@ -688,7 +687,7 @@ def dashboard():
         
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
-            SELECT attendance, single_counselling, group_counselling,total_days, ojt, industrial_visit, assessment, guest_lecture,school_enrollment,other_trainings
+            SELECT attendance, single_counselling, group_counselling,total_days, ojt, industrial_visit, assessment, guest_lecture,other_trainings
             FROM student_training 
             WHERE can_id = %s
         ''', (can_id,))
@@ -831,7 +830,7 @@ def admin_dashboard():
             SELECT 
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                st.industrial_visit, st.assessment, st.assessment_date, 
                 st.trade, st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
@@ -863,13 +862,6 @@ def admin_dashboard():
             query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
             params.append(current_filters['ojt_status'].strip())
         
-        # Handle school enrollment filter
-        if current_filters['school']:
-            if current_filters['school'] == "Enrolled":
-                query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
-            elif current_filters['school'] == "Not Enrolled":
-                query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
-        
         if current_filters['single_counselling']:
             query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
             params.append(current_filters['single_counselling'].strip())
@@ -899,7 +891,7 @@ def admin_dashboard():
             """SELECT 
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                st.industrial_visit, st.assessment, st.assessment_date, 
                 st.trade, st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc""",
             "SELECT COUNT(*)"
@@ -930,7 +922,6 @@ def admin_dashboard():
                 SUM(CASE WHEN st.guest_lecture = 'Completed' THEN 1 ELSE 0 END) AS guest_lecture_completed,
                 SUM(CASE WHEN st.industrial_visit = 'Completed' THEN 1 ELSE 0 END) AS industrial_visit_completed,
                 SUM(CASE WHEN st.assessment = 'Completed' THEN 1 ELSE 0 END) AS assessment_completed,
-                SUM(CASE WHEN st.school_enrollment IS NOT NULL AND st.school_enrollment <> '' THEN 1 ELSE 0 END) AS school_enrollment_count,
                 SUM(CASE WHEN st.other_trainings IS NOT NULL AND st.other_trainings <> 'Not Completed' THEN 1 ELSE 0 END) AS other_training_completed
             FROM students s
             JOIN student_training st ON s.can_id = st.can_id
@@ -960,12 +951,6 @@ def admin_dashboard():
         if current_filters['ojt_status']:
             training_query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
             training_params.append(current_filters['ojt_status'].strip())
-        
-        if current_filters['school']:
-            if current_filters['school'] == "Enrolled":
-                training_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
-            elif current_filters['school'] == "Not Enrolled":
-                training_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
         
         if current_filters['single_counselling']:
             training_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
@@ -1054,7 +1039,7 @@ def modal_data():
             SELECT 
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                st.industrial_visit, st.assessment, st.assessment_date, 
                 st.trade, st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
@@ -1067,9 +1052,7 @@ def modal_data():
         
         # Add training type condition
         if training_type != 'total':
-            if training_type == 'school':
-                base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
-            elif training_type == 'other_trainings':
+            if training_type == 'other_trainings':
                 base_query += " AND st.other_trainings <> 'Not Completed'"
             else:
                 base_query += f" AND st.{training_type} = %s"
@@ -1137,7 +1120,7 @@ def export_filtered_data():
                 s.can_id, s.student_name, s.father_name, s.mother_name, s.batch_id,
                 s.mobile, s.religion, s.category, s.dob, s.district, s.center, s.gender,
                 st.trade, st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture,
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
+                st.industrial_visit, st.assessment, st.assessment_date,
                 st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
@@ -1150,9 +1133,7 @@ def export_filtered_data():
         
         # Add training type condition
         if filters['type'] != 'total':
-            if filters['type'] == 'school':
-                base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
-            elif filters['type'] == 'other_trainings':
+            if filters['type'] == 'other_trainings':
                 base_query += " AND st.other_trainings <> 'Not Completed'"
             else:
                 base_query += f" AND st.{filters['type']} = %s"
@@ -1206,7 +1187,7 @@ def export_filtered_data():
                 student['ojt'], student['guest_lecture'], student['industrial_visit'],
                 student['assessment'],
                 student['assessment_date'].strftime('%d-%m-%Y') if student['assessment_date'] else '',
-                student['school_enrollment'], student['total_days'], student['attendance'],
+                student['total_days'], student['attendance'],
                 student['other_trainings'], student['aadhar'], student['account_number'],
                 student['account_holder'], student['ifsc']
             ])
