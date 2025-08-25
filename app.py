@@ -831,7 +831,8 @@ def admin_dashboard():
             SELECT 
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
+                st.udsi, 
                 st.trade, st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
@@ -1055,7 +1056,7 @@ def modal_data():
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                st.trade, st.total_days, st.attendance, st.other_trainings,
+                st.trade, st.total_days, st.attendance, st.other_trainings,st.udsi,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
             JOIN student_training st ON s.can_id = st.can_id

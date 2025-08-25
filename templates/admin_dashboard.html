@@ -305,6 +305,8 @@
                     <th>Total Days</th>
                     <th>Attendance</th>
                     <th>Post Training Progression</th>
+                    <th>Enrolled School</th>
+                    <th>UDSI Code</th>
                     <th>Aadhar</th>
                     <th>Account Number</th>
                     <th>Account Holder</th>
@@ -358,7 +360,9 @@
                 <th>Assessment Date</th>
                 <th>Total Days</th>
                 <th>Attendance</th>
-                <th>Other Training</th>
+                <th>Post Training Progression</th>
+                <th>Enrolled School</th>
+                <th>UDSI Code</th>
 
                 <!-- Bank Details Columns -->
                 <th>Aadhar</th>
@@ -368,7 +372,8 @@
               </tr>
             </thead>
             <tbody>
-              {% if students %} {% for student in students %}
+              {% if students %}
+              {% for student in students %}
               <tr>
                 <!-- Students Data -->
                 <td>{{ student.can_id or '' }}</td>
@@ -379,10 +384,7 @@
                 <td>{{ student.mobile or '' }}</td>
                 <td>{{ student.religion or '' }}</td>
                 <td>{{ student.category or '' }}</td>
-                <td>
-                  {{ student.dob.strftime('%d-%m-%Y') if student.dob else ''
-                  }}
-                </td>
+                <td>{{ student.dob.strftime('%d-%m-%Y') if student.dob else '' }}</td>
                 <td>{{ student.district or '' }}</td>
                 <td>{{ student.center or '' }}</td>
                 <td>{{ student.gender or '' }}</td>
@@ -425,10 +427,7 @@
                     {{ student.assessment or 'Not Completed' }}
                   </span>
                 </td>
-                <td>
-                  {{ student.assessment_date.strftime('%d-%m-%Y') if
-                  student.assessment_date else '' }}
-                </td>
+                <td>{{ student.assessment_date.strftime('%d-%m-%Y') if student.assessment_date else '' }}</td>
                 <td>{{ student.total_days or 0 }}</td>
                 <td>{{ student.attendance or 0 }}</td>
                 <td>
@@ -438,18 +437,22 @@
                   </span>
                 </td>
 
-                <!-- Bank Data -->
+                <!-- Extra Data -->
+                <td>{{ student.school_enrollment or '' }}</td>
+                <td>{{ student.udsi or '' }}</td>
                 <td>{{ student.aadhar or '' }}</td>
                 <td>{{ student.account_number or '' }}</td>
                 <td>{{ student.account_holder or '' }}</td>
                 <td>{{ student.ifsc or '' }}</td>
               </tr>
-              {% endfor %} {% else %}
+              {% endfor %}
+              {% else %}
               <tr>
-                <td colspan="26" class="text-center">No records found</td>
+                <td colspan="28" class="text-center">No records found</td>
               </tr>
               {% endif %}
             </tbody>
+
           </table>
         </div>
 
@@ -617,7 +620,7 @@
     ) {
       const tableBody = document.getElementById("modalTableBody");
       tableBody.innerHTML =
-        '<tr><td colspan="27" class="text-center">Loading data...</td></tr>';
+        '<tr><td colspan="29" class="text-center">Loading data...</td></tr>';
 
       // AJAX request to get filtered data
       fetch(
@@ -632,7 +635,7 @@
         .then((data) => {
           if (data.length === 0) {
             tableBody.innerHTML =
-              '<tr><td colspan="27" class="text-center">No records found</td></tr>';
+              '<tr><td colspan="29" class="text-center">No records found</td></tr>';
             return;
           }
 
@@ -729,6 +732,8 @@
                                     </span>
                                 </td>
                                 <!-- Bank Data -->
+                                <td>${student.school_enrollment || ""}</td>
+                                <td>${student.udsi || ""}</td>
                                 <td>${student.aadhar || ""}</td>
                                 <td>${student.account_number || ""}</td>
                                 <td>${student.account_holder || ""}</td>
@@ -742,7 +747,7 @@
         .catch((error) => {
           console.error("Error:", error);
           tableBody.innerHTML =
-            '<tr><td colspan="27" class="text-center">Error loading data</td></tr>';
+            '<tr><td colspan="29" class="text-center">Error loading data</td></tr>';
         });
     }
 
