@@ -93,7 +93,7 @@
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     -webkit-background-clip: text;
@@ -104,11 +104,11 @@
 }
 
 .stat-percentage {
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--primary);
     background: rgba(67, 97, 238, 0.1);
-    padding: 4px 12px;
+    padding: 3px 30px;
     border-radius: 20px;
     border: 1px solid rgba(67, 97, 238, 0.2);
     transition: all 0.3s ease;
@@ -117,26 +117,6 @@
 .stat-card:hover .stat-percentage {
     background: rgba(67, 97, 238, 0.15);
     transform: scale(1.05);
-}
-
-/* Special styling for total students card */
-.stat-card[data-type="total"] {
-    background: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(72, 149, 239, 0.05) 100%);
-    border: 2px solid rgba(67, 97, 238, 0.2);
-}
-
-.stat-card[data-type="total"] .stat-value {
-    font-size: 2.2rem;
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.stat-card[data-type="total"] .stat-percentage {
-    background: rgba(67, 97, 238, 0.15);
-    color: var(--primary-dark);
-    border-color: rgba(67, 97, 238, 0.3);
 }
 
 /* Container adjustments */
@@ -352,7 +332,7 @@
 }
 
 /* Filters Section */
-.filters-container {
+.filters-container {    
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(245, 247, 255, 0.92) 100%);
     border-radius: var(--border-radius-lg);
     padding: var(--space-lg);
@@ -363,8 +343,8 @@
 }
 
 .filters-container h3 {
-    font-size: 1.3rem;
-    margin-bottom: var(--space-md);
+    font-size: 1.2rem;
+    margin-bottom: var(--space-lg);
     color: var(--primary-dark);
     display: flex;
     align-items: center;
