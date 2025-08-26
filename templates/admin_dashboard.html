@@ -265,6 +265,30 @@
                     </select>
                   </div>
                 </div>
+                
+            <!-- Gender Statistics Section -->
+            <div class="gender-stats" id="genderStats">
+              <div class="gender-stat-card male">
+                <div class="gender-label">Male Students</div>
+                <div class="gender-count" id="maleCount">650</div>
+                <div class="gender-percentage" id="malePercentage">52.0%</div>
+              </div>
+              <div class="gender-stat-card female">
+                <div class="gender-label">Female Students</div>
+                <div class="gender-count" id="femaleCount">580</div>
+                <div class="gender-percentage" id="femalePercentage">46.4%</div>
+              </div>
+              <div class="gender-stat-card other">
+                <div class="gender-label">Other</div>
+                <div class="gender-count" id="otherCount">20</div>
+                <div class="gender-percentage" id="otherPercentage">1.6%</div>
+              </div>
+              <div class="gender-stat-card total">
+                <div class="gender-label">Total Students</div>
+                <div class="gender-count" id="totalCount">1,250</div>
+                <div class="gender-percentage">100%</div>
+              </div>
+            </div>
                 <div class="filter-actions">
                   <button type="submit" class="btn btn-primary">
                     <i class="fas fa-filter btn-icon"></i> Apply Filters
@@ -278,6 +302,7 @@
                 </div>
               </form>
             </div>
+
             <div class="modal-table-container">
               <table>
                 <thead>
@@ -611,6 +636,34 @@
       document.getElementById("trainingModal").style.display = "none";
     }
 
+    // Function to update gender statistics
+    function updateGenderStats(students) {
+      let maleCount = 0;
+      let femaleCount = 0;
+      let otherCount = 0;
+      const total = students.length;
+      
+      students.forEach(student => {
+        if (student.gender === 'Male') maleCount++;
+        else if (student.gender === 'Female') femaleCount++;
+        else otherCount++;
+      });
+      
+      // Update the UI
+      document.getElementById('maleCount').textContent = maleCount;
+      document.getElementById('femaleCount').textContent = femaleCount;
+      document.getElementById('otherCount').textContent = otherCount;
+      document.getElementById('totalCount').textContent = total;
+      
+      // Calculate and update percentages
+      document.getElementById('malePercentage').textContent = 
+        total > 0 ? `${((maleCount / total) * 100).toFixed(1)}%` : '0%';
+      document.getElementById('femalePercentage').textContent = 
+        total > 0 ? `${((femaleCount / total) * 100).toFixed(1)}%` : '0%';
+      document.getElementById('otherPercentage').textContent = 
+        total > 0 ? `${((otherCount / total) * 100).toFixed(1)}%` : '0%';
+    }
+
     function loadModalData(
       type,
       district = "",
@@ -621,6 +674,15 @@
       const tableBody = document.getElementById("modalTableBody");
       tableBody.innerHTML =
         '<tr><td colspan="29" class="text-center">Loading data...</td></tr>';
+
+      // Reset gender stats while loading
+      document.getElementById('maleCount').textContent = '0';
+      document.getElementById('femaleCount').textContent = '0';
+      document.getElementById('otherCount').textContent = '0';
+      document.getElementById('totalCount').textContent = '0';
+      document.getElementById('malePercentage').textContent = '0%';
+      document.getElementById('femalePercentage').textContent = '0%';
+      document.getElementById('otherPercentage').textContent = '0%';
 
       // AJAX request to get filtered data
       fetch(

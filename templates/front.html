@@ -203,6 +203,24 @@
         });
       });
 
+      function adjustSlideHeights() {
+    if (window.innerWidth <= 768) {
+        const slides = document.querySelectorAll('.slide');
+        const activeSlide = document.querySelector('.slide.active');
+        
+        if (activeSlide) {
+            const activeHeight = activeSlide.scrollHeight;
+            document.querySelector('.slideshow-container').style.minHeight = activeHeight + 80 + 'px';
+        }
+    } else {
+        document.querySelector('.slideshow-container').style.minHeight = '500px';
+    }
+}
+
+// Call on load and resize
+window.addEventListener('load', adjustSlideHeights);
+window.addEventListener('resize', adjustSlideHeights);
+
       // Slideshow functionality
       const slides = document.querySelectorAll(".slide");
       const dots = document.querySelectorAll(".nav-dot");
@@ -219,6 +237,7 @@
         dots[index].classList.add("active");
 
         currentSlide = index;
+        setTimeout(adjustSlideHeights, 50);
       }
 
       function nextSlide() {

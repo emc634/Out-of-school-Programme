@@ -405,6 +405,84 @@
     flex-wrap: wrap;
 }
 
+.gender-stats {
+      display: flex;
+      gap: 15px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+    
+    .gender-stat-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      flex: 1;
+      min-width: 120px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+      border-left: 4px solid #007bff;
+    }
+
+    .gender-stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .gender-stat-card.male {
+      border-left-color: #007bff;
+    }
+    
+    .gender-stat-card.female {
+      border-left-color: #e83e8c;
+    }
+    
+    .gender-stat-card.other {
+      border-left-color: #6f42c1;
+    }
+    
+    .gender-stat-card.total {
+      border-left-color: #28a745;
+      background: #f0fff4;
+    }
+    
+    .gender-label {
+      font-size: 14px;
+      color: #6c757d;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    .gender-count {
+      font-size: 20px;
+      font-weight: bold;
+      color: #343a40;
+    }
+
+    .gender-stat-card.male .gender-count {
+      color: #007bff;
+    }
+
+    .gender-stat-card.female .gender-count {
+      color: #e83e8c;
+    }
+
+    .gender-stat-card.other .gender-count {
+      color: #6f42c1;
+    }
+
+    .gender-stat-card.total .gender-count {
+      color: #28a745;
+    }
+    
+    .gender-percentage {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: 3px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
 /* Data Table Section */
 .data-table-container {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(245, 247, 255, 0.92) 100%);
