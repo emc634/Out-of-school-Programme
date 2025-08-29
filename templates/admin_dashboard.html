@@ -272,23 +272,22 @@
             <div class="gender-stats" id="genderStats">
               <div class="gender-stat-card total">
                 <div class="gender-label">Total Students</div>
-                <div class="gender-count" id="totalCount">1,250</div>
-                <div class="gender-percentage">100%</div>
+                <div class="gender-count" id="totalCount">0</div>
               </div>
               <div class="gender-stat-card male">
                 <div class="gender-label">Male Students</div>
-                <div class="gender-count" id="maleCount">650</div>
-                <div class="gender-percentage" id="malePercentage">52.0%</div>
+                <div class="gender-count" id="maleCount">0</div>
+                <div class="gender-percentage" id="malePercentage">0%</div>
               </div>
               <div class="gender-stat-card female">
                 <div class="gender-label">Female Students</div>
-                <div class="gender-count" id="femaleCount">580</div>
-                <div class="gender-percentage" id="femalePercentage">46.4%</div>
+                <div class="gender-count" id="femaleCount">0</div>
+                <div class="gender-percentage" id="femalePercentage">0%</div>
               </div>
               <div class="gender-stat-card other">
                 <div class="gender-label">Other</div>
-                <div class="gender-count" id="otherCount">20</div>
-                <div class="gender-percentage" id="otherPercentage">1.6%</div>
+                <div class="gender-count" id="otherCount">0</div>
+                <div class="gender-percentage" id="otherPercentage">0%</div>
               </div>
             </div>
                 <div class="filter-actions">
@@ -628,6 +627,15 @@
       document.getElementById("modalCenter").innerHTML =
         '<option value="">All Centers</option>';
       document.getElementById("modalCenter").disabled = true;
+      
+      // Reset gender stats to loading state
+      updateGenderStats({
+        total: 0,
+        male: { count: 0, percentage: 0 },
+        female: { count: 0, percentage: 0 },
+        other: { count: 0, percentage: 0 }
+      });
+      
       loadModalData(type);
 
       // Show modal
@@ -639,31 +647,17 @@
     }
 
     // Function to update gender statistics
-    function updateGenderStats(students) {
-      let maleCount = 0;
-      let femaleCount = 0;
-      let otherCount = 0;
-      const total = students.length;
+    function updateGenderStats(genderStats) {
+      // Update the UI with the provided statistics
+      document.getElementById('totalCount').textContent = genderStats.total;
+      document.getElementById('maleCount').textContent = genderStats.male.count;
+      document.getElementById('femaleCount').textContent = genderStats.female.count;
+      document.getElementById('otherCount').textContent = genderStats.other.count;
       
-      students.forEach(student => {
-        if (student.gender === 'Male') maleCount++;
-        else if (student.gender === 'Female') femaleCount++;
-        else otherCount++;
-      });
-      
-      // Update the UI
-      document.getElementById('maleCount').textContent = maleCount;
-      document.getElementById('femaleCount').textContent = femaleCount;
-      document.getElementById('otherCount').textContent = otherCount;
-      document.getElementById('totalCount').textContent = total;
-      
-      // Calculate and update percentages
-      document.getElementById('malePercentage').textContent = 
-        total > 0 ? `${((maleCount / total) * 100).toFixed(1)}%` : '0%';
-      document.getElementById('femalePercentage').textContent = 
-        total > 0 ? `${((femaleCount / total) * 100).toFixed(1)}%` : '0%';
-      document.getElementById('otherPercentage').textContent = 
-        total > 0 ? `${((otherCount / total) * 100).toFixed(1)}%` : '0%';
+      // Update percentages
+      document.getElementById('malePercentage').textContent = `${genderStats.male.percentage}%`;
+      document.getElementById('femalePercentage').textContent = `${genderStats.female.percentage}%`;
+      document.getElementById('otherPercentage').textContent = `${genderStats.other.percentage}%`;
     }
 
     function loadModalData(
@@ -678,13 +672,12 @@
         '<tr><td colspan="29" class="text-center">Loading data...</td></tr>';
 
       // Reset gender stats while loading
-      document.getElementById('maleCount').textContent = '0';
-      document.getElementById('femaleCount').textContent = '0';
-      document.getElementById('otherCount').textContent = '0';
-      document.getElementById('totalCount').textContent = '0';
-      document.getElementById('malePercentage').textContent = '0%';
-      document.getElementById('femalePercentage').textContent = '0%';
-      document.getElementById('otherPercentage').textContent = '0%';
+      updateGenderStats({
+        total: 0,
+        male: { count: 0, percentage: 0 },
+        female: { count: 0, percentage: 0 },
+        other: { count: 0, percentage: 0 }
+      });
 
       // AJAX request to get filtered data
       fetch(
@@ -696,15 +689,27 @@
           }
           return response.json();
         })
-        .then((data) => {
-          if (data.length === 0) {
+        .then((responseData) => {
+          const { students, gender_stats } = responseData;
+          
+          if (students.length === 0) {
             tableBody.innerHTML =
               '<tr><td colspan="29" class="text-center">No records found</td></tr>';
+            // Update gender stats with zero values
+            updateGenderStats({
+              total: 0,
+              male: { count: 0, percentage: 0 },
+              female: { count: 0, percentage: 0 },
+              other: { count: 0, percentage: 0 }
+            });
             return;
           }
 
+          // Update gender statistics
+          updateGenderStats(gender_stats);
+
           let html = "";
-          data.forEach((student) => {
+          students.forEach((student) => {
             html += `
                             <tr>
                                 <!-- Students Data -->
@@ -812,6 +817,13 @@
           console.error("Error:", error);
           tableBody.innerHTML =
             '<tr><td colspan="29" class="text-center">Error loading data</td></tr>';
+          // Reset gender stats on error
+          updateGenderStats({
+            total: 0,
+            male: { count: 0, percentage: 0 },
+            female: { count: 0, percentage: 0 },
+            other: { count: 0, percentage: 0 }
+          });
         });
     }
 

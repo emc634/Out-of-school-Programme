@@ -1056,7 +1056,7 @@ def modal_data():
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                st.trade, st.total_days, st.attendance, st.other_trainings,st.udsi,
+                st.trade, st.total_days, st.attendance, st.other_trainings, st.udsi,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
             JOIN student_training st ON s.can_id = st.can_id
@@ -1093,8 +1093,20 @@ def modal_data():
             base_query += " AND st.trade = %s"
             params.append(trade)
         
+        # Execute main query for student data
         cursor.execute(base_query, params)
         students = cursor.fetchall()
+        
+        # Calculate gender statistics
+        total_count = len(students)
+        male_count = sum(1 for student in students if student.get('gender', '').lower() == 'male')
+        female_count = sum(1 for student in students if student.get('gender', '').lower() == 'female')
+        other_count = total_count - male_count - female_count
+        
+        # Calculate percentages
+        male_percentage = (male_count / total_count * 100) if total_count > 0 else 0
+        female_percentage = (female_count / total_count * 100) if total_count > 0 else 0
+        other_percentage = (other_count / total_count * 100) if total_count > 0 else 0
         
         # Convert to list of dicts for JSON serialization
         result = []
@@ -1106,12 +1118,38 @@ def modal_data():
             if student_dict.get('assessment_date'):
                 student_dict['assessment_date'] = student_dict['assessment_date'].strftime('%d-%m-%Y')
             result.append(student_dict)
-            
-        return jsonify(result)
+        
+        # Return both student data and gender statistics
+        return jsonify({
+            'students': result,
+            'gender_stats': {
+                'total': total_count,
+                'male': {
+                    'count': male_count,
+                    'percentage': round(male_percentage, 1)
+                },
+                'female': {
+                    'count': female_count,
+                    'percentage': round(female_percentage, 1)
+                },
+                'other': {
+                    'count': other_count,
+                    'percentage': round(other_percentage, 1)
+                }
+            }
+        })
         
     except Exception as e:
         print("Modal data error:", str(e))
-        return jsonify([])
+        return jsonify({
+            'students': [],
+            'gender_stats': {
+                'total': 0,
+                'male': {'count': 0, 'percentage': 0},
+                'female': {'count': 0, 'percentage': 0},
+                'other': {'count': 0, 'percentage': 0}
+            }
+        })
     finally:
         if 'cursor' in locals():
             cursor.close()
