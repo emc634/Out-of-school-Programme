@@ -844,17 +844,15 @@ def admin_dashboard():
         
         # Base query joining all three tables
         query = """
-            SELECT 
-                s.*, 
-                st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
-                st.udsi, 
-                st.trade, st.total_days, st.attendance, st.other_trainings,
-                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
-            FROM students s
-            JOIN student_training st ON s.can_id = st.can_id
-            JOIN bank_details bd ON s.can_id = bd.can_id
-            WHERE 1=1
+        SELECT 
+            s.*, 
+            st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
+            st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
+            st.udsi, st.trade, st.total_days, st.attendance, st.other_trainings,
+            bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+        FROM students s
+        LEFT JOIN student_training st ON s.can_id = st.can_id
+        LEFT JOIN bank_details bd ON s.can_id = bd.can_id
         """
         
         params = []
