@@ -95,8 +95,8 @@ def student_signup():
             flash("Password didn't match, Please Try again", "error")
             return redirect(url_for("student_signup"))
         
-        if len(mobile)>10:
-            flash("Your Phone No. is invalid, Please recheck it again", "error")
+        if not mobile.isdigit() or len(mobile) != 10:
+            flash("Mobile number must be exactly 10 digits", "error")
             return redirect(url_for("student_signup"))
             
         
@@ -112,26 +112,42 @@ def student_signup():
         password_hash = password
         
         conn = None
+        # In student_signup route, replace the database section with:
         try:
             conn = get_db_connection()
             if conn is None:
                 flash("Database connection failed. Please try again.", "error")
                 return redirect(url_for("student_signup"))
+            
             cursor = conn.cursor()
+            
+            # Start transaction explicitly
+            conn.autocommit = False
+            
             cursor.execute(
-                "INSERT INTO students (can_id, student_name,batch_id, father_name, mother_name, mobile, religion, category, dob, district, center,gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (can_id, student_name,batch_id, father_name, mother_name, mobile, religion, category, dob, district, center, gender,password_hash)
+                "INSERT INTO students (can_id, student_name, batch_id, father_name, mother_name, mobile, religion, category, dob, district, center, gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (can_id, student_name, batch_id, father_name, mother_name, mobile, religion, category, dob, district, center, gender, password_hash)
             )
+            
             cursor.execute(
-                "INSERT INTO student_training (can_id, trade,total_days) VALUES (%s, %s, %s)",
-                (can_id,trade,course_days[trade])
+                "INSERT INTO student_training (can_id, trade, total_days) VALUES (%s, %s, %s)",
+                (can_id, trade, course_days[trade])
             )
+            
             conn.commit()
+            
+            # Set session AFTER successful database operations
+            session['can_id'] = can_id
             
             flash("Account created successfully", "success")
             return redirect(url_for("student_profile"))
             
-        except IntegrityError as e:
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            print(f"Database error: {str(e)}")  # Add for debugging
+            # ... rest of exception handling
+             
             # Handle duplicate primary key (can_id) or NOT NULL violations
             if 'duplicate key value violates unique constraint' in str(e):
                 flash("Candidate ID or Mobile No. already exists. Please use a different ID or Mobile No..", "error")
