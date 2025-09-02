@@ -171,14 +171,34 @@
                         <p class="section-subtitle">Detailed progress reports and upcoming activities will be displayed
                             here</p>
                     </div>
+                    <!-- New Drive Integration Section -->
+                    <div class="drive-container">
+                        <div class="drive-header">
+                            <h3>Study Materials</h3>
+                            <a href="https://drive.google.com/drive/folders/1rr0DCn-z_BLg5x5X0C8jsQRwiIhhheK1"
+                                target="_blank" class="drive-folder-link">
+                                Download your Syllabus
+                            </a>
+                        </div>
+
+                        <div class="files-grid" id="driveFiles">
+                            <!-- Files will be dynamically loaded here -->
+                            <div class="no-files">
+                                <i class="fas fa-cloud-download-alt"
+                                    style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
+                                <p>Loading available files...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-              <footer class="app-footer">
-        <div class="footer-content">
-          <span>Powered by</span>
-            <img src="{{ url_for('static', filename='Images/company_logo.png') }}" alt="VALEUR FABTEX Logo" class="footer-logo-img" />
-        </div>
-      </footer>
+            <footer class="app-footer">
+                <div class="footer-content">
+                    <span>Powered by</span>
+                    <img src="{{ url_for('static', filename='Images/company_logo.png') }}" alt="VALEUR FABTEX Logo"
+                        class="footer-logo-img" />
+                </div>
+            </footer>
     </main>
 
     <script>
@@ -248,14 +268,14 @@
 
             // Send to Flask
             fetch('/dashboard', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        attendedDays: attendedDays
-                    })
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    attendedDays: attendedDays
                 })
+            })
                 .then(response => {
                     if (response.ok) {
                         console.log('Attendance updated successfully');
@@ -325,6 +345,66 @@
                     setTimeout(() => alert.remove(), 500);
                 }, 3000);
             });
+        });
+
+        // New function to load drive files
+        function loadDriveFiles() {
+            // This is a simplified implementation
+            // In a real scenario, you would use the Google Drive API
+
+            const filesContainer = document.getElementById('driveFiles');
+
+            filesContainer.innerHTML = '';
+
+            if (files.length === 0) {
+                filesContainer.innerHTML = `
+                    <div class="no-files">
+                        <i class="fas fa-folder-open" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
+                        <p>No files available yet. Check the drive folder for updates.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Add file cards
+            files.forEach(file => {
+                const icon = getFileIcon(file.type);
+
+                const fileCard = document.createElement('div');
+                fileCard.className = 'file-card';
+                fileCard.innerHTML = `
+                    <div class="file-icon">${icon}</div>
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-meta">${file.type.toUpperCase()} · ${file.size}</div>
+                    <a href="${file.url}" target="_blank" class="file-download">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                `;
+
+                filesContainer.appendChild(fileCard);
+            });
+        }
+
+        function getFileIcon(type) {
+            const icons = {
+                'pdf': '<i class="fas fa-file-pdf"></i>',
+                'doc': '<i class="fas fa-file-word"></i>',
+                'docx': '<i class="fas fa-file-word"></i>',
+                'ppt': '<i class="fas fa-file-powerpoint"></i>',
+                'pptx': '<i class="fas fa-file-powerpoint"></i>',
+                'xls': '<i class="fas fa-file-excel"></i>',
+                'xlsx': '<i class="fas fa-file-excel"></i>',
+                'zip': '<i class="fas fa-file-archive"></i>',
+                'default': '<i class="fas fa-file"></i>'
+            };
+
+            return icons[type] || icons.default;
+        }
+
+        // Load files when page is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            // Your existing DOMContentLoaded code
+            loadDriveFiles();
         });
     </script>
 </body>
