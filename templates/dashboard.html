@@ -239,6 +239,11 @@
         }
 
         markBtn.addEventListener('click', function () {
+
+            if (attendedDays >= totalDays) {
+                alert("You have already completed all training days!");
+                return;
+            }
             const today = new Date().toDateString();
             const lastMarked = sessionStorage.getItem('lastMarked');
 

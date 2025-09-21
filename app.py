@@ -674,8 +674,8 @@ def dashboard():
                 
                 # Update attendance
                 cursor.execute(
-                    'UPDATE student_training SET attendance = %s WHERE can_id = %s',
-                    (attended_days, can_id)
+                    'UPDATE student_training SET attendance = %s, last_attendance_date = %s WHERE can_id = %s',
+                    (attended_days,date.today(), can_id)
                 )
                 
                 if cursor.rowcount == 0:
@@ -815,7 +815,6 @@ def admin_login():
 @app.route('/admin_dashboard')
 @admin_required
 def admin_dashboard():
-    # Collect filters directly from request args (no session persistence)
     current_filters = {
         'trade': request.args.get('trade'),
         'gender': request.args.get('gender'),
@@ -830,102 +829,9 @@ def admin_dashboard():
         'other_trainings': request.args.get('other_trainings'),
     }
 
-    # Pagination
-    page = request.args.get('page', 1, type=int)
-    per_page = 25
-
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
-
-        # Base query
-        query = """
-            SELECT 
-                s.*, 
-                st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
-                st.udsi, st.trade, st.total_days, st.attendance, st.other_trainings,
-                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
-            FROM students s
-            LEFT JOIN student_training st ON s.can_id = st.can_id
-            LEFT JOIN bank_details bd ON s.can_id = bd.can_id
-            WHERE 1=1
-        """
-        params = []
-
-        # Apply filters only if present in request
-        if current_filters['trade']:
-            query += " AND LOWER(TRIM(st.trade)) = LOWER(%s)"
-            params.append(current_filters['trade'].strip())
-
-        if current_filters['gender']:
-            query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
-            params.append(current_filters['gender'].strip())
-
-        if current_filters['district']:
-            query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
-            params.append(current_filters['district'].strip())
-
-        if current_filters['center']:
-            query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
-            params.append(current_filters['center'].strip())
-
-        if current_filters['ojt_status']:
-            query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
-            params.append(current_filters['ojt_status'].strip())
-
-        if current_filters['school']:
-            if current_filters['school'] == "Enrolled":
-                query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
-            elif current_filters['school'] == "Not Enrolled":
-                query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
-
-        if current_filters['single_counselling']:
-            query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
-            params.append(current_filters['single_counselling'].strip())
-
-        if current_filters['group_counselling']:
-            query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
-            params.append(current_filters['group_counselling'].strip())
-
-        if current_filters['assessment']:
-            query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
-            params.append(current_filters['assessment'].strip())
-
-        if current_filters['industrial_visit']:
-            query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
-            params.append(current_filters['industrial_visit'].strip())
-
-        if current_filters['other_trainings']:
-            if current_filters['other_trainings'] == "Not Completed":
-                query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = LOWER(%s))"
-                params.append('Not Completed')
-            else:
-                query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
-                params.append(current_filters['other_trainings'].strip())
-
-        # Count query
-        count_query = query.replace(
-            """SELECT 
-                s.*, 
-                st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
-                st.udsi, st.trade, st.total_days, st.attendance, st.other_trainings,
-                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc""",
-            "SELECT COUNT(*)"
-        )
-        cursor.execute(count_query, params)
-        total_records = cursor.fetchone()[0]
-
-        # Paginated query
-        query += " ORDER BY s.can_id LIMIT %s OFFSET %s"
-        params.extend([per_page, (page - 1) * per_page])
-        cursor.execute(query, params)
-        students = cursor.fetchall()
-
-        total_pages = max(1, (total_records + per_page - 1) // per_page)
-        has_prev = page > 1
-        has_next = page < total_pages
 
         # Training counts (for statistics cards)
         training_query = """
@@ -946,49 +852,39 @@ def admin_dashboard():
         """
         training_params = []
 
-        # Reapply same filters to training counts
+        # Apply same filters as before to training_query
         if current_filters['trade']:
             training_query += " AND LOWER(TRIM(st.trade)) = LOWER(%s)"
             training_params.append(current_filters['trade'].strip())
-
         if current_filters['gender']:
             training_query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
             training_params.append(current_filters['gender'].strip())
-
         if current_filters['district']:
             training_query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
             training_params.append(current_filters['district'].strip())
-
         if current_filters['center']:
             training_query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
             training_params.append(current_filters['center'].strip())
-
         if current_filters['ojt_status']:
             training_query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
             training_params.append(current_filters['ojt_status'].strip())
-
         if current_filters['school']:
             if current_filters['school'] == "Enrolled":
                 training_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
             elif current_filters['school'] == "Not Enrolled":
                 training_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
-
         if current_filters['single_counselling']:
             training_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
             training_params.append(current_filters['single_counselling'].strip())
-
         if current_filters['group_counselling']:
             training_query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
             training_params.append(current_filters['group_counselling'].strip())
-
         if current_filters['assessment']:
             training_query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
             training_params.append(current_filters['assessment'].strip())
-
         if current_filters['industrial_visit']:
             training_query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
             training_params.append(current_filters['industrial_visit'].strip())
-
         if current_filters['other_trainings']:
             if current_filters['other_trainings'] == "Not Completed":
                 training_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = LOWER(%s))"
@@ -1000,16 +896,24 @@ def admin_dashboard():
         cursor.execute(training_query, training_params)
         training_counts = cursor.fetchone()
 
+        # Today's attendance count
+        from datetime import date
+        cursor.execute(
+            "SELECT COUNT(*) FROM student_training WHERE last_attendance_date = %s",
+            (date.today(),)
+        )
+        todays_attendance_count = cursor.fetchone()[0]
+
+        # Total students
+        cursor.execute("SELECT COUNT(*) FROM students")
+        total_records = cursor.fetchone()[0]
+
         return render_template(
             'admin_dashboard.html',
-            students=students,
-            total_records=total_records,
             training_counts=training_counts,
-            page=page,
-            total_pages=total_pages,
-            has_prev=has_prev,
-            has_next=has_next,
-            current_filters=current_filters
+            todays_attendance_count=todays_attendance_count,
+            current_filters=current_filters,
+            total_records=total_records
         )
 
     except Exception as e:
@@ -1026,15 +930,12 @@ def admin_dashboard():
             'school_enrollment_count': 0,
             'other_training_completed': 0
         }
-        return render_template("admin_dashboard.html",
-                             students=[],
-                             total_records=0,
-                             training_counts=training_counts,
-                             page=1,
-                             total_pages=1,
-                             has_prev=False,
-                             has_next=False,
-                             current_filters=current_filters)
+        return render_template(
+            "admin_dashboard.html",
+            training_counts=training_counts,
+            todays_attendance_count=0,
+            current_filters=current_filters
+        )
     finally:
         if 'cursor' in locals(): cursor.close()
         if 'conn' in locals(): conn.close()

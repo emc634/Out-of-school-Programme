@@ -14,7 +14,7 @@
   <main class="main-content">
     <div class="container">
       <div class="admin-title">
-      <h1>Admin Dashboard</h1>
+        <h1>Admin Dashboard</h1>
       </div>
       <div class="admin-header">
         <div class="admin-logo-title-container">
@@ -47,6 +47,21 @@
 
       <!-- Statistics Cards -->
       <div class="stats-grid">
+
+        <!-- Today's Attendance -->
+        <div class="stat-card" data-type="todays_attendance">
+          <div class="stat-card-content">
+            <i class="fas fa-calendar-check stat-icon"></i>
+            <div class="stat-info">
+              <div class="stat-label">Today's Attendance</div>
+              <div class="stat-numbers">
+                <div class="stat-value">{{ todays_attendance_count or 0 }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
         <!-- Total Students -->
         <div class="stat-card" data-type="total" onclick="openModal('total')">
           <div class="stat-card-content">
@@ -267,29 +282,29 @@
                     </select>
                   </div>
                 </div>
-                
-            <!-- Gender Statistics Section -->
-            <div class="gender-stats" id="genderStats">
-              <div class="gender-stat-card total">
-                <div class="gender-label">Total Students</div>
-                <div class="gender-count" id="totalCount">0</div>
-              </div>
-              <div class="gender-stat-card male">
-                <div class="gender-label">Male Students</div>
-                <div class="gender-count" id="maleCount">0</div>
-                <div class="gender-percentage" id="malePercentage">0%</div>
-              </div>
-              <div class="gender-stat-card female">
-                <div class="gender-label">Female Students</div>
-                <div class="gender-count" id="femaleCount">0</div>
-                <div class="gender-percentage" id="femalePercentage">0%</div>
-              </div>
-              <div class="gender-stat-card other">
-                <div class="gender-label">Other</div>
-                <div class="gender-count" id="otherCount">0</div>
-                <div class="gender-percentage" id="otherPercentage">0%</div>
-              </div>
-            </div>
+
+                <!-- Gender Statistics Section -->
+                <div class="gender-stats" id="genderStats">
+                  <div class="gender-stat-card total">
+                    <div class="gender-label">Total Students</div>
+                    <div class="gender-count" id="totalCount">0</div>
+                  </div>
+                  <div class="gender-stat-card male">
+                    <div class="gender-label">Male Students</div>
+                    <div class="gender-count" id="maleCount">0</div>
+                    <div class="gender-percentage" id="malePercentage">0%</div>
+                  </div>
+                  <div class="gender-stat-card female">
+                    <div class="gender-label">Female Students</div>
+                    <div class="gender-count" id="femaleCount">0</div>
+                    <div class="gender-percentage" id="femalePercentage">0%</div>
+                  </div>
+                  <div class="gender-stat-card other">
+                    <div class="gender-label">Other</div>
+                    <div class="gender-count" id="otherCount">0</div>
+                    <div class="gender-percentage" id="otherPercentage">0%</div>
+                  </div>
+                </div>
                 <div class="filter-actions">
                   <button type="submit" class="btn btn-primary">
                     <i class="fas fa-filter btn-icon"></i> Apply Filters
@@ -447,7 +462,7 @@
       document.getElementById("modalCenter").innerHTML =
         '<option value="">All Centers</option>';
       document.getElementById("modalCenter").disabled = true;
-      
+
       // Reset gender stats to loading state
       updateGenderStats({
         total: 0,
@@ -455,7 +470,7 @@
         female: { count: 0, percentage: 0 },
         other: { count: 0, percentage: 0 }
       });
-      
+
       loadModalData(type);
 
       // Show modal
@@ -473,7 +488,7 @@
       document.getElementById('maleCount').textContent = genderStats.male.count;
       document.getElementById('femaleCount').textContent = genderStats.female.count;
       document.getElementById('otherCount').textContent = genderStats.other.count;
-      
+
       // Update percentages
       document.getElementById('malePercentage').textContent = `${genderStats.male.percentage}%`;
       document.getElementById('femalePercentage').textContent = `${genderStats.female.percentage}%`;
@@ -511,7 +526,7 @@
         })
         .then((responseData) => {
           const { students, gender_stats } = responseData;
-          
+
           if (students.length === 0) {
             tableBody.innerHTML =
               '<tr><td colspan="29" class="text-center">No records found</td></tr>';
