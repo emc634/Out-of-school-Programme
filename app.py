@@ -627,12 +627,10 @@ def dashboard():
             
             attended_days = data.get('attendedDays')
             
-            # Validate attendance value
             if attended_days is None:
                 flash("Attendance data is required", "error")
                 return redirect(url_for('dashboard'))
             
-            # Validate attendance range
             try:
                 attended_days = int(attended_days)
                 if attended_days < 0:
@@ -649,17 +647,36 @@ def dashboard():
                     flash("Database connection failed", "error")
                     return redirect(url_for('dashboard'))
                 
-                cursor = conn.cursor()
+                cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
                 
-                # Check if student exists and get current attendance
-                cursor.execute('SELECT attendance FROM student_training WHERE can_id = %s', (can_id,))
+                # Fetch current attendance and total days
+                cursor.execute(
+                    'SELECT attendance, total_days FROM student_training WHERE can_id = %s',
+                    (can_id,)
+                )
                 result = cursor.fetchone()
                 if not result:
                     flash("Student not found", "error")
                     return redirect(url_for('dashboard'))
                 
+                current_attendance = result['attendance']
+                total_days = result['total_days']
+                
+                # ✅ Validation: prevent exceeding course days
+                if attended_days > total_days:
+                    flash("You have already completed all training days!", "info")
+                    return redirect(url_for('dashboard'))
+                
+                # ✅ Prevent reducing attendance accidentally
+                if attended_days < current_attendance:
+                    flash("Attendance cannot be reduced", "error")
+                    return redirect(url_for('dashboard'))
+                
                 # Update attendance
-                cursor.execute('UPDATE student_training SET attendance = %s WHERE can_id = %s', (attended_days, can_id))
+                cursor.execute(
+                    'UPDATE student_training SET attendance = %s WHERE can_id = %s',
+                    (attended_days, can_id)
+                )
                 
                 if cursor.rowcount == 0:
                     flash("Failed to update attendance", "error")
@@ -704,7 +721,9 @@ def dashboard():
         
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
-            SELECT attendance, single_counselling, group_counselling,total_days, ojt, industrial_visit, assessment, guest_lecture,school_enrollment,other_trainings
+            SELECT attendance, single_counselling, group_counselling, total_days, 
+                   ojt, industrial_visit, assessment, guest_lecture, 
+                   school_enrollment, other_trainings
             FROM student_training 
             WHERE can_id = %s
         ''', (can_id,))
@@ -745,6 +764,7 @@ def dashboard():
             conn.close()
     
     return render_template("dashboard.html", student=student)
+
 
 
 @app.route('/admin_login', methods=['GET', 'POST'])
