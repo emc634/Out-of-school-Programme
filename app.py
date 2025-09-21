@@ -811,29 +811,33 @@ def admin_login():
     return render_template('admin_login.html')
 
 
-
 @app.route('/admin_dashboard')
 @admin_required
 def admin_dashboard():
-    current_filters = {
-        'trade': request.args.get('trade'),
-        'gender': request.args.get('gender'),
-        'district': request.args.get('district'),
-        'center': request.args.get('center'),
-        'ojt_status': request.args.get('ojt_status'),
-        'school': request.args.get('school'),
-        'single_counselling': request.args.get('single_counselling'),
-        'group_counselling': request.args.get('group_counselling'),
-        'assessment': request.args.get('assessment'),
-        'industrial_visit': request.args.get('industrial_visit'),
-        'other_trainings': request.args.get('other_trainings'),
+    # Current filters
+    current_filters = {key: request.args.get(key) for key in [
+        'trade', 'gender', 'district', 'center', 'ojt_status',
+        'school', 'single_counselling', 'group_counselling',
+        'assessment', 'industrial_visit', 'other_trainings'
+    ]}
+
+    default_counts = {
+        'total_students': 0,
+        'single_completed': 0,
+        'group_completed': 0,
+        'ojt_completed': 0,
+        'guest_lecture_completed': 0,
+        'industrial_visit_completed': 0,
+        'assessment_completed': 0,
+        'school_enrollment_count': 0,
+        'other_training_completed': 0
     }
 
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
 
-        # Training counts (for statistics cards)
+        # Base query
         training_query = """
             SELECT 
                 COUNT(*) AS total_students,
@@ -847,66 +851,55 @@ def admin_dashboard():
                 SUM(CASE WHEN st.other_trainings IS NOT NULL AND st.other_trainings <> 'Not Completed' THEN 1 ELSE 0 END) AS other_training_completed
             FROM students s
             LEFT JOIN student_training st ON s.can_id = st.can_id
-            LEFT JOIN bank_details bd ON s.can_id = bd.can_id
             WHERE 1=1
         """
-        training_params = []
+        params = []
 
-        # Apply same filters as before to training_query
-        if current_filters['trade']:
-            training_query += " AND LOWER(TRIM(st.trade)) = LOWER(%s)"
-            training_params.append(current_filters['trade'].strip())
-        if current_filters['gender']:
-            training_query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
-            training_params.append(current_filters['gender'].strip())
-        if current_filters['district']:
-            training_query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
-            training_params.append(current_filters['district'].strip())
-        if current_filters['center']:
-            training_query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
-            training_params.append(current_filters['center'].strip())
-        if current_filters['ojt_status']:
-            training_query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
-            training_params.append(current_filters['ojt_status'].strip())
-        if current_filters['school']:
+        # Mapping filters to query conditions
+        filter_map = {
+            'trade': "LOWER(TRIM(st.trade)) = LOWER(%s)",
+            'gender': "LOWER(TRIM(s.gender)) = LOWER(%s)",
+            'district': "LOWER(TRIM(s.district)) = LOWER(%s)",
+            'center': "LOWER(TRIM(s.center)) = LOWER(%s)",
+            'ojt_status': "LOWER(TRIM(st.ojt)) = LOWER(%s)",
+            'single_counselling': "LOWER(TRIM(st.single_counselling)) = LOWER(%s)",
+            'group_counselling': "LOWER(TRIM(st.group_counselling)) = LOWER(%s)",
+            'assessment': "LOWER(TRIM(st.assessment)) = LOWER(%s)",
+            'industrial_visit': "LOWER(TRIM(st.industrial_visit)) = LOWER(%s)",
+        }
+
+        for key, condition in filter_map.items():
+            value = current_filters.get(key)
+            if value:
+                training_query += f" AND {condition}"
+                params.append(value.strip())
+
+        # Special handling filters
+        if current_filters.get('school'):
             if current_filters['school'] == "Enrolled":
-                training_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) != ''"
+                training_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) <> ''"
             elif current_filters['school'] == "Not Enrolled":
                 training_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
-        if current_filters['single_counselling']:
-            training_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
-            training_params.append(current_filters['single_counselling'].strip())
-        if current_filters['group_counselling']:
-            training_query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
-            training_params.append(current_filters['group_counselling'].strip())
-        if current_filters['assessment']:
-            training_query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
-            training_params.append(current_filters['assessment'].strip())
-        if current_filters['industrial_visit']:
-            training_query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
-            training_params.append(current_filters['industrial_visit'].strip())
-        if current_filters['other_trainings']:
+
+        if current_filters.get('other_trainings'):
             if current_filters['other_trainings'] == "Not Completed":
-                training_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = LOWER(%s))"
-                training_params.append('Not Completed')
+                training_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = 'not completed')"
             else:
                 training_query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
-                training_params.append(current_filters['other_trainings'].strip())
+                params.append(current_filters['other_trainings'].strip())
 
-        cursor.execute(training_query, training_params)
-        training_counts = cursor.fetchone()
+        cursor.execute(training_query, params)
+        training_counts = cursor.fetchone() or default_counts
 
-        # Today's attendance count
-        from datetime import date
+        # Today's attendance
         cursor.execute(
             "SELECT COUNT(*) FROM student_training WHERE last_attendance_date = %s",
             (date.today(),)
         )
-        todays_attendance_count = cursor.fetchone()[0]
+        todays_attendance_count = cursor.fetchone()[0] or 0
 
-        # Total students
-        cursor.execute("SELECT COUNT(*) FROM students")
-        total_records = cursor.fetchone()[0]
+        # Total students (fallback to training_counts if missing)
+        total_records = training_counts.get('total_students', 0)
 
         return render_template(
             'admin_dashboard.html',
@@ -917,28 +910,21 @@ def admin_dashboard():
         )
 
     except Exception as e:
-        print("Dashboard error:", str(e))
+        print("Dashboard error:", e)
         flash("An error occurred while loading dashboard", "error")
-        training_counts = {
-            'total_students': 0,
-            'single_completed': 0,
-            'group_completed': 0,
-            'ojt_completed': 0,
-            'guest_lecture_completed': 0,
-            'industrial_visit_completed': 0,
-            'assessment_completed': 0,
-            'school_enrollment_count': 0,
-            'other_training_completed': 0
-        }
         return render_template(
             "admin_dashboard.html",
-            training_counts=training_counts,
+            training_counts=default_counts,
             todays_attendance_count=0,
-            current_filters=current_filters
+            current_filters=current_filters,
+            total_records=0
         )
     finally:
-        if 'cursor' in locals(): cursor.close()
-        if 'conn' in locals(): conn.close()
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
 
 
 @app.route('/admin_dashboard/modal_data')
