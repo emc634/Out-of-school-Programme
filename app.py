@@ -524,10 +524,23 @@ def update_profile():
                     update_values_training.append(field)
 
             if assessment:
-                update_fields_training.append("assessment = %s")
-                update_values_training.append(assessment)
-                update_fields_training.append("assessment_date = %s")
-                update_values_training.append(datetime.today().date())
+                # Fetch attendance % from DB
+                cursor.execute("SELECT attendance, total_days FROM student_training WHERE can_id = %s", (can_id,))
+                att_row = cursor.fetchone()
+
+                if att_row and att_row["total_days"] > 0:
+                    attendance_percent = (att_row["attendance"] / att_row["total_days"]) * 100
+                else:
+                    attendance_percent = 0
+
+                if attendance_percent >= 80:
+                    update_fields_training.append("assessment = %s")
+                    update_values_training.append(assessment)
+                    update_fields_training.append("assessment_date = %s")
+                    update_values_training.append(datetime.today().date())
+                else:
+                    flash("Assessment cannot be updated because your attendance is below 80%.", "error")
+                    return redirect(url_for("update_profile"))
 
             if school_name:
                 update_fields_training.append("school_enrollment = %s")
