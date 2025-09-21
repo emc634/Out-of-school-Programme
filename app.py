@@ -17,14 +17,14 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 
 course_days={
-   "Agriculture":50,
-   "Beauty & Wellness": 70,
-   "Plumbing":70,
-   "Food Processing":50,
-   "Automotive":50,
-   "Electronics":100,
-   "Tourism & Hospitality" :66,
-   "Retail":65
+   "Agriculture":[50,"https://drive.google.com/file/d/1Ne5fPmmoC6W6JF92cIqe_uH40NXC5mCz/view?usp=drive_link"],
+   "Beauty & Wellness": [70,"https://drive.google.com/file/d/1aI8JZfubWoA2cEeFl0BcyDQ7PZTHTtbC/view"],
+   "Plumbing":[70,"https://drive.google.com/file/d/1tfs39122cJPT_JIU8Amj2F4LtYuazho0/view?usp=drive_link"],
+   "Food Processing":[50,"https://drive.google.com/file/d/1RrPxtfiBjbs0ecYHK_5tVJbSUCkd3Dts/view?usp=drive_link"],
+   "Automotive":[50,"https://drive.google.com/file/d/1wlYJdd5VgpxZnEhfw28D1AQ8RUZi98Cw/view?usp=drive_link"],
+   "Electronics":[100,"https://drive.google.com/file/d/1VdM2kVZTTSZfSVSBkYRFYAqCZ_JanAkr/view?usp=drive_link"],
+   "Tourism & Hospitality" :[66,"https://drive.google.com/file/d/1o2yYeaCteillbpOh8FdsPedl03Gg06Xt/view?usp=drive_link"],
+   "Retail":[65,"https://drive.google.com/file/d/1m9frLws3Aepqm1iEgZB_JlHti97jTE19/view?usp=drive_link"]
 }
 
 def login_required(f):
@@ -131,7 +131,7 @@ def student_signup():
             
             cursor.execute(
                 "INSERT INTO student_training (can_id, trade, total_days) VALUES (%s, %s, %s)",
-                (can_id, trade, course_days[trade])
+                (can_id, trade, course_days[trade][0])
             )
             
             conn.commit()
@@ -721,13 +721,17 @@ def dashboard():
         
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
-            SELECT attendance, single_counselling, group_counselling, total_days, 
-                   ojt, industrial_visit, assessment, guest_lecture, 
-                   school_enrollment, other_trainings
+            SELECT trade, attendance, single_counselling, group_counselling, total_days, 
+                ojt, industrial_visit, assessment, guest_lecture, 
+                school_enrollment, other_trainings
             FROM student_training 
             WHERE can_id = %s
         ''', (can_id,))
         student = cursor.fetchone()
+
+        if student:
+            student['syllabus'] = course_days.get(student['trade'], ["", None])[1]
+
         
         if not student:
             flash("Student data not found", "warning")
