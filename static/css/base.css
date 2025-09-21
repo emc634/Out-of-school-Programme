@@ -787,6 +787,7 @@ img:hover {
   justify-content: center;
   /* horizontally center text */
   text-align: center;
+  font-weight: 600;
 }
 
 .alert-close {

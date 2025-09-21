@@ -49,7 +49,8 @@
       <div class="stats-grid">
 
         <!-- Today's Attendance -->
-        <div class="stat-card" data-type="todays_attendance">
+        <!-- Today's Attendance -->
+        <div class="stat-card" data-type="todays_attendance" onclick="openModal('todays_attendance')">
           <div class="stat-card-content">
             <i class="fas fa-calendar-check stat-icon"></i>
             <div class="stat-info">
@@ -452,6 +453,7 @@
         industrial_visit: "Students with Industrial Visit Completed",
         assessment: "Students with Assessment Completed",
         other_trainings: "Students with Other Training Completed",
+        todays_attendance: "Students Present Today", 
       };
 
       modalTitle.textContent = titles[type] || "Students";

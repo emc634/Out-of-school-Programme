@@ -942,11 +942,8 @@ def admin_dashboard():
         if 'conn' in locals():
             conn.close()
 
-
-
 @app.route('/admin_dashboard/modal_data')
 def modal_data():
-    # Get parameters
     training_type = request.args.get('type')
     district = request.args.get('district', '').strip()
     center = request.args.get('center', '').strip()
@@ -963,6 +960,7 @@ def modal_data():
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
                 st.trade, st.total_days, st.attendance, st.other_trainings, st.udsi,
+                st.last_attendance_date,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
             LEFT JOIN student_training st ON s.can_id = st.can_id
@@ -973,11 +971,14 @@ def modal_data():
         params = []
         
         # Add training type condition
-        if training_type != 'total':
+        if training_type and training_type != 'total':
             if training_type == 'school':
                 base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
             elif training_type == 'other_trainings':
                 base_query += " AND st.other_trainings <> 'Not Completed'"
+            elif training_type == 'todays_attendance':
+                base_query += " AND st.last_attendance_date = %s"
+                params.append(date.today())
             else:
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
@@ -1014,34 +1015,25 @@ def modal_data():
         female_percentage = (female_count / total_count * 100) if total_count > 0 else 0
         other_percentage = (other_count / total_count * 100) if total_count > 0 else 0
         
-        # Convert to list of dicts for JSON serialization
+        # Convert to list of dicts for JSON serialization and format dates
         result = []
         for student in students:
             student_dict = dict(student)
-            # Format dates
             if student_dict.get('dob'):
                 student_dict['dob'] = student_dict['dob'].strftime('%d-%m-%Y')
             if student_dict.get('assessment_date'):
                 student_dict['assessment_date'] = student_dict['assessment_date'].strftime('%d-%m-%Y')
+            if student_dict.get('last_attendance_date'):
+                student_dict['last_attendance_date'] = student_dict['last_attendance_date'].strftime('%d-%m-%Y')
             result.append(student_dict)
         
-        # Return both student data and gender statistics
         return jsonify({
             'students': result,
             'gender_stats': {
                 'total': total_count,
-                'male': {
-                    'count': male_count,
-                    'percentage': round(male_percentage, 1)
-                },
-                'female': {
-                    'count': female_count,
-                    'percentage': round(female_percentage, 1)
-                },
-                'other': {
-                    'count': other_count,
-                    'percentage': round(other_percentage, 1)
-                }
+                'male': {'count': male_count, 'percentage': round(male_percentage, 1)},
+                'female': {'count': female_count, 'percentage': round(female_percentage, 1)},
+                'other': {'count': other_count, 'percentage': round(other_percentage, 1)}
             }
         })
         
@@ -1061,6 +1053,7 @@ def modal_data():
             cursor.close()
         if 'conn' in locals():
             conn.close()
+
 
 @app.route('/export_filtered_data')
 def export_filtered_data():
