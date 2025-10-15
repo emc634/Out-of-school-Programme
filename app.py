@@ -125,13 +125,13 @@ def student_signup():
             conn.autocommit = False
             
             cursor.execute(
-                "INSERT INTO students (can_id, student_name, batch_id, father_name, mother_name, mobile, religion, category, dob, district, center, gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (can_id, student_name, batch_id, father_name, mother_name, mobile, religion, category, dob, district, center, gender, password_hash)
+            "INSERT INTO students (can_id, student_name, batch_id, father_name, mother_name, mobile, trade, religion, category, dob, district, center, gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (can_id, student_name, batch_id, father_name, mother_name, mobile, trade, religion, category, dob, district, center, gender, password_hash)
             )
             
             cursor.execute(
-                "INSERT INTO student_training (can_id, trade, total_days) VALUES (%s, %s, %s)",
-                (can_id, trade, course_days[trade][0])
+                "INSERT INTO student_training (can_id,total_days) VALUES (%s,%s)",
+                (can_id, course_days[trade][0])
             )
             
             conn.commit()
@@ -734,11 +734,12 @@ def dashboard():
         
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('''
-            SELECT trade, attendance, single_counselling, group_counselling, total_days, 
-                ojt, industrial_visit, assessment, guest_lecture, 
-                school_enrollment, other_trainings
-            FROM student_training 
-            WHERE can_id = %s
+            SELECT st.attendance, st.single_counselling, st.group_counselling, st.total_days, 
+                st.ojt, st.industrial_visit, st.assessment, st.guest_lecture, 
+                st.school_enrollment, st.other_trainings, s.trade
+            FROM student_training st
+            JOIN students s ON st.can_id = s.can_id
+            WHERE st.can_id = %s
         ''', (can_id,))
         student = cursor.fetchone()
 
@@ -874,7 +875,7 @@ def admin_dashboard():
 
         # Mapping filters to query conditions
         filter_map = {
-            'trade': "LOWER(TRIM(st.trade)) = LOWER(%s)",
+            'trade': "LOWER(TRIM(s.trade)) = LOWER(%s)",
             'gender': "LOWER(TRIM(s.gender)) = LOWER(%s)",
             'district': "LOWER(TRIM(s.district)) = LOWER(%s)",
             'center': "LOWER(TRIM(s.center)) = LOWER(%s)",
@@ -959,7 +960,7 @@ def modal_data():
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                st.trade, st.total_days, st.attendance, st.other_trainings, st.udsi,
+                st.total_days, st.attendance, st.other_trainings, st.udsi,
                 st.last_attendance_date,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
             FROM students s
@@ -997,7 +998,7 @@ def modal_data():
             params.append(gender)
             
         if trade:
-            base_query += " AND st.trade = %s"
+            base_query += " AND s.trade = %s"
             params.append(trade)
         
         # Execute main query for student data
@@ -1074,7 +1075,7 @@ def export_filtered_data():
             SELECT 
                 s.can_id, s.student_name, s.father_name, s.mother_name, s.batch_id,
                 s.mobile, s.religion, s.category, s.dob, s.district, s.center, s.gender,
-                st.trade, st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture,
+                s.trade, st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture,
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
                 st.total_days, st.attendance, st.other_trainings,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
@@ -1110,7 +1111,7 @@ def export_filtered_data():
             params.append(filters['gender'])
             
         if filters['trade']:
-            base_query += " AND st.trade = %s"
+            base_query += " AND s.trade = %s"
             params.append(filters['trade'])
         
         cursor.execute(base_query, params)
