@@ -127,6 +127,17 @@ def get_db_connection():
             
         );
         """
+        create_attendance_table = """
+        CREATE TABLE IF NOT EXISTS daily_attendance (
+            can_id VARCHAR(50) NOT NULL,
+            attendance_date DATE NOT NULL,
+            status VARCHAR(10) DEFAULT 'Absent' CHECK (status IN ('Present', 'Absent')),
+            marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (can_id) REFERENCES students(can_id) ON DELETE CASCADE,
+            PRIMARY KEY (can_id, attendance_date)
+        );
+        """
+
         
         cursor.execute(create_table_query)
         print("Students table created/verified successfully!")

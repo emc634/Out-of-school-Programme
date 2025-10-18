@@ -49,7 +49,6 @@
       <div class="stats-grid">
 
         <!-- Today's Attendance -->
-        <!-- Today's Attendance -->
         <div class="stat-card" data-type="todays_attendance" onclick="openModal('todays_attendance')">
           <div class="stat-card-content">
             <i class="fas fa-calendar-check stat-icon"></i>
@@ -228,6 +227,12 @@
             <div class="modal-filters">
               <form id="modalFilterForm">
                 <div class="filters-grid">
+                  <!-- NEW: Date Filter - ONLY shows for Today's Attendance -->
+                  <div class="filter-group" id="dateFilterGroup" style="display: none;">
+                    <label class="form-label">Select Date</label>
+                    <input type="date" id="modalDate" name="date" class="form-control" />
+                  </div>
+
                   <!-- District Dropdown -->
                   <div class="filter-group">
                     <label class="form-label">District</label>
@@ -442,6 +447,8 @@
     function openModal(type) {
       const modal = document.getElementById("trainingModal");
       const modalTitle = document.getElementById("modalTitle");
+      const dateFilterGroup = document.getElementById("dateFilterGroup");
+      const dateInput = document.getElementById("modalDate");
 
       // Set modal title based on type
       const titles = {
@@ -453,14 +460,31 @@
         industrial_visit: "Students with Industrial Visit Completed",
         assessment: "Students with Assessment Completed",
         other_trainings: "Students with Other Training Completed",
-        todays_attendance: "Students Present Today", 
+        todays_attendance: "Students Attendance by Date",
       };
 
       modalTitle.textContent = titles[type] || "Students";
       modal.dataset.type = type;
 
+      // Show/hide date filter ONLY for attendance
+      if (type === "todays_attendance") {
+        dateFilterGroup.style.display = "block";
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+      } else {
+        dateFilterGroup.style.display = "none";
+        dateInput.value = "";
+      }
+
       // Reset form and load initial data
       document.getElementById("modalFilterForm").reset();
+      
+      // Restore date if it was for attendance
+      if (type === "todays_attendance") {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.value = today;
+      }
+
       document.getElementById("modalCenter").innerHTML =
         '<option value="">All Centers</option>';
       document.getElementById("modalCenter").disabled = true;
@@ -502,7 +526,8 @@
       district = "",
       center = "",
       gender = "",
-      trade = ""
+      trade = "",
+      date = ""
     ) {
       const tableBody = document.getElementById("modalTableBody");
       tableBody.innerHTML =
@@ -516,9 +541,9 @@
         other: { count: 0, percentage: 0 }
       });
 
-      // AJAX request to get filtered data
+      // AJAX request to get filtered data (with date parameter)
       fetch(
-        `/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}`
+        `/admin_dashboard/modal_data?type=${type}&district=${district}&center=${center}&gender=${gender}&trade=${trade}&date=${date}`
       )
         .then((response) => {
           if (!response.ok) {
@@ -699,8 +724,9 @@
           const center = this.elements.center.value;
           const gender = this.elements.gender.value;
           const trade = this.elements.trade.value;
+          const date = this.elements.date ? this.elements.date.value : "";
 
-          loadModalData(type, district, center, gender, trade);
+          loadModalData(type, district, center, gender, trade, date);
         });
 
       // Debugging

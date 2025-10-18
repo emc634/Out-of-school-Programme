@@ -624,117 +624,73 @@ def dashboard():
     cursor = None
     student = None
     
-    # Check if user is authenticated
     if not can_id:
         flash("Please log in to access the dashboard", "error")
         return redirect(url_for('student_signin'))
     
     if request.method == "POST":
         try:
-            data = request.get_json()
+            conn = get_db_connection()
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             
-            # Validate input data
-            if not data:
-                flash("No data provided", "error")
+            # Check if already marked today
+            cursor.execute("""
+                SELECT last_attendance_date FROM student_training
+                WHERE can_id = %s
+            """, (can_id,))
+            
+            result = cursor.fetchone()
+            
+            if result and result['last_attendance_date'] == date.today():
+                flash("Attendance already marked for today!", "info")
                 return redirect(url_for('dashboard'))
             
-            attended_days = data.get('attendedDays')
+            # Get current attendance and total days
+            cursor.execute("""
+                SELECT attendance, total_days FROM student_training
+                WHERE can_id = %s
+            """, (can_id,))
             
-            if attended_days is None:
-                flash("Attendance data is required", "error")
+            attendance_data = cursor.fetchone()
+            current_attendance = attendance_data['attendance'] or 0
+            total_days = attendance_data['total_days'] or 0
+            
+            # Check if already completed
+            if current_attendance >= total_days:
+                flash("You have already completed all training days!", "info")
                 return redirect(url_for('dashboard'))
             
-            try:
-                attended_days = int(attended_days)
-                if attended_days < 0:
-                    flash("Attendance cannot be negative", "error")
-                    return redirect(url_for('dashboard'))
-            except (ValueError, TypeError):
-                flash("Invalid attendance format", "error")
-                return redirect(url_for('dashboard'))
+            # Update attendance
+            new_attendance = current_attendance + 1
+            cursor.execute("""
+                UPDATE student_training 
+                SET attendance = %s, last_attendance_date = %s
+                WHERE can_id = %s
+            """, (new_attendance, date.today(), can_id))
             
-            # Database operations
-            try:
-                conn = get_db_connection()
-                if not conn:
-                    flash("Database connection failed", "error")
-                    return redirect(url_for('dashboard'))
-                
-                cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-                
-                # Fetch current attendance and total days
-                cursor.execute(
-                    'SELECT attendance, total_days FROM student_training WHERE can_id = %s',
-                    (can_id,)
-                )
-                result = cursor.fetchone()
-                if not result:
-                    flash("Student not found", "error")
-                    return redirect(url_for('dashboard'))
-                
-                current_attendance = result['attendance']
-                total_days = result['total_days']
-                
-                # ✅ Validation: prevent exceeding course days
-                if attended_days > total_days:
-                    flash("You have already completed all training days!", "info")
-                    return redirect(url_for('dashboard'))
-                
-                # ✅ Prevent reducing attendance accidentally
-                if attended_days < current_attendance:
-                    flash("Attendance cannot be reduced", "error")
-                    return redirect(url_for('dashboard'))
-                
-                # Update attendance
-                cursor.execute(
-                    'UPDATE student_training SET attendance = %s, last_attendance_date = %s WHERE can_id = %s',
-                    (attended_days,date.today(), can_id)
-                )
-                
-                if cursor.rowcount == 0:
-                    flash("Failed to update attendance", "error")
-                    return redirect(url_for('dashboard'))
-                
-                conn.commit()
-                flash("Attendance updated successfully", "success")
-                return redirect(url_for('dashboard'))
-                
-            except psycopg2.Error as e:
-                if conn:
-                    conn.rollback()
-                flash(f"Database error: {str(e)}", "error")
-                return redirect(url_for('dashboard'))
-            
-            except Exception as e:
-                if conn:
-                    conn.rollback()
-                flash("An unexpected error occurred while updating attendance", "error")
-                return redirect(url_for('dashboard'))
-            
-            finally:
-                if cursor:
-                    cursor.close()
-                if conn:
-                    conn.close()
-                    
-        except json.JSONDecodeError:
-            flash("Invalid JSON format", "error")
+            conn.commit()
+            flash("Attendance marked successfully!", "success")
             return redirect(url_for('dashboard'))
-        
+            
         except Exception as e:
-            flash("An unexpected error occurred", "error")
+            if conn:
+                conn.rollback()
+            flash(f"Error marking attendance: {str(e)}", "error")
             return redirect(url_for('dashboard'))
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
     
     # GET request - Fetch student data
     try:
         conn = get_db_connection()
-        if not conn:
-            flash("Database connection failed", "error")
-            return render_template("dashboard.html", student=None, error="Database connection failed")
-        
         cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        
         cursor.execute('''
-            SELECT st.attendance, st.single_counselling, st.group_counselling, st.total_days, 
+            SELECT st.single_counselling, st.group_counselling, st.total_days, 
+                st.attendance, st.last_attendance_date,
                 st.ojt, st.industrial_visit, st.assessment, st.guest_lecture, 
                 st.school_enrollment, st.other_trainings, s.trade
             FROM student_training st
@@ -745,35 +701,14 @@ def dashboard():
 
         if student:
             student['syllabus'] = course_days.get(student['trade'], ["", None])[1]
-
         
         if not student:
             flash("Student data not found", "warning")
-            return render_template("dashboard.html", student=None, error="Student data not found")
-    
-    except psycopg2.DatabaseError as e:
-        flash(f"Database error: {str(e)}", "error")
-        return render_template("dashboard.html", student=None, error="Database error occurred")
-    
-    except psycopg2.InterfaceError as e:
-        flash("Database interface error", "error")
-        return render_template("dashboard.html", student=None, error="Database connection issue")
-    
-    except psycopg2.OperationalError as e:
-        flash("Database operational error", "error")
-        return render_template("dashboard.html", student=None, error="Database is temporarily unavailable")
-    
-    except psycopg2.Error as e:
-        flash(f"Database error: {str(e)}", "error")
-        return render_template("dashboard.html", student=None, error="Database operation failed")
-    
-    except AttributeError as e:
-        flash("Configuration error", "error")
-        return render_template("dashboard.html", student=None, error="Application configuration issue")
+            return render_template("dashboard.html", student=None, today_date=date.today())
     
     except Exception as e:
         flash("An unexpected error occurred while fetching data", "error")
-        return render_template("dashboard.html", student=None, error="Internal server error")
+        return render_template("dashboard.html", student=None, today_date=date.today())
     
     finally:
         if cursor:
@@ -781,7 +716,7 @@ def dashboard():
         if conn:
             conn.close()
     
-    return render_template("dashboard.html", student=student)
+    return render_template("dashboard.html", student=student, today_date=date.today())
 
 
 
@@ -909,7 +844,7 @@ def admin_dashboard():
         cursor.execute(training_query, params)
         training_counts = cursor.fetchone() or default_counts
 
-        # Today's attendance
+        # Today's attendance count - FIXED: Using student_training table
         cursor.execute(
             "SELECT COUNT(*) FROM student_training WHERE last_attendance_date = %s",
             (date.today(),)
@@ -950,6 +885,7 @@ def modal_data():
     center = request.args.get('center', '').strip()
     gender = request.args.get('gender', '').strip()
     trade = request.args.get('trade', '').strip()
+    date_filter = request.args.get('date', '').strip()  # NEW: Get date parameter
     
     try:
         conn = get_db_connection()
@@ -978,8 +914,13 @@ def modal_data():
             elif training_type == 'other_trainings':
                 base_query += " AND st.other_trainings <> 'Not Completed'"
             elif training_type == 'todays_attendance':
-                base_query += " AND st.last_attendance_date = %s"
-                params.append(date.today())
+                # UPDATED: Use date filter if provided, otherwise use today
+                if date_filter:
+                    base_query += " AND st.last_attendance_date = %s"
+                    params.append(date_filter)
+                else:
+                    base_query += " AND st.last_attendance_date = %s"
+                    params.append(date.today())
             else:
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
