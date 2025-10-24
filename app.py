@@ -27,6 +27,30 @@ course_days={
    "Retail":[65,"https://drive.google.com/file/d/1m9frLws3Aepqm1iEgZB_JlHti97jTE19/view?usp=drive_link"]
 }
 
+def record_daily_attendance(can_id):
+    """Record attendance in the daily_attendance table"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO daily_attendance (can_id, attendance_date, status)
+            VALUES (%s, %s, 'Present')
+            ON CONFLICT (can_id, attendance_date) 
+            DO UPDATE SET status = 'Present', marked_at = CURRENT_TIMESTAMP
+        """, (can_id, date.today()))
+        
+        conn.commit()
+        return True
+    except Exception as e:
+        print(f"Error recording attendance: {e}")
+        return False
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -112,7 +136,6 @@ def student_signup():
         password_hash = password
         
         conn = None
-        # In student_signup route, replace the database section with:
         try:
             conn = get_db_connection()
             if conn is None:
@@ -124,13 +147,25 @@ def student_signup():
             # Start transaction explicitly
             conn.autocommit = False
             
-            cursor.execute(
-            "INSERT INTO students (can_id, student_name, batch_id, father_name, mother_name, mobile, trade, religion, category, dob, district, center, gender, password) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-            (can_id, student_name, batch_id, father_name, mother_name, mobile, trade, religion, category, dob, district, center, gender, password_hash)
+            # FIX: Check for duplicate mobile BEFORE inserting
+            cursor.execute("SELECT can_id FROM students WHERE mobile = %s", (mobile,))
+            if cursor.fetchone():
+                flash("Mobile number already registered", "error")
+                return redirect(url_for("student_signup"))
+            
+            # FIX: Ensure column order matches value order
+            cursor.execute("""
+                INSERT INTO students 
+                (can_id, student_name, batch_id, father_name, mother_name, 
+                 mobile, trade, religion, category, dob, district, center, gender, password) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+                (can_id, student_name, batch_id, father_name, mother_name, 
+                 mobile, trade, religion, category, dob, district, center, gender, password_hash)
             )
             
             cursor.execute(
-                "INSERT INTO student_training (can_id,total_days) VALUES (%s,%s)",
+                "INSERT INTO student_training (can_id, total_days) VALUES (%s, %s)",
                 (can_id, course_days[trade][0])
             )
             
@@ -142,24 +177,28 @@ def student_signup():
             flash("Account created successfully", "success")
             return redirect(url_for("student_profile"))
             
-        except Exception as e:
+        except IntegrityError as e:
             if conn:
                 conn.rollback()
-            print(f"Database error: {str(e)}")  # Add for debugging
-            # ... rest of exception handling
-             
-            # Handle duplicate primary key (can_id) or NOT NULL violations
-            if 'duplicate key value violates unique constraint' in str(e):
-                flash("Candidate ID or Mobile No. already exists. Please use a different ID or Mobile No..", "error")
+            error_msg = str(e).lower()
+            if 'can_id' in error_msg or 'duplicate key' in error_msg:
+                flash("Candidate ID already exists. Please use a different ID.", "error")
+            elif 'mobile' in error_msg:
+                flash("Mobile number already registered", "error")
             else:
-                flash("Data integrity error: " + str(e), "error")
+                flash(f"Data integrity error: {str(e)}", "error")
             return redirect(url_for('student_signup'))
 
         except OperationalError as e:
+            if conn:
+                conn.rollback()
             flash("Database operational error: " + str(e), "error")
             return redirect(url_for('student_signup'))
 
         except Exception as e:
+            if conn:
+                conn.rollback()
+            print(f"Unexpected error: {str(e)}")
             flash("An unexpected error occurred: " + str(e), "error")
             return redirect(url_for('student_signup'))
         finally:
@@ -660,13 +699,20 @@ def dashboard():
                 flash("You have already completed all training days!", "info")
                 return redirect(url_for('dashboard'))
             
-            # Update attendance
+            # Update attendance in student_training
             new_attendance = current_attendance + 1
             cursor.execute("""
                 UPDATE student_training 
                 SET attendance = %s, last_attendance_date = %s
                 WHERE can_id = %s
             """, (new_attendance, date.today(), can_id))
+            
+            # FIX: Also record in daily_attendance table
+            cursor.execute("""
+                INSERT INTO daily_attendance (can_id, attendance_date, status)
+                VALUES (%s, %s, 'Present')
+                ON CONFLICT (can_id, attendance_date) DO NOTHING
+            """, (can_id, date.today()))
             
             conn.commit()
             flash("Attendance marked successfully!", "success")
