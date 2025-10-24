@@ -127,6 +127,7 @@ def get_db_connection():
             
         );
         """
+        
         create_attendance_table = """
         CREATE TABLE IF NOT EXISTS daily_attendance (
             can_id VARCHAR(50) NOT NULL,
@@ -138,28 +139,41 @@ def get_db_connection():
         );
         """
 
-        
+        # Execute all table creation queries
         cursor.execute(create_table_query)
         print("Students table created/verified successfully!")
+        
         cursor.execute(create_table_admin)
         print("Admin table created/verified successfully!")
-        cursor.execute(create_student_training)
-        print("Admin table created/verified successfully!")
-        cursor.execute(create_bank_details)
-        print("Admin table created/verified successfully!")
-
         
-        # Create an index on can_id for faster lookups (optional but recommended)
+        cursor.execute(create_student_training)
+        print("Student training table created/verified successfully!")
+        
+        cursor.execute(create_bank_details)
+        print("Bank details table created/verified successfully!")
+        
+        # THIS WAS MISSING - Execute the attendance table creation
+        cursor.execute(create_attendance_table)
+        print("Daily attendance table created/verified successfully!")
+        
+        # Create indexes
         index_query = """
         CREATE INDEX IF NOT EXISTS idx_students_can_id ON students(can_id);
         """
         cursor.execute(index_query)
         
-        # Create an index on mobile for faster lookups (optional but recommended)
         mobile_index_query = """
         CREATE INDEX IF NOT EXISTS idx_students_mobile ON students(mobile);
         """
         cursor.execute(mobile_index_query)
+        
+        # Optional: Create index on attendance table for faster queries
+        attendance_index_query = """
+        CREATE INDEX IF NOT EXISTS idx_attendance_date ON daily_attendance(attendance_date);
+        CREATE INDEX IF NOT EXISTS idx_attendance_can_id ON daily_attendance(can_id);
+        """
+        cursor.execute(attendance_index_query)
+        print("Indexes created/verified successfully!")
         
         conn.commit()
         cursor.close()
@@ -202,5 +216,3 @@ def age_calculator(date_of_birth):
     today=date.today()
     age=today.year-dob.year- ((today.month, today.day) < (dob.month, dob.day))
     return age
-
-    
