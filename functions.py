@@ -2,7 +2,24 @@ import psycopg2
 import psycopg2.extras
 import os
 from urllib.parse import urlparse
-from datetime import date,datetime
+from datetime import date, datetime, timezone, timedelta
+
+def get_ist_time():
+    """
+    Get current time in Indian Standard Time (IST) without microseconds
+    IST is UTC+5:30
+    """
+    ist_offset = timedelta(hours=5, minutes=30)
+    ist_timezone = timezone(ist_offset)
+    ist_time = datetime.now(ist_timezone)
+    # Remove microseconds
+    return ist_time.replace(microsecond=0)
+
+def get_ist_date():
+    """
+    Get current date in Indian Standard Time (IST)
+    """
+    return get_ist_time().date()
 
 def get_db_connection():
     """
@@ -13,33 +30,28 @@ def get_db_connection():
     cursor = None
     
     try:
-        # Load environment variables from .env file
         from dotenv import load_dotenv
         load_dotenv()
         
-        # Get database URL from environment variable
         database_url = os.getenv('DATABASE_URL')
         
         if database_url:
-            # Parse DATABASE_URL (common in deployment platforms like Heroku)
             url = urlparse(database_url)
             print(f"Connecting using DATABASE_URL to host: {url.hostname}")
             conn = psycopg2.connect(
                 host=url.hostname,
-                database=url.path[1:],  # Remove leading slash
+                database=url.path[1:],
                 user=url.username,
                 password=url.password,
                 port=url.port or 5432
             )
         else:
-            # Use individual environment variables
             db_host = os.getenv('DB_HOST', 'localhost')
             db_name = os.getenv('DB_NAME')
             db_user = os.getenv('DB_USER')
             db_password = os.getenv('DB_PASSWORD')
             db_port = os.getenv('DB_PORT', 5432)
             
-            # Check if required environment variables are set
             if not all([db_name, db_user, db_password]):
                 missing_vars = []
                 if not db_name: missing_vars.append('DB_NAME')
@@ -57,13 +69,12 @@ def get_db_connection():
                 port=db_port
             )
         
-        # Test the connection
         cursor = conn.cursor()
         cursor.execute("SELECT 1;")
         cursor.fetchone()
         print("Database connection successful!")
         
-        # Create table if it doesn't exist
+        # Create all tables
         create_table_query = """
         CREATE TABLE IF NOT EXISTS students (
             id SERIAL PRIMARY KEY,
@@ -73,7 +84,7 @@ def get_db_connection():
             mother_name VARCHAR(100) NOT NULL,
             batch_id VARCHAR(100) NOT NULL,
             trade VARCHAR(100) NOT NULL,
-            mobile VARCHAR(15)  NOT NULL,
+            mobile VARCHAR(15) NOT NULL,
             religion VARCHAR(50) NOT NULL,
             category VARCHAR(50) NOT NULL,
             dob DATE NOT NULL,
@@ -81,11 +92,10 @@ def get_db_connection():
             center VARCHAR(100) NOT NULL,
             gender VARCHAR(10) NOT NULL,
             password TEXT NOT NULL
-            
         );
         """
         
-        create_student_training="""
+        create_student_training = """
         CREATE TABLE IF NOT EXISTS student_training(
             id SERIAL PRIMARY KEY,
             can_id VARCHAR(50) UNIQUE NOT NULL,
@@ -102,12 +112,11 @@ def get_db_connection():
             attendance INT DEFAULT 0,
             last_attendance_date DATE,
             other_trainings VARCHAR(50) DEFAULT NULL,
-            
             FOREIGN KEY (can_id) REFERENCES students(can_id) ON DELETE CASCADE   
         )
         """
         
-        create_bank_details="""
+        create_bank_details = """
         CREATE TABLE IF NOT EXISTS bank_details(
             id SERIAL PRIMARY KEY,
             can_id VARCHAR(50) UNIQUE NOT NULL,
@@ -124,22 +133,21 @@ def get_db_connection():
             id SERIAL PRIMARY KEY,
             email varchar(50) NOT NULL,
             password varchar(50) NOT NULL
-            
         );
         """
         
+        # UPDATED: IST timestamp without microseconds
         create_attendance_table = """
         CREATE TABLE IF NOT EXISTS daily_attendance (
             can_id VARCHAR(50) NOT NULL,
             attendance_date DATE NOT NULL,
             status VARCHAR(10) DEFAULT 'Absent' CHECK (status IN ('Present', 'Absent')),
-            marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            marked_at TIMESTAMP WITHOUT TIME ZONE,
             FOREIGN KEY (can_id) REFERENCES students(can_id) ON DELETE CASCADE,
             PRIMARY KEY (can_id, attendance_date)
         );
         """
-
-        # Execute all table creation queries
+        
         cursor.execute(create_table_query)
         print("Students table created/verified successfully!")
         
@@ -152,28 +160,18 @@ def get_db_connection():
         cursor.execute(create_bank_details)
         print("Bank details table created/verified successfully!")
         
-        # THIS WAS MISSING - Execute the attendance table creation
         cursor.execute(create_attendance_table)
         print("Daily attendance table created/verified successfully!")
         
         # Create indexes
-        index_query = """
+        index_queries = """
         CREATE INDEX IF NOT EXISTS idx_students_can_id ON students(can_id);
-        """
-        cursor.execute(index_query)
-        
-        mobile_index_query = """
         CREATE INDEX IF NOT EXISTS idx_students_mobile ON students(mobile);
-        """
-        cursor.execute(mobile_index_query)
-        
-        # Create indexes for better query performance
-        attendance_index_query = """
         CREATE INDEX IF NOT EXISTS idx_attendance_date ON daily_attendance(attendance_date);
         CREATE INDEX IF NOT EXISTS idx_attendance_can_id ON daily_attendance(can_id);
         CREATE INDEX IF NOT EXISTS idx_student_training_last_date ON student_training(last_attendance_date);
         """
-        cursor.execute(attendance_index_query)
+        cursor.execute(index_queries)
         print("Indexes created/verified successfully!")
         
         conn.commit()
@@ -184,36 +182,26 @@ def get_db_connection():
     except psycopg2.OperationalError as e:
         error_msg = str(e)
         if "could not connect to server" in error_msg:
-            print(f"Connection failed: Cannot reach PostgreSQL server. Check host and port.")
+            print(f"Connection failed: Cannot reach PostgreSQL server.")
         elif "authentication failed" in error_msg:
             print(f"Authentication failed: Check username and password.")
         elif "database" in error_msg and "does not exist" in error_msg:
-            print(f"Database does not exist. Please create the database first.")
+            print(f"Database does not exist.")
         else:
             print(f"PostgreSQL Operational Error: {e}")
         raise
         
-    except psycopg2.Error as e:
-        print(f"PostgreSQL Error: {e}")
-        raise
-        
-    except ValueError as e:
-        print(f"Configuration Error: {e}")
-        raise
-        
     except Exception as e:
-        print(f"Unexpected error during database connection: {e}")
+        print(f"Unexpected error: {e}")
         raise
         
     finally:
         if cursor:
             cursor.close()
 
-
-
-#Function to calculate the age 
 def age_calculator(date_of_birth):
-    dob=datetime.strptime(date_of_birth,'%Y-%m-%d').date()
-    today=date.today()
-    age=today.year-dob.year- ((today.month, today.day) < (dob.month, dob.day))
+    """Calculate age from date of birth"""
+    dob = datetime.strptime(date_of_birth, '%Y-%m-%d').date()
+    today = get_ist_date()  # Use IST date
+    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
     return age
