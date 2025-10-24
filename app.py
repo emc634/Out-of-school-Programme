@@ -27,30 +27,6 @@ course_days={
    "Retail":[65,"https://drive.google.com/file/d/1m9frLws3Aepqm1iEgZB_JlHti97jTE19/view?usp=drive_link"]
 }
 
-def record_daily_attendance(can_id):
-    """Record attendance in the daily_attendance table"""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute("""
-            INSERT INTO daily_attendance (can_id, attendance_date, status)
-            VALUES (%s, %s, 'Present')
-            ON CONFLICT (can_id, attendance_date) 
-            DO UPDATE SET status = 'Present', marked_at = CURRENT_TIMESTAMP
-        """, (can_id, date.today()))
-        
-        conn.commit()
-        return True
-    except Exception as e:
-        print(f"Error recording attendance: {e}")
-        return False
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):

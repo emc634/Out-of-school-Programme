@@ -167,10 +167,11 @@ def get_db_connection():
         """
         cursor.execute(mobile_index_query)
         
-        # Optional: Create index on attendance table for faster queries
+        # Create indexes for better query performance
         attendance_index_query = """
         CREATE INDEX IF NOT EXISTS idx_attendance_date ON daily_attendance(attendance_date);
         CREATE INDEX IF NOT EXISTS idx_attendance_can_id ON daily_attendance(can_id);
+        CREATE INDEX IF NOT EXISTS idx_student_training_last_date ON student_training(last_attendance_date);
         """
         cursor.execute(attendance_index_query)
         print("Indexes created/verified successfully!")
