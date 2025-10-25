@@ -687,6 +687,7 @@ def admin_dashboard():
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
 
+        # --- Training counts query ---
         training_query = """
             SELECT 
                 COUNT(*) AS total_students,
@@ -738,10 +739,11 @@ def admin_dashboard():
         cursor.execute(training_query, params)
         training_counts = cursor.fetchone() or default_counts
 
-        # UPDATED: Use IST date for today's attendance
+        # --- TODAY'S attendance count using attendance_date ---
+        today = get_ist_date()  # Should return YYYY-MM-DD
         cursor.execute(
-            "SELECT COUNT(*) FROM student_training WHERE last_attendance_date = %s",
-            (get_ist_date(),)
+            "SELECT COUNT(*) FROM daily_attendance WHERE attendance_date = %s AND status = 'Present'",
+            (today,)
         )
         todays_attendance_count = cursor.fetchone()[0] or 0
         total_records = training_counts.get('total_students', 0)
@@ -769,6 +771,7 @@ def admin_dashboard():
             cursor.close()
         if 'conn' in locals():
             conn.close()
+
 
 # UPDATED MODAL DATA with IST
 @app.route('/admin_dashboard/modal_data')
