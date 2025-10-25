@@ -687,7 +687,6 @@ def admin_dashboard():
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
 
-        # --- Training counts query ---
         training_query = """
             SELECT 
                 COUNT(*) AS total_students,
@@ -739,11 +738,10 @@ def admin_dashboard():
         cursor.execute(training_query, params)
         training_counts = cursor.fetchone() or default_counts
 
-        # --- TODAY'S attendance count using attendance_date ---
-        today = get_ist_date()  # Should return YYYY-MM-DD
+        # UPDATED: Use IST date for today's attendance
         cursor.execute(
-            "SELECT COUNT(*) FROM daily_attendance WHERE attendance_date = %s AND status = 'Present'",
-            (today,)
+            "SELECT COUNT(*) FROM student_training WHERE last_attendance_date = %s",
+            (get_ist_date(),)
         )
         todays_attendance_count = cursor.fetchone()[0] or 0
         total_records = training_counts.get('total_students', 0)
@@ -772,7 +770,6 @@ def admin_dashboard():
         if 'conn' in locals():
             conn.close()
 
-
 # UPDATED MODAL DATA with IST
 @app.route('/admin_dashboard/modal_data')
 def modal_data():
@@ -787,41 +784,40 @@ def modal_data():
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
 
+        # --- Base query ---
         base_query = """
             SELECT 
                 s.*, 
                 st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
                 st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
                 st.total_days, st.attendance, st.other_trainings, st.udsi,
-                st.last_attendance_date,
                 bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc,
-                da.marked_at
+                da.attendance_date, da.marked_at, da.status
             FROM students s
             LEFT JOIN student_training st ON s.can_id = st.can_id
             LEFT JOIN bank_details bd ON s.can_id = bd.can_id
-            LEFT JOIN daily_attendance da ON s.can_id = da.can_id AND da.attendance_date = st.last_attendance_date
+            LEFT JOIN daily_attendance da ON s.can_id = da.can_id
             WHERE 1=1
         """
 
         params = []
 
+        # --- Apply training type filters ---
         if training_type and training_type != 'total':
             if training_type == 'school':
                 base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
             elif training_type == 'other_trainings':
                 base_query += " AND st.other_trainings <> 'Not Completed'"
             elif training_type == 'todays_attendance':
-                # UPDATED: Use IST date
-                if date_filter:
-                    base_query += " AND st.last_attendance_date = %s"
-                    params.append(date_filter)
-                else:
-                    base_query += " AND st.last_attendance_date = %s"
-                    params.append(get_ist_date())
+                # UPDATED: Use daily_attendance.attendance_date
+                today_date = date_filter if date_filter else get_ist_date()
+                base_query += " AND da.attendance_date = %s AND da.status = 'Present'"
+                params.append(today_date)
             else:
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
 
+        # --- Apply additional filters ---
         if district:
             base_query += " AND LOWER(s.district) = LOWER(%s)"
             params.append(district)
@@ -857,8 +853,8 @@ def modal_data():
                 student_dict['dob'] = student_dict['dob'].strftime('%d-%m-%Y')
             if student_dict.get('assessment_date'):
                 student_dict['assessment_date'] = student_dict['assessment_date'].strftime('%d-%m-%Y')
-            if student_dict.get('last_attendance_date'):
-                student_dict['last_attendance_date'] = student_dict['last_attendance_date'].strftime('%d-%m-%Y')
+            if student_dict.get('attendance_date'):
+                student_dict['attendance_date'] = student_dict['attendance_date'].strftime('%d-%m-%Y')
             # UPDATED: Format IST timestamp without microseconds
             if student_dict.get('marked_at'):
                 student_dict['marked_at'] = student_dict['marked_at'].strftime('%d-%m-%Y %H:%M:%S')
@@ -875,21 +871,14 @@ def modal_data():
         })
 
     except Exception as e:
-        print("Modal data error:", str(e))
-        return jsonify({
-            'students': [],
-            'gender_stats': {
-                'total': 0,
-                'male': {'count': 0, 'percentage': 0},
-                'female': {'count': 0, 'percentage': 0},
-                'other': {'count': 0, 'percentage': 0}
-            }
-        })
+        print("Modal data error:", e)
+        return jsonify({'students': [], 'gender_stats': {}}), 500
     finally:
         if 'cursor' in locals():
             cursor.close()
         if 'conn' in locals():
             conn.close()
+
 
 @app.route('/export_filtered_data')
 def export_filtered_data():
