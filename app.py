@@ -741,10 +741,38 @@ def admin_dashboard():
 
         # --- TODAY'S attendance count using attendance_date ---
         today = get_ist_date()  # Should return YYYY-MM-DD
-        cursor.execute(
-            "SELECT COUNT(*) FROM daily_attendance WHERE attendance_date = %s AND status = 'Present'",
-            (today,)
-        )
+        
+        # Build attendance query with same filters
+        attendance_query = """
+            SELECT COUNT(*) 
+            FROM daily_attendance da
+            JOIN students s ON da.can_id = s.can_id
+            LEFT JOIN student_training st ON s.can_id = st.can_id
+            WHERE da.attendance_date = %s AND da.status = 'Present'
+        """
+        attendance_params = [today]
+        
+        # Apply the same filters to attendance query
+        for key, condition in filter_map.items():
+            value = current_filters.get(key)
+            if value:
+                attendance_query += f" AND {condition}"
+                attendance_params.append(value.strip())
+        
+        if current_filters.get('school'):
+            if current_filters['school'] == "Enrolled":
+                attendance_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) <> ''"
+            elif current_filters['school'] == "Not Enrolled":
+                attendance_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
+
+        if current_filters.get('other_trainings'):
+            if current_filters['other_trainings'] == "Not Completed":
+                attendance_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = 'not completed')"
+            else:
+                attendance_query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
+                attendance_params.append(current_filters['other_trainings'].strip())
+        
+        cursor.execute(attendance_query, attendance_params)
         todays_attendance_count = cursor.fetchone()[0] or 0
         total_records = training_counts.get('total_students', 0)
 
@@ -773,7 +801,7 @@ def admin_dashboard():
             conn.close()
 
 
-# UPDATED MODAL DATA with IST
+# UPDATED MODAL DATA with IST and filter preservation
 @app.route('/admin_dashboard/modal_data')
 def modal_data():
     training_type = request.args.get('type')
@@ -782,6 +810,15 @@ def modal_data():
     gender = request.args.get('gender', '').strip()
     trade = request.args.get('trade', '').strip()
     date_filter = request.args.get('date', '').strip()
+    
+    # NEW: Get additional dashboard filters
+    ojt_status = request.args.get('ojt_status', '').strip()
+    school = request.args.get('school', '').strip()
+    single_counselling = request.args.get('single_counselling', '').strip()
+    group_counselling = request.args.get('group_counselling', '').strip()
+    assessment = request.args.get('assessment', '').strip()
+    industrial_visit = request.args.get('industrial_visit', '').strip()
+    other_trainings = request.args.get('other_trainings', '').strip()
 
     try:
         conn = get_db_connection()
@@ -810,7 +847,7 @@ def modal_data():
             if training_type == 'school':
                 base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
             elif training_type == 'other_trainings':
-                base_query += " AND st.other_trainings <> 'Not Completed'"
+                base_query += " AND st.other_trainings IS NOT NULL AND st.other_trainings <> 'Not Completed'"
             elif training_type == 'todays_attendance':
                 # UPDATED: Use daily_attendance.attendance_date
                 today_date = date_filter if date_filter else get_ist_date()
@@ -820,22 +857,56 @@ def modal_data():
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
 
-        # --- Apply additional filters ---
+        # --- Apply additional filters from dashboard (FIXED: These were missing) ---
         if district:
-            base_query += " AND LOWER(s.district) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
             params.append(district)
 
         if center:
-            base_query += " AND LOWER(s.center) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
             params.append(center)
 
         if gender:
-            base_query += " AND s.gender = %s"
+            base_query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
             params.append(gender)
 
         if trade:
-            base_query += " AND s.trade = %s"
+            base_query += " AND LOWER(TRIM(s.trade)) = LOWER(%s)"
             params.append(trade)
+        
+        # NEW: Apply dashboard-level filters
+        if ojt_status:
+            base_query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
+            params.append(ojt_status)
+        
+        if single_counselling:
+            base_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
+            params.append(single_counselling)
+        
+        if group_counselling:
+            base_query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
+            params.append(group_counselling)
+        
+        if assessment:
+            base_query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
+            params.append(assessment)
+        
+        if industrial_visit:
+            base_query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
+            params.append(industrial_visit)
+        
+        if school:
+            if school == "Enrolled":
+                base_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) <> ''"
+            elif school == "Not Enrolled":
+                base_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
+        
+        if other_trainings:
+            if other_trainings == "Not Completed":
+                base_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = 'not completed')"
+            else:
+                base_query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
+                params.append(other_trainings)
 
         cursor.execute(base_query, params)
         students = cursor.fetchall()
