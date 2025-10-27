@@ -667,7 +667,6 @@ def admin_login():
 
     return render_template('admin_login.html')
 
-# UPDATED ADMIN DASHBOARD with IST
 @app.route('/admin_dashboard')
 @admin_required
 def admin_dashboard():
@@ -801,7 +800,7 @@ def admin_dashboard():
             conn.close()
 
 
-# UPDATED MODAL DATA with IST and filter preservation
+# FIXED MODAL DATA - Removed daily_attendance JOIN to prevent duplicates
 @app.route('/admin_dashboard/modal_data')
 def modal_data():
     training_type = request.args.get('type')
@@ -811,7 +810,7 @@ def modal_data():
     trade = request.args.get('trade', '').strip()
     date_filter = request.args.get('date', '').strip()
     
-    # NEW: Get additional dashboard filters
+    # Get additional dashboard filters
     ojt_status = request.args.get('ojt_status', '').strip()
     school = request.args.get('school', '').strip()
     single_counselling = request.args.get('single_counselling', '').strip()
@@ -824,40 +823,52 @@ def modal_data():
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
 
-        # --- Base query ---
-        base_query = """
-            SELECT 
-                s.*, 
-                st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
-                st.total_days, st.attendance, st.other_trainings, st.udsi,
-                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc,
-                da.attendance_date, da.marked_at, da.status
-            FROM students s
-            LEFT JOIN student_training st ON s.can_id = st.can_id
-            LEFT JOIN bank_details bd ON s.can_id = bd.can_id
-            LEFT JOIN daily_attendance da ON s.can_id = da.can_id
-            WHERE 1=1
-        """
-
-        params = []
+        # FIXED: Separate query for attendance data to avoid duplicates
+        if training_type == 'todays_attendance':
+            base_query = """
+                SELECT DISTINCT
+                    s.*, 
+                    st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
+                    st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                    st.total_days, st.attendance, st.other_trainings, st.udsi,
+                    bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+                FROM students s
+                LEFT JOIN student_training st ON s.can_id = st.can_id
+                LEFT JOIN bank_details bd ON s.can_id = bd.can_id
+                WHERE s.can_id IN (
+                    SELECT can_id FROM daily_attendance 
+                    WHERE attendance_date = %s AND status = 'Present'
+                )
+            """
+            today_date = date_filter if date_filter else get_ist_date()
+            params = [today_date]
+        else:
+            # For non-attendance queries, don't join daily_attendance at all
+            base_query = """
+                SELECT 
+                    s.*, 
+                    st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture, 
+                    st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment, 
+                    st.total_days, st.attendance, st.other_trainings, st.udsi,
+                    bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+                FROM students s
+                LEFT JOIN student_training st ON s.can_id = st.can_id
+                LEFT JOIN bank_details bd ON s.can_id = bd.can_id
+                WHERE 1=1
+            """
+            params = []
 
         # --- Apply training type filters ---
-        if training_type and training_type != 'total':
+        if training_type and training_type != 'total' and training_type != 'todays_attendance':
             if training_type == 'school':
                 base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
             elif training_type == 'other_trainings':
                 base_query += " AND st.other_trainings IS NOT NULL AND st.other_trainings <> 'Not Completed'"
-            elif training_type == 'todays_attendance':
-                # UPDATED: Use daily_attendance.attendance_date
-                today_date = date_filter if date_filter else get_ist_date()
-                base_query += " AND da.attendance_date = %s AND da.status = 'Present'"
-                params.append(today_date)
             else:
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
 
-        # --- Apply additional filters from dashboard (FIXED: These were missing) ---
+        # --- Apply additional filters from dashboard ---
         if district:
             base_query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
             params.append(district)
@@ -874,7 +885,6 @@ def modal_data():
             base_query += " AND LOWER(TRIM(s.trade)) = LOWER(%s)"
             params.append(trade)
         
-        # NEW: Apply dashboard-level filters
         if ojt_status:
             base_query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
             params.append(ojt_status)
@@ -910,6 +920,23 @@ def modal_data():
 
         cursor.execute(base_query, params)
         students = cursor.fetchall()
+        
+        # OPTIONAL: Get attendance details separately if needed for display
+        attendance_details = {}
+        if training_type == 'todays_attendance':
+            today_date = date_filter if date_filter else get_ist_date()
+            cursor.execute("""
+                SELECT can_id, attendance_date, marked_at, status
+                FROM daily_attendance
+                WHERE attendance_date = %s AND status = 'Present'
+            """, (today_date,))
+            attendance_records = cursor.fetchall()
+            for record in attendance_records:
+                attendance_details[record['can_id']] = {
+                    'attendance_date': record['attendance_date'],
+                    'marked_at': record['marked_at'],
+                    'status': record['status']
+                }
 
         total_count = len(students)
         male_count = sum(1 for student in students if student.get('gender', '').lower() == 'male')
@@ -927,11 +954,14 @@ def modal_data():
                 student_dict['dob'] = student_dict['dob'].strftime('%d-%m-%Y')
             if student_dict.get('assessment_date'):
                 student_dict['assessment_date'] = student_dict['assessment_date'].strftime('%d-%m-%Y')
-            if student_dict.get('attendance_date'):
-                student_dict['attendance_date'] = student_dict['attendance_date'].strftime('%d-%m-%Y')
-            # UPDATED: Format IST timestamp without microseconds
-            if student_dict.get('marked_at'):
-                student_dict['marked_at'] = student_dict['marked_at'].strftime('%d-%m-%Y %H:%M:%S')
+            
+            # Add attendance details if this is attendance modal
+            if training_type == 'todays_attendance' and student_dict['can_id'] in attendance_details:
+                att_detail = attendance_details[student_dict['can_id']]
+                student_dict['attendance_date'] = att_detail['attendance_date'].strftime('%d-%m-%Y')
+                student_dict['marked_at'] = att_detail['marked_at'].strftime('%d-%m-%Y %H:%M:%S')
+                student_dict['status'] = att_detail['status']
+            
             result.append(student_dict)
 
         return jsonify({
