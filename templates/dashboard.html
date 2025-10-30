@@ -163,10 +163,7 @@
                     </div>
                 </div>
 
-
-
                 <div class="training-section">
-                    <!-- New Drive Integration Section -->
                     <div class="drive-container">
                         <div class="drive-header">
                             <h3>Study Materials</h3>
@@ -176,16 +173,15 @@
                         </div>
 
                         <div class="files-grid" id="driveFiles">
-                            <!-- Files will be dynamically loaded here -->
                             <div class="no-files">
-                                <i class="fas fa-cloud-download-alt"
-                                    style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
+                                <i class="fas fa-cloud-download-alt" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
                                 <p>Loading available files...</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <footer class="app-footer">
                 <div class="footer-content">
                     <span>Powered by</span>
@@ -193,6 +189,7 @@
                         class="footer-logo-img" />
                 </div>
             </footer>
+        </div>
     </main>
 
 <script>
@@ -236,6 +233,27 @@
         }
     }
 
+    // ✅ Improved daily attendance handling
+    document.addEventListener('DOMContentLoaded', function () {
+        const today = new Date().toDateString();
+        const lastMarked = sessionStorage.getItem('lastMarked');
+        const lastMarkedDate = sessionStorage.getItem('lastMarkedDate');
+
+        // If stored date isn't today, reset for new day
+        if (lastMarkedDate !== today) {
+            markBtn.disabled = false;
+            markBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark Today\'s Attendance';
+            sessionStorage.removeItem('lastMarked');
+            sessionStorage.setItem('lastMarkedDate', today);
+        }
+
+        // If already marked today
+        if (lastMarked === today) {
+            markBtn.disabled = true;
+            markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
+        }
+    });
+
     markBtn.addEventListener('click', function () {
         if (attendedDays >= totalDays) {
             alert("You have already completed all training days!");
@@ -250,22 +268,21 @@
             return;
         }
 
-        // Disable button immediately to prevent double clicks
         markBtn.disabled = true;
         markBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Marking...';
 
-        // Send to Flask
         fetch('/dashboard', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         })
         .then(response => {
             if (response.redirected) {
                 window.location.href = response.url;
             } else if (response.ok) {
                 sessionStorage.setItem('lastMarked', today);
+                sessionStorage.setItem('lastMarkedDate', today);
+                markBtn.disabled = true;
+                markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
                 window.location.reload();
             } else {
                 markBtn.disabled = false;
@@ -281,45 +298,33 @@
         });
     });
 
+    // Backend + session check
     function initAttendance() {
-        // Check if marked today from backend
         {% if student and student.last_attendance_date %}
         const lastAttendanceDate = '{{ student.last_attendance_date }}';
         const todayDate = '{{ today_date }}';
-        
         if (lastAttendanceDate === todayDate) {
             const today = new Date().toDateString();
             sessionStorage.setItem('lastMarked', today);
+            sessionStorage.setItem('lastMarkedDate', today);
             markBtn.disabled = true;
             markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
         }
         {% endif %}
-
-        // Also check sessionStorage
-        const today = new Date().toDateString();
-        const lastMarked = sessionStorage.getItem('lastMarked');
-        
-        if (lastMarked === today) {
-            markBtn.disabled = true;
-            markBtn.innerHTML = '<i class="fas fa-check"></i> Already Marked Today';
-        }
-
         updateAttendanceDisplay();
     }
 
-    // Mobile menu toggle functionality
+    // Navbar + alerts + drive loader (unchanged)
     document.querySelector('.mobile-toggle').addEventListener('click', function () {
         document.querySelector('.navbar').classList.toggle('active');
         document.querySelector('.navbar-overlay').classList.toggle('active');
     });
 
-    // Close navbar when clicking on overlay
     document.querySelector('.navbar-overlay').addEventListener('click', function () {
         document.querySelector('.navbar').classList.remove('active');
         this.classList.remove('active');
     });
 
-    // Close navbar when clicking on a nav link
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function () {
             document.querySelector('.navbar').classList.remove('active');
@@ -327,7 +332,6 @@
         });
     });
 
-    // Initialize attendance display on page load
     initAttendance();
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -340,7 +344,6 @@
         });
     });
 
-    // Drive files functionality (keeping your existing code)
     function loadDriveFiles() {
         const filesContainer = document.getElementById('driveFiles');
         filesContainer.innerHTML = `
@@ -351,10 +354,7 @@
         `;
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        loadDriveFiles();
-    });
+    document.addEventListener('DOMContentLoaded', loadDriveFiles);
 </script>
 </body>
-
 </html>
