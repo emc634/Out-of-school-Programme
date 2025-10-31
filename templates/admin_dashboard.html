@@ -478,7 +478,7 @@
 
       // Reset form and load initial data
       document.getElementById("modalFilterForm").reset();
-      
+
       // Restore date if it was for attendance
       if (type === "todays_attendance") {
         const today = new Date().toISOString().split('T')[0];
@@ -733,20 +733,47 @@
       console.log("Initialization complete");
     });
 
-    // Export Modal Data Functionality
+    // ============================================
+    // FIXED: Export Modal Data Functionality
+    // ============================================
     document
       .getElementById("exportModalDataBtn")
       .addEventListener("click", function () {
         const form = document.getElementById("modalFilterForm");
         const type = document.getElementById("trainingModal").dataset.type;
 
-        // Build URL with filters
-        const url = `/export_filtered_data?type=${type}&district=${form.district.value}&center=${form.center.value}&gender=${form.gender.value}&trade=${form.trade.value}`;
+        // Get all form values
+        const district = form.district.value;
+        const center = form.center.value;
+        const gender = form.gender.value;
+        const trade = form.trade.value;
+
+        // FIXED: Get date value (only exists for attendance modal)
+        const dateInput = form.elements.date;
+        const date = dateInput ? dateInput.value : "";
+
+        // Build URL with ALL filters using URLSearchParams
+        const params = new URLSearchParams();
+
+        // Always add type
+        params.append('type', type);
+
+        // Add other parameters only if they have values
+        if (district) params.append('district', district);
+        if (center) params.append('center', center);
+        if (gender) params.append('gender', gender);
+        if (trade) params.append('trade', trade);
+        if (date) params.append('date', date);  // CRITICAL FIX: Include date parameter
+
+        console.log('Exporting with params:', params.toString()); // Debug log
 
         // Trigger download
-        window.location.href = url;
+        window.location.href = `/export_filtered_data?${params.toString()}`;
       });
 
+    // ============================================
+    // FIXED: Main exportData function
+    // ============================================
     function exportData() {
       // Get current filters from the modal (if open)
       let filters = {};
@@ -755,14 +782,15 @@
       if (modal.style.display === "block") {
         // If modal is open, use modal filters
         const form = document.getElementById("modalFilterForm");
+        const dateInput = form.elements.date;
+
         filters = {
           type: modal.dataset.type,
           district: form.district.value,
           center: form.center.value,
           gender: form.gender.value,
           trade: form.trade.value,
-          other_trainings:
-            form.querySelector('[name="other_trainings"]')?.value || "",
+          date: dateInput ? dateInput.value : "",  // FIXED: Include date
         };
       } else {
         // Otherwise use empty/default filters
@@ -772,7 +800,7 @@
           center: "",
           gender: "",
           trade: "",
-          other_trainings: "",
+          date: "",
         };
       }
 
@@ -781,6 +809,8 @@
       for (const [key, value] of Object.entries(filters)) {
         if (value) params.append(key, value);
       }
+
+      console.log('Exporting with params:', params.toString()); // Debug log
 
       // Trigger download
       window.location.href = `/export_filtered_data?${params.toString()}`;

@@ -800,17 +800,18 @@ def admin_dashboard():
             conn.close()
 
 
-# FIXED MODAL DATA - Removed daily_attendance JOIN to prevent duplicates
+# FIXED MODAL DATA ROUTE with debugging
 @app.route('/admin_dashboard/modal_data')
 def modal_data():
-    training_type = request.args.get('type')
+    # Collect ALL filter parameters from the request
+    training_type = request.args.get('type', '').strip()
     district = request.args.get('district', '').strip()
     center = request.args.get('center', '').strip()
     gender = request.args.get('gender', '').strip()
     trade = request.args.get('trade', '').strip()
     date_filter = request.args.get('date', '').strip()
     
-    # Get additional dashboard filters
+    # Additional dashboard filters
     ojt_status = request.args.get('ojt_status', '').strip()
     school = request.args.get('school', '').strip()
     single_counselling = request.args.get('single_counselling', '').strip()
@@ -819,11 +820,31 @@ def modal_data():
     industrial_visit = request.args.get('industrial_visit', '').strip()
     other_trainings = request.args.get('other_trainings', '').strip()
 
+    # DEBUG: Print filters
+    print("\n========== MODAL FILTERS ==========")
+    if training_type: print(f"type: '{training_type}'")
+    if district: print(f"district: '{district}'")
+    if center: print(f"center: '{center}'")
+    if gender: print(f"gender: '{gender}'")
+    if trade: print(f"trade: '{trade}'")
+    if date_filter: print(f"date: '{date_filter}'")
+    if ojt_status: print(f"ojt_status: '{ojt_status}'")
+    if school: print(f"school: '{school}'")
+    if single_counselling: print(f"single_counselling: '{single_counselling}'")
+    if group_counselling: print(f"group_counselling: '{group_counselling}'")
+    if assessment: print(f"assessment: '{assessment}'")
+    if industrial_visit: print(f"industrial_visit: '{industrial_visit}'")
+    if other_trainings: print(f"other_trainings: '{other_trainings}'")
+    print("====================================\n")
+
+    conn = None
+    cursor = None
+
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
 
-        # FIXED: Separate query for attendance data to avoid duplicates
+        # Special handling for TODAY'S ATTENDANCE
         if training_type == 'todays_attendance':
             base_query = """
                 SELECT DISTINCT
@@ -842,8 +863,9 @@ def modal_data():
             """
             today_date = date_filter if date_filter else get_ist_date()
             params = [today_date]
+            print(f"Attendance date: {today_date}")
         else:
-            # For non-attendance queries, don't join daily_attendance at all
+            # Regular query (non-attendance)
             base_query = """
                 SELECT 
                     s.*, 
@@ -858,70 +880,91 @@ def modal_data():
             """
             params = []
 
-        # --- Apply training type filters ---
+        # Apply TRAINING TYPE filter - FIX: Don't apply duplicate filters
         if training_type and training_type != 'total' and training_type != 'todays_attendance':
             if training_type == 'school':
-                base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
+                base_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) <> ''"
             elif training_type == 'other_trainings':
-                base_query += " AND st.other_trainings IS NOT NULL AND st.other_trainings <> 'Not Completed'"
+                base_query += " AND st.other_trainings IS NOT NULL AND TRIM(st.other_trainings) <> ''"
             else:
                 base_query += f" AND st.{training_type} = %s"
                 params.append('Completed')
 
-        # --- Apply additional filters from dashboard ---
+        # Apply DISTRICT filter
         if district:
-            base_query += " AND LOWER(TRIM(s.district)) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.district)) = LOWER(TRIM(%s))"
             params.append(district)
 
+        # Apply CENTER filter
         if center:
-            base_query += " AND LOWER(TRIM(s.center)) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.center)) = LOWER(TRIM(%s))"
             params.append(center)
 
+        # Apply GENDER filter
         if gender:
-            base_query += " AND LOWER(TRIM(s.gender)) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.gender)) = LOWER(TRIM(%s))"
             params.append(gender)
 
+        # Apply TRADE filter
         if trade:
-            base_query += " AND LOWER(TRIM(s.trade)) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.trade)) = LOWER(TRIM(%s))"
             params.append(trade)
         
-        if ojt_status:
-            base_query += " AND LOWER(TRIM(st.ojt)) = LOWER(%s)"
+        # FIX: Only apply these if they're NOT the main training_type
+        # Apply OJT STATUS filter (only if not the main type)
+        if ojt_status and training_type != 'ojt':
+            base_query += " AND LOWER(TRIM(st.ojt)) = LOWER(TRIM(%s))"
             params.append(ojt_status)
         
-        if single_counselling:
-            base_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(%s)"
+        # Apply SINGLE COUNSELLING filter (only if not the main type)
+        if single_counselling and training_type != 'single_counselling':
+            base_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(TRIM(%s))"
             params.append(single_counselling)
         
-        if group_counselling:
-            base_query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(%s)"
+        # Apply GROUP COUNSELLING filter (only if not the main type)
+        if group_counselling and training_type != 'group_counselling':
+            base_query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(TRIM(%s))"
             params.append(group_counselling)
         
-        if assessment:
-            base_query += " AND LOWER(TRIM(st.assessment)) = LOWER(%s)"
+        # Apply ASSESSMENT filter (only if not the main type)
+        if assessment and training_type != 'assessment':
+            base_query += " AND LOWER(TRIM(st.assessment)) = LOWER(TRIM(%s))"
             params.append(assessment)
         
-        if industrial_visit:
-            base_query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(%s)"
+        # Apply INDUSTRIAL VISIT filter (only if not the main type)
+        if industrial_visit and training_type != 'industrial_visit':
+            base_query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(TRIM(%s))"
             params.append(industrial_visit)
         
-        if school:
+        # Apply SCHOOL ENROLLMENT filter (only if not the main type)
+        if school and training_type != 'school':
             if school == "Enrolled":
                 base_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) <> ''"
             elif school == "Not Enrolled":
                 base_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
         
-        if other_trainings:
+        # Apply OTHER TRAININGS filter (only if not the main type)
+        if other_trainings and training_type != 'other_trainings':
             if other_trainings == "Not Completed":
                 base_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = 'not completed')"
             else:
-                base_query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(%s)"
+                base_query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(TRIM(%s))"
                 params.append(other_trainings)
 
+        # DEBUG: Print query
+        print("\n========== SQL QUERY ==========")
+        print(base_query)
+        print("\n========== PARAMS ==========")
+        print(params)
+        print("================================\n")
+
+        # Execute query
         cursor.execute(base_query, params)
         students = cursor.fetchall()
         
-        # OPTIONAL: Get attendance details separately if needed for display
+        print(f"\n========== RESULTS: {len(students)} records found ==========\n")
+        
+        # Get attendance details separately for attendance modal
         attendance_details = {}
         if training_type == 'todays_attendance':
             today_date = date_filter if date_filter else get_ist_date()
@@ -938,6 +981,7 @@ def modal_data():
                     'status': record['status']
                 }
 
+        # Calculate gender statistics
         total_count = len(students)
         male_count = sum(1 for student in students if student.get('gender', '').lower() == 'male')
         female_count = sum(1 for student in students if student.get('gender', '').lower() == 'female')
@@ -947,20 +991,38 @@ def modal_data():
         female_percentage = (female_count / total_count * 100) if total_count > 0 else 0
         other_percentage = (other_count / total_count * 100) if total_count > 0 else 0
 
+        # Build result array with safe date formatting
         result = []
         for student in students:
             student_dict = dict(student)
+            
+            # Safe date formatting with None checks
             if student_dict.get('dob'):
                 student_dict['dob'] = student_dict['dob'].strftime('%d-%m-%Y')
+            else:
+                student_dict['dob'] = ''
+                
             if student_dict.get('assessment_date'):
                 student_dict['assessment_date'] = student_dict['assessment_date'].strftime('%d-%m-%Y')
+            else:
+                student_dict['assessment_date'] = ''
             
             # Add attendance details if this is attendance modal
             if training_type == 'todays_attendance' and student_dict['can_id'] in attendance_details:
                 att_detail = attendance_details[student_dict['can_id']]
-                student_dict['attendance_date'] = att_detail['attendance_date'].strftime('%d-%m-%Y')
-                student_dict['marked_at'] = att_detail['marked_at'].strftime('%d-%m-%Y %H:%M:%S')
-                student_dict['status'] = att_detail['status']
+                
+                # Safe date formatting for attendance fields
+                if att_detail.get('attendance_date'):
+                    student_dict['attendance_date'] = att_detail['attendance_date'].strftime('%d-%m-%Y')
+                else:
+                    student_dict['attendance_date'] = ''
+                
+                if att_detail.get('marked_at'):
+                    student_dict['marked_at'] = att_detail['marked_at'].strftime('%d-%m-%Y %H:%M:%S')
+                else:
+                    student_dict['marked_at'] = ''
+                    
+                student_dict['status'] = att_detail.get('status', '')
             
             result.append(student_dict)
 
@@ -975,118 +1037,325 @@ def modal_data():
         })
 
     except Exception as e:
-        print("Modal data error:", e)
-        return jsonify({'students': [], 'gender_stats': {}}), 500
+        print("Modal data error:", str(e))
+        import traceback
+        traceback.print_exc()
+        return jsonify({'students': [], 'gender_stats': {
+            'total': 0,
+            'male': {'count': 0, 'percentage': 0},
+            'female': {'count': 0, 'percentage': 0},
+            'other': {'count': 0, 'percentage': 0}
+        }}), 500
+        
     finally:
-        if 'cursor' in locals():
+        if cursor:
             cursor.close()
-        if 'conn' in locals():
+        if conn:
             conn.close()
-
 
 @app.route('/export_filtered_data')
 def export_filtered_data():
+    # Collect ALL possible filter parameters from the request
     filters = {
-        'type': request.args.get('type', 'total'),
-        'district': request.args.get('district', ''),
-        'center': request.args.get('center', ''),
-        'gender': request.args.get('gender', ''),
-        'trade': request.args.get('trade', '')
+        'type': request.args.get('type', 'total').strip(),
+        'district': request.args.get('district', '').strip(),
+        'center': request.args.get('center', '').strip(),
+        'gender': request.args.get('gender', '').strip(),
+        'trade': request.args.get('trade', '').strip(),
+        'ojt_status': request.args.get('ojt_status', '').strip(),
+        'school': request.args.get('school', '').strip(),
+        'single_counselling': request.args.get('single_counselling', '').strip(),
+        'group_counselling': request.args.get('group_counselling', '').strip(),
+        'assessment': request.args.get('assessment', '').strip(),
+        'industrial_visit': request.args.get('industrial_visit', '').strip(),
+        'other_trainings': request.args.get('other_trainings', '').strip(),
+        'date': request.args.get('date', '').strip()
     }
+
+    # DEBUG: Print filters
+    print("\n========== EXPORT FILTERS ==========")
+    for key, value in filters.items():
+        if value:
+            print(f"{key}: '{value}'")
+    print("====================================\n")
+
+    conn = None
+    cursor = None
 
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=extras.DictCursor)
 
-        base_query = """
-            SELECT 
-                s.can_id, s.student_name, s.father_name, s.mother_name, s.batch_id,
-                s.mobile, s.religion, s.category, s.dob, s.district, s.center, s.gender,
-                s.trade, st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture,
-                st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
-                st.total_days, st.attendance, st.other_trainings,
-                bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
-            FROM students s
-            LEFT JOIN student_training st ON s.can_id = st.can_id
-            LEFT JOIN bank_details bd ON s.can_id = bd.can_id
-            WHERE 1=1
-        """
+        # Special handling for TODAY'S ATTENDANCE export
+        if filters['type'] == 'todays_attendance':
+            base_query = """
+                SELECT DISTINCT
+                    s.can_id, s.student_name, s.father_name, s.mother_name, s.batch_id,
+                    s.mobile, s.religion, s.category, s.dob, s.district, s.center, s.gender,
+                    s.trade, st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture,
+                    st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
+                    st.total_days, st.attendance, st.other_trainings, st.udsi,
+                    bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc,
+                    da.attendance_date, da.marked_at, da.status
+                FROM students s
+                LEFT JOIN student_training st ON s.can_id = st.can_id
+                LEFT JOIN bank_details bd ON s.can_id = bd.can_id
+                INNER JOIN daily_attendance da ON s.can_id = da.can_id
+                WHERE da.status = 'Present' AND da.attendance_date = %s
+            """
+            # Use provided date or today's IST date
+            attendance_date = filters['date'] if filters['date'] else get_ist_date()
+            params = [attendance_date]
+            print(f"Attendance date filter: {attendance_date}")
+        else:
+            # Regular export query (non-attendance)
+            base_query = """
+                SELECT 
+                    s.can_id, s.student_name, s.father_name, s.mother_name, s.batch_id,
+                    s.mobile, s.religion, s.category, s.dob, s.district, s.center, s.gender,
+                    s.trade, st.single_counselling, st.group_counselling, st.ojt, st.guest_lecture,
+                    st.industrial_visit, st.assessment, st.assessment_date, st.school_enrollment,
+                    st.total_days, st.attendance, st.other_trainings, st.udsi,
+                    bd.aadhar, bd.account_number, bd.account_holder, bd.ifsc
+                FROM students s
+                LEFT JOIN student_training st ON s.can_id = st.can_id
+                LEFT JOIN bank_details bd ON s.can_id = bd.can_id
+                WHERE 1=1
+            """
+            params = []
 
-        params = []
+            # Apply TYPE filter - FIX: Don't add extra conditions if type is already being filtered
+            if filters['type'] != 'total':
+                if filters['type'] == 'school':
+                    base_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) <> ''"
+                elif filters['type'] == 'other_trainings':
+                    base_query += " AND st.other_trainings IS NOT NULL AND TRIM(st.other_trainings) <> ''"
+                else:
+                    # For single_counselling, group_counselling, ojt, guest_lecture, industrial_visit, assessment
+                    base_query += f" AND st.{filters['type']} = %s"
+                    params.append('Completed')
 
-        if filters['type'] != 'total':
-            if filters['type'] == 'school':
-                base_query += " AND st.school_enrollment IS NOT NULL AND st.school_enrollment <> ''"
-            elif filters['type'] == 'other_trainings':
-                base_query += " AND st.other_trainings <> 'Not Completed'"
-            else:
-                base_query += f" AND st.{filters['type']} = %s"
-                params.append('Completed')
-
+        # Apply DISTRICT filter
         if filters['district']:
-            base_query += " AND LOWER(s.district) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.district)) = LOWER(TRIM(%s))"
             params.append(filters['district'])
 
+        # Apply CENTER filter
         if filters['center']:
-            base_query += " AND LOWER(s.center) = LOWER(%s)"
+            base_query += " AND LOWER(TRIM(s.center)) = LOWER(TRIM(%s))"
             params.append(filters['center'])
 
+        # Apply GENDER filter
         if filters['gender']:
-            base_query += " AND s.gender = %s"
+            base_query += " AND LOWER(TRIM(s.gender)) = LOWER(TRIM(%s))"
             params.append(filters['gender'])
 
+        # Apply TRADE filter
         if filters['trade']:
-            base_query += " AND s.trade = %s"
+            base_query += " AND LOWER(TRIM(s.trade)) = LOWER(TRIM(%s))"
             params.append(filters['trade'])
+        
+        # FIX: Only apply these filters if they're NOT the main 'type' filter
+        # Apply OJT STATUS filter (only if it's not the type)
+        if filters['ojt_status'] and filters['type'] != 'ojt':
+            base_query += " AND LOWER(TRIM(st.ojt)) = LOWER(TRIM(%s))"
+            params.append(filters['ojt_status'])
+        
+        # Apply SINGLE COUNSELLING filter (only if it's not the type)
+        if filters['single_counselling'] and filters['type'] != 'single_counselling':
+            base_query += " AND LOWER(TRIM(st.single_counselling)) = LOWER(TRIM(%s))"
+            params.append(filters['single_counselling'])
+        
+        # Apply GROUP COUNSELLING filter (only if it's not the type)
+        if filters['group_counselling'] and filters['type'] != 'group_counselling':
+            base_query += " AND LOWER(TRIM(st.group_counselling)) = LOWER(TRIM(%s))"
+            params.append(filters['group_counselling'])
+        
+        # Apply ASSESSMENT filter (only if it's not the type)
+        if filters['assessment'] and filters['type'] != 'assessment':
+            base_query += " AND LOWER(TRIM(st.assessment)) = LOWER(TRIM(%s))"
+            params.append(filters['assessment'])
+        
+        # Apply INDUSTRIAL VISIT filter (only if it's not the type)
+        if filters['industrial_visit'] and filters['type'] != 'industrial_visit':
+            base_query += " AND LOWER(TRIM(st.industrial_visit)) = LOWER(TRIM(%s))"
+            params.append(filters['industrial_visit'])
+        
+        # Apply SCHOOL ENROLLMENT filter (only if it's not the type)
+        if filters['school'] and filters['type'] != 'school':
+            if filters['school'] == "Enrolled":
+                base_query += " AND st.school_enrollment IS NOT NULL AND TRIM(st.school_enrollment) <> ''"
+            elif filters['school'] == "Not Enrolled":
+                base_query += " AND (st.school_enrollment IS NULL OR TRIM(st.school_enrollment) = '')"
+        
+        # Apply OTHER TRAININGS filter (only if it's not the type)
+        if filters['other_trainings'] and filters['type'] != 'other_trainings':
+            if filters['other_trainings'] == "Not Completed":
+                base_query += " AND (st.other_trainings IS NULL OR LOWER(TRIM(st.other_trainings)) = 'not completed')"
+            else:
+                base_query += " AND LOWER(TRIM(st.other_trainings)) = LOWER(TRIM(%s))"
+                params.append(filters['other_trainings'])
 
+        # DEBUG: Print the final query and params
+        print("\n========== SQL QUERY ==========")
+        print(base_query)
+        print("\n========== PARAMS ==========")
+        print(params)
+        print("================================\n")
+
+        # Execute the query
         cursor.execute(base_query, params)
         students = cursor.fetchall()
 
+        # DEBUG: Print result count
+        print(f"\n========== RESULTS: {len(students)} records found ==========\n")
+
+        # If no results, let's check what data actually exists
+        if not students or len(students) == 0:
+            # Debug query to see what values exist in database
+            print("\n========== DEBUGGING: Checking existing values ==========")
+            
+            if filters['district']:
+                cursor.execute("SELECT DISTINCT TRIM(district) as district FROM students ORDER BY district")
+                districts = [row['district'] for row in cursor.fetchall()]
+                print(f"Available districts: {districts}")
+                print(f"Looking for: '{filters['district']}'")
+            
+            if filters['trade']:
+                cursor.execute("SELECT DISTINCT TRIM(trade) as trade FROM students ORDER BY trade")
+                trades = [row['trade'] for row in cursor.fetchall()]
+                print(f"Available trades: {trades}")
+                print(f"Looking for: '{filters['trade']}'")
+            
+            if filters['gender']:
+                cursor.execute("SELECT DISTINCT TRIM(gender) as gender FROM students ORDER BY gender")
+                genders = [row['gender'] for row in cursor.fetchall()]
+                print(f"Available genders: {genders}")
+                print(f"Looking for: '{filters['gender']}'")
+            
+            print("=========================================================\n")
+            
+            flash("No data found matching the selected filters. Please adjust your filters and try again.", "warning")
+            return redirect(url_for('admin_dashboard'))
+
+        # Create CSV in memory
         import csv
         from io import StringIO
 
         output = StringIO()
         writer = csv.writer(output)
 
-        writer.writerow([
-            'CAN ID', 'Student Name', "Father's Name", "Mother's Name", 'Batch ID',
-            'Mobile', 'Religion', 'Category', 'DOB', 'District', 'Center', 'Gender',
-            'Trade', 'One to One Counselling', 'Group Counselling', 'OJT Status', 'Guest Lecture',
-            'Industrial Visit', 'Assessment', 'Assessment Date', 'School Enrollment',
-            'Total Days', 'Attendance', 'Other Trainings',
-            'Aadhar', 'Account Number', 'Account Holder', 'IFSC'
-        ])
-
-        for student in students:
+        # Write CSV headers (different for attendance vs regular export)
+        if filters['type'] == 'todays_attendance':
             writer.writerow([
-                student['can_id'], student['student_name'], student['father_name'], student['mother_name'],
-                student['batch_id'], student['mobile'], student['religion'], student['category'],
-                student['dob'].strftime('%d-%m-%Y') if student['dob'] else '',
-                student['district'], student['center'], student['gender'],
-                student['trade'], student['single_counselling'], student['group_counselling'],
-                student['ojt'], student['guest_lecture'], student['industrial_visit'],
-                student['assessment'],
-                student['assessment_date'].strftime('%d-%m-%Y') if student['assessment_date'] else '',
-                student['school_enrollment'], student['total_days'], student['attendance'],
-                student['other_trainings'], student['aadhar'], student['account_number'],
-                student['account_holder'], student['ifsc']
+                'CAN ID', 'Student Name', "Father's Name", "Mother's Name", 'Batch ID',
+                'Mobile', 'Religion', 'Category', 'DOB', 'District', 'Center', 'Gender',
+                'Trade', 'One to One Counselling', 'Group Counselling', 'OJT Status', 'Guest Lecture',
+                'Industrial Visit', 'Assessment', 'Assessment Date', 'School Enrollment', 'UDSI',
+                'Total Days', 'Attendance', 'Other Trainings',
+                'Aadhar', 'Account Number', 'Account Holder', 'IFSC',
+                'Attendance Date', 'Marked At', 'Status'
+            ])
+        else:
+            writer.writerow([
+                'CAN ID', 'Student Name', "Father's Name", "Mother's Name", 'Batch ID',
+                'Mobile', 'Religion', 'Category', 'DOB', 'District', 'Center', 'Gender',
+                'Trade', 'One to One Counselling', 'Group Counselling', 'OJT Status', 'Guest Lecture',
+                'Industrial Visit', 'Assessment', 'Assessment Date', 'School Enrollment', 'UDSI',
+                'Total Days', 'Attendance', 'Other Trainings',
+                'Aadhar', 'Account Number', 'Account Holder', 'IFSC'
             ])
 
+        # Write data rows
+        for student in students:
+            # Safe date formatting with None checks
+            dob_str = student['dob'].strftime('%d-%m-%Y') if student.get('dob') else ''
+            assessment_date_str = student['assessment_date'].strftime('%d-%m-%Y') if student.get('assessment_date') else ''
+            
+            # Build base row data
+            row_data = [
+                student.get('can_id', ''),
+                student.get('student_name', ''),
+                student.get('father_name', ''),
+                student.get('mother_name', ''),
+                student.get('batch_id', ''),
+                student.get('mobile', ''),
+                student.get('religion', ''),
+                student.get('category', ''),
+                dob_str,
+                student.get('district', ''),
+                student.get('center', ''),
+                student.get('gender', ''),
+                student.get('trade', ''),
+                student.get('single_counselling', ''),
+                student.get('group_counselling', ''),
+                student.get('ojt', ''),
+                student.get('guest_lecture', ''),
+                student.get('industrial_visit', ''),
+                student.get('assessment', ''),
+                assessment_date_str,
+                student.get('school_enrollment', ''),
+                student.get('udsi', ''),
+                student.get('total_days', ''),
+                student.get('attendance', ''),
+                student.get('other_trainings', ''),
+                student.get('aadhar', ''),
+                student.get('account_number', ''),
+                student.get('account_holder', ''),
+                student.get('ifsc', '')
+            ]
+            
+            # Add attendance-specific columns if this is an attendance export
+            if filters['type'] == 'todays_attendance':
+                attendance_date_str = student['attendance_date'].strftime('%d-%m-%Y') if student.get('attendance_date') else ''
+                marked_at_str = student['marked_at'].strftime('%d-%m-%Y %H:%M:%S') if student.get('marked_at') else ''
+                row_data.extend([
+                    attendance_date_str,
+                    marked_at_str,
+                    student.get('status', '')
+                ])
+            
+            writer.writerow(row_data)
+
+        # Generate descriptive filename based on filters
+        filename_parts = ['student_data']
+        
+        if filters['type'] == 'todays_attendance':
+            filename_parts.append('attendance')
+            if filters['date']:
+                filename_parts.append(filters['date'].replace('-', '_'))
+        elif filters['type'] != 'total':
+            filename_parts.append(filters['type'].replace('_', '-'))
+        
+        if filters['district']:
+            filename_parts.append(filters['district'].replace(' ', '-'))
+        if filters['trade']:
+            filename_parts.append(filters['trade'].replace(' ', '-'))
+        if filters['center']:
+            filename_parts.append(filters['center'].replace(' ', '-'))
+            
+        filename = '_'.join(filename_parts) + '.csv'
+        
+        # Create and return response
         from flask import make_response
         response = make_response(output.getvalue())
-        response.headers['Content-Disposition'] = 'attachment; filename=student_data.csv'
+        response.headers['Content-Disposition'] = f'attachment; filename={filename}'
         response.headers['Content-type'] = 'text/csv'
 
+        print(f"✅ Export successful: {filename} ({len(students)} records)\n")
         return response
 
     except Exception as e:
         print("Export error:", str(e))
-        flash("An error occurred while exporting data", "error")
+        import traceback
+        traceback.print_exc()
+        flash(f"An error occurred while exporting data: {str(e)}", "error")
         return redirect(url_for('admin_dashboard'))
+        
     finally:
-        if 'cursor' in locals():
+        if cursor:
             cursor.close()
-        if 'conn' in locals():
+        if conn:
             conn.close()
 
 @app.route('/reset_filters')
